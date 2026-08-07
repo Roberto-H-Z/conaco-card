@@ -1,0 +1,27 @@
+/**
+ * CANACO Card — Custom CSS
+ * 
+ * Sobrescribe estilos de Metronic o agrega estilos específicos
+ * de la aplicación sin modificar el core de Metronic.
+ */
+
+:root {
+    --canaco-primary: #004d99; /* Azul institucional CANACO - Ajustar según manual de marca */
+    --canaco-secondary: #f26522; /* Naranja CANACO - Ajustar según manual de marca */
+}
+
+/* Ajustes menores al sidebar para mejor visibilidad del logo */
+#sidebar h1 {
+    font-size: 1.5rem;
+    letter-spacing: -0.5px;
+}
+
+/* Espaciado para cards de dashboard */
+.kt-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.kt-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+}

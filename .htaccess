@@ -1,0 +1,44 @@
+# ============================================================================
+# CANACO Card — Apache URL Rewriting
+# ============================================================================
+# Requiere: mod_rewrite habilitado en Apache/XAMPP
+# Todo llega al Front Controller (index.php) excepto archivos físicos.
+# ============================================================================
+
+RewriteEngine On
+
+# ── Base del proyecto ─────────────────────────────────────────
+RewriteBase /conaco-card/
+
+# ── No reescribir archivos y directorios que existan físicamente ──
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# ── Enviar todo al Front Controller ──────────────────────────
+RewriteRule ^(.+)$ index.php?ruta=$1 [QSA,L]
+
+# ── Seguridad: bloquear acceso directo a archivos sensibles ──
+<FilesMatch "\.(php|sql|md|env|log|json)$">
+    # Permitir solo index.php y archivos en vistas/assets
+    Order Deny,Allow
+    Deny from all
+</FilesMatch>
+
+<Files "index.php">
+    Allow from all
+</Files>
+
+# ── Permitir archivos estáticos ──────────────────────────────
+<FilesMatch "\.(css|js|png|jpg|jpeg|gif|svg|webp|ico|woff|woff2|ttf|eot|map)$">
+    Allow from all
+</FilesMatch>
+
+# ── Impedir listado de directorios ───────────────────────────
+Options -Indexes
+
+# ── Headers de seguridad básicos ─────────────────────────────
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+</IfModule>

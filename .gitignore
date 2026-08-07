@@ -1,2 +1,26 @@
+# IDE y editores
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Archivos de entorno y configuración local
+.env
+.env.local
+
+# Logs
+storage/logs/*.log
+!storage/logs/.keep
+
+# Subidas de archivos (mantener carpetas vacías con .keep)
+uploads/afiliados/*
+!uploads/afiliados/.keep
+uploads/promociones/*
+!uploads/promociones/.keep
+
+# Dependencias (si se agregara Composer después)
+vendor/
+
+# Archivos temporales de Metronic 9.5 (fuentes)
 metronic-v9.5.0/
-metronic-v9.5.0/figma/
