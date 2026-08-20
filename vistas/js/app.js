@@ -1,60 +1,103 @@
-/**
- * CANACO Card — Global Javascript
- * 
- * Lógica general de la aplicación compartida en todos los módulos.
- */
-
+/** Utilidades globales del panel CANACO Card. */
 document.addEventListener('DOMContentLoaded', () => {
-    // Inicialización global
-    console.log('CANACO Card - App Inicializada');
-
-    // Aquí se pueden inicializar componentes que no sean cubiertos 
-    // automáticamente por KTComponents de Metronic.
+    const contenido = document.getElementById('content_container');
+    if (contenido) contenido.classList.add('canaco-module-enter');
+    document.querySelectorAll('.canaco-nav-link').forEach(enlace => enlace.addEventListener('click', () => {
+        document.body.classList.add('canaco-module-leaving');
+    }));
 });
 
-/**
- * Función auxiliar para realizar peticiones AJAX a la API interna.
- * 
- * @param {string} url Ruta relativa (ej: 'afiliados/lista')
- * @param {object} data Datos a enviar
- * @param {string} method GET o POST
- * @returns {Promise} 
- */
-async function canacoAjax(url, data = {}, method = 'POST') {
-    const fullUrl = window.location.pathname.replace(/\/+$/, '') + '/' + url.replace(/^\/+/, '');
-    
-    // Configuración base
-    const options = {
-        method: method,
+document.addEventListener('DOMContentLoaded', () => {
+    const botonMenu = document.getElementById('sidebarToggle');
+    if (!botonMenu) return;
+
+    const aplicarMenu = (oculto, guardar = true) => {
+        document.body.classList.toggle('canaco-sidebar-hidden', oculto);
+        botonMenu.setAttribute('aria-expanded', oculto ? 'false' : 'true');
+        botonMenu.setAttribute('aria-label', oculto ? 'Mostrar menú lateral' : 'Ocultar menú lateral');
+        botonMenu.title = oculto ? 'Mostrar menú lateral' : 'Ocultar menú lateral';
+        const icono = document.getElementById('sidebarToggleIcon');
+        if (icono) {
+            icono.classList.toggle('ki-menu', !oculto);
+            icono.classList.toggle('ki-arrow-right', oculto);
+        }
+        if (guardar) localStorage.setItem('canaco-sidebar-hidden', oculto ? '1' : '0');
+    };
+
+    aplicarMenu(localStorage.getItem('canaco-sidebar-hidden') === '1', false);
+    botonMenu.addEventListener('click', () => aplicarMenu(!document.body.classList.contains('canaco-sidebar-hidden')));
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    const toggle = document.getElementById('themeToggle');
+    if (!toggle) return;
+
+    const aplicarTema = (tema, guardar = true) => {
+        const oscuro = tema === 'dark';
+        const root = document.documentElement;
+        root.classList.toggle('dark', oscuro);
+        root.classList.toggle('light', !oscuro);
+        root.setAttribute('data-kt-theme-mode', tema);
+        root.style.colorScheme = tema;
+        toggle.setAttribute('aria-pressed', oscuro ? 'true' : 'false');
+        toggle.setAttribute('aria-label', oscuro ? 'Activar tema claro' : 'Activar tema oscuro');
+        toggle.title = oscuro ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro';
+        if (guardar) {
+            localStorage.setItem('canaco-theme', tema);
+            localStorage.setItem('kt-theme', tema);
+        }
+    };
+
+    const temaInicial = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+    aplicarTema(temaInicial, false);
+    toggle.addEventListener('click', () => {
+        aplicarTema(document.documentElement.classList.contains('dark') ? 'light' : 'dark');
+    });
+});
+
+async function canacoAjax(ruta, datos = {}, metodo = 'POST') {
+    const baseUrl = document.body.dataset.baseUrl || '/';
+    const url = new URL(ruta.replace(/^\/+/, ''), window.location.origin + baseUrl);
+    const method = metodo.toUpperCase();
+    const opciones = {
+        method,
         headers: {
-            'Content-Type': 'application/json',
+            Accept: 'application/json',
             'X-Requested-With': 'XMLHttpRequest'
         }
     };
 
-    // Agregar CSRF Token si existe en el DOM (para métodos que modifican)
-    const csrfInput = document.querySelector('input[name="csrf_token"]');
-    if (csrfInput && method !== 'GET') {
-        options.headers['X-CSRF-TOKEN'] = csrfInput.value;
-    }
-
     if (method === 'GET') {
-        const queryParams = new URLSearchParams(data).toString();
-        if (queryParams) {
-            fullUrl += '?' + queryParams;
-        }
+        Object.entries(datos).forEach(([clave, valor]) => {
+            if (valor !== '' && valor !== null && valor !== undefined) {
+                url.searchParams.set(clave, valor);
+            }
+        });
+    } else if (datos instanceof FormData) {
+        const csrf = document.querySelector('meta[name="csrf-token"]')?.content || '';
+        opciones.headers['X-CSRF-TOKEN'] = csrf;
+        if (!datos.has('csrf_token')) datos.set('csrf_token', csrf);
+        opciones.body = datos;
     } else {
-        options.body = JSON.stringify(data);
+        opciones.headers['Content-Type'] = 'application/json';
+        const csrf = document.querySelector('meta[name="csrf-token"]')?.content || '';
+        opciones.headers['X-CSRF-TOKEN'] = csrf;
+        opciones.body = JSON.stringify({ ...datos, csrf_token: csrf });
     }
 
+    const respuesta = await fetch(url, opciones);
+    let cuerpo;
     try {
-        const response = await fetch(fullUrl, options);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return await response.json();
-    } catch (error) {
-        console.error('CANACO AJAX Error:', error);
+        cuerpo = await respuesta.json();
+    } catch (_) {
+        throw new Error('El servidor devolvió una respuesta inválida.');
+    }
+
+    if (!respuesta.ok) {
+        const error = new Error(cuerpo.message || `Error HTTP ${respuesta.status}`);
+        error.errors = cuerpo.errors || {};
         throw error;
     }
+
+    return cuerpo;
 }

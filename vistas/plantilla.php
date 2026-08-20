@@ -19,27 +19,7 @@
 
 <?php require VIEWS_PATH . 'layouts/head.php'; ?>
 
-<body class="antialiased flex h-full text-base text-foreground bg-background demo1 kt-sidebar-fixed kt-header-fixed">
- <!-- Theme Mode -->
- <script>
-  const defaultThemeMode = 'light';
-  let themeMode;
-  if (document.documentElement) {
-   if (localStorage.getItem('kt-theme')) {
-    themeMode = localStorage.getItem('kt-theme');
-   } else if (document.documentElement.hasAttribute('data-kt-theme-mode')) {
-    themeMode = document.documentElement.getAttribute('data-kt-theme-mode');
-   } else {
-    themeMode = defaultThemeMode;
-   }
-   if (themeMode === 'system') {
-    themeMode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-   }
-   document.documentElement.classList.add(themeMode);
-  }
- </script>
- <!-- End of Theme Mode -->
-
+<body class="antialiased flex h-full text-base text-foreground bg-background demo1 kt-sidebar-fixed kt-header-fixed" data-base-url="<?= e(base_url()) ?>">
  <!-- Page -->
  <!-- Main -->
  <div class="flex grow">

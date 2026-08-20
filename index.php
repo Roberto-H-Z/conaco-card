@@ -1,23 +1,8 @@
 <?php
 declare(strict_types=1);
 
-/**
- * CANACO Card — Front Controller
- * 
- * Punto de entrada único de la aplicación.
- * 1. Carga configuración
- * 2. Inicializa sesión
- * 3. Registra autoloader
- * 4. Carga helpers
- * 5. Resuelve la ruta
- * 6. Ejecuta el controlador
- * 7. Renderiza la vista
- */
-
-// ── 1. Configuración ────────────────────────────────────────
 require_once __DIR__ . '/config/config.php';
 
-// ── 2. Sesión ───────────────────────────────────────────────
 if (session_status() === PHP_SESSION_NONE) {
     session_start([
         'cookie_httponly' => true,
@@ -26,32 +11,18 @@ if (session_status() === PHP_SESSION_NONE) {
     ]);
 }
 
-// ── 3. Autoloader ───────────────────────────────────────────
 require_once CONFIG_PATH . 'autoload.php';
-
-// ── 4. Helpers ──────────────────────────────────────────────
 require_once HELPERS_PATH . 'funciones.php';
 require_once HELPERS_PATH . 'auth.helper.php';
 require_once HELPERS_PATH . 'validation.helper.php';
 
-// ── 5. Resolver ruta ────────────────────────────────────────
 $rutas = require CONFIG_PATH . 'routes.php';
 
-// Obtener la ruta solicitada
-$rutaSolicitada = isset($_GET['ruta']) ? trim($_GET['ruta'], '/') : 'inicio';
+// Obtener ruta solicitada; la raíz ('') cargará la portada pública
+$rutaSolicitada = trim((string) ($_GET['ruta'] ?? ''), '/');
 
-// Separar segmentos (para rutas como /afiliados/editar/15)
-$segmentos = explode('/', $rutaSolicitada);
-$rutaBase = $segmentos[0] ?: 'inicio';
-
-// Redirigir raíz a inicio
-if ($rutaBase === '' || $rutaSolicitada === '') {
-    $rutaBase = 'inicio';
-}
-
-// ── 6. Verificar existencia de la ruta ──────────────────────
-if (!isset($rutas[$rutaBase])) {
-    // Ruta no encontrada: 404
+// Buscar configuración de ruta (incluye la clave vacía '' para la raíz)
+if (!isset($rutas[$rutaSolicitada])) {
     http_response_code(404);
     $rutaConfig = [
         'controlador' => 'ControladorPlantilla',
@@ -65,53 +36,43 @@ if (!isset($rutas[$rutaBase])) {
         'layout'      => 'admin',
     ];
 } else {
-    $rutaConfig = $rutas[$rutaBase];
+    $rutaConfig = $rutas[$rutaSolicitada];
 }
 
-// ── 7. Verificar autenticación (preparado para el futuro) ───
-if ($rutaConfig['auth'] && !estaAutenticado()) {
-    header('Location: ' . base_url('login'));
+if (($rutaConfig['auth'] ?? false) && !estaAutenticado()) {
+    http_response_code(401);
+    exit('Autenticación requerida.');
+}
+
+$nombreControlador = $rutaConfig['controlador'];
+$metodo            = $rutaConfig['metodo'];
+$datosVista        = [];
+
+if (!class_exists($nombreControlador) || !method_exists($nombreControlador, $metodo)) {
+    http_response_code(500);
+    exit('No fue posible resolver la solicitud.');
+}
+
+$controlador = new $nombreControlador();
+$datosVista  = $controlador->$metodo() ?? [];
+
+if (!empty($rutaConfig['api'])) {
     exit;
 }
 
-// ── 8. Verificar roles (preparado para el futuro) ───────────
-if ($rutaConfig['auth'] && !empty($rutaConfig['roles'])) {
-    $usuarioSesion = obtenerUsuarioSesion();
-    if ($usuarioSesion && !in_array($usuarioSesion['rol'] ?? '', $rutaConfig['roles'], true)) {
-        http_response_code(403);
-        $rutaConfig['vista'] = '404';
-        $rutaConfig['titulo'] = 'Acceso denegado';
-    }
-}
+// Variables para la plantilla
+$vista        = $rutaConfig['vista']        ?? '404';
+$tituloModulo = $rutaConfig['titulo']       ?? 'Página';
+$breadcrumbs  = $rutaConfig['breadcrumbs']  ?? [];
+$jsModulo     = $rutaConfig['js']           ?? [];
+$jsPublico    = $rutaConfig['js_publico']   ?? [];
+$rutaActual   = explode('/', $rutaSolicitada)[0];
+$layout       = $rutaConfig['layout']       ?? 'admin';
 
-// ── 9. Ejecutar controlador ─────────────────────────────────
-$nombreControlador = $rutaConfig['controlador'];
-$metodo = $rutaConfig['metodo'];
-
-// Parámetros adicionales de la URL
-$parametros = array_slice($segmentos, 1);
-
-$datosVista = [];
-if (class_exists($nombreControlador)) {
-    $controlador = new $nombreControlador();
-    if (method_exists($controlador, $metodo)) {
-        $datosVista = $controlador->$metodo(...$parametros) ?? [];
-    }
-}
-
-// ── 10. Renderizar ──────────────────────────────────────────
-// Variables disponibles en las vistas
-$vista = $rutaConfig['vista'];
-$tituloModulo = $rutaConfig['titulo'];
-$breadcrumbs = $rutaConfig['breadcrumbs'];
-$jsModulo = $rutaConfig['js'];
-$layoutTipo = $rutaConfig['layout'];
-$rutaActual = $rutaBase;
-
-if ($layoutTipo === 'auth') {
-    // Layout sin sidebar (login, registro, etc.)
-    require VIEWS_PATH . 'modulos/' . $vista . '.php';
+// Elegir la plantilla según el layout
+if ($layout === 'publico') {
+    require VIEWS_PATH . 'plantilla_publica.php';
 } else {
-    // Layout administrativo completo
     require VIEWS_PATH . 'plantilla.php';
 }
+

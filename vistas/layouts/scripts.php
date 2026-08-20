@@ -15,11 +15,11 @@
 <script src="<?= asset('js/layouts/demo1.js') ?>"></script>
 
 <!-- CANACO Global Javascript -->
-<script src="<?= canaco_js('app.js') ?>"></script>
+<script src="<?= canaco_js('app.js') ?>?v=<?= filemtime(VIEWS_PATH . 'js/app.js') ?>"></script>
 
 <!-- Modulos Específicos Javascript -->
 <?php if (!empty($jsModulo)): ?>
     <?php foreach ($jsModulo as $script): ?>
-        <script src="<?= canaco_js($script) ?>"></script>
+        <script src="<?= canaco_js($script) ?>?v=<?= filemtime(VIEWS_PATH . 'js/' . $script) ?>"></script>
     <?php endforeach; ?>
 <?php endif; ?>

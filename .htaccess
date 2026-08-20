@@ -8,7 +8,7 @@
 RewriteEngine On
 
 # ── Base del proyecto ─────────────────────────────────────────
-RewriteBase /conaco-card/
+RewriteBase /canaco-card/
 
 # ── No reescribir archivos y directorios que existan físicamente ──
 RewriteCond %{REQUEST_FILENAME} !-f
@@ -16,6 +16,9 @@ RewriteCond %{REQUEST_FILENAME} !-d
 
 # ── Enviar todo al Front Controller ──────────────────────────
 RewriteRule ^(.+)$ index.php?ruta=$1 [QSA,L]
+
+# La raíz también debe llegar al Front Controller.
+RewriteRule ^$ index.php [L]
 
 # ── Seguridad: bloquear acceso directo a archivos sensibles ──
 <FilesMatch "\.(php|sql|md|env|log|json)$">

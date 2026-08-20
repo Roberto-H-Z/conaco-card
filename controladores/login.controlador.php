@@ -71,7 +71,7 @@ class ControladorLogin
     public function cerrar(): void
     {
         cerrarSesion();
-        header('Location: ' . base_url('login'));
+        header('Location: ' . base_url('portada'));
         exit;
     }
 }

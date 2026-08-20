@@ -15,7 +15,7 @@ define('APP_VERSION', '1.0.0');
 
 // ── URL base ─────────────────────────────────────────────────
 // Ajustar al dominio real en producción
-define('BASE_URL', '/conaco-card/');
+define('BASE_URL', '/canaco-card/');
 
 // ── Rutas del filesystem ─────────────────────────────────────
 define('APP_ROOT', dirname(__DIR__) . DIRECTORY_SEPARATOR);
