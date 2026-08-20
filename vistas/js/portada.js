@@ -124,6 +124,12 @@
     const elements = document.querySelectorAll('.cp-fade-in');
     if (!elements.length) return;
 
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion || !('IntersectionObserver' in window)) {
+        elements.forEach(el => el.classList.add('visible'));
+        return;
+    }
+
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -140,7 +146,104 @@
 })();
 
 
-/* ── 6. Smooth scroll para links de ancla ────────────────────────────────── */
+/* ── 6. Carrusel manual de promociones ─────────────────────────────────── */
+(function initPromoCarousel() {
+    const track = document.querySelector('[data-carousel-track]');
+    const previousButton = document.querySelector('[data-carousel-prev]');
+    const nextButton = document.querySelector('[data-carousel-next]');
+    const status = document.querySelector('[data-carousel-status]');
+    const tools = previousButton ? previousButton.closest('.cp-carousel-tools') : null;
+    const items = track ? Array.from(track.querySelectorAll('[data-carousel-item]')) : [];
+
+    if (!track || items.length < 2 || !previousButton || !nextButton) return;
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let frame = 0;
+
+    function getStep() {
+        const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+        return items[0].getBoundingClientRect().width + gap;
+    }
+
+    function getCurrentIndex() {
+        const step = getStep();
+        return step > 0
+            ? Math.max(0, Math.min(items.length - 1, Math.round(track.scrollLeft / step)))
+            : 0;
+    }
+
+    function updateState() {
+        const current = getCurrentIndex();
+        const maxScroll = Math.max(0, track.scrollWidth - track.clientWidth - 2);
+
+        previousButton.disabled = track.scrollLeft <= 2;
+        nextButton.disabled = track.scrollLeft >= maxScroll;
+        if (tools) tools.hidden = previousButton.disabled && nextButton.disabled;
+
+        if (status) {
+            status.textContent = `${String(current + 1).padStart(2, '0')} / ${String(items.length).padStart(2, '0')}`;
+        }
+    }
+
+    function move(direction) {
+        track.scrollBy({
+            left: getStep() * direction,
+            behavior: reduceMotion.matches ? 'auto' : 'smooth'
+        });
+    }
+
+    previousButton.addEventListener('click', () => move(-1));
+    nextButton.addEventListener('click', () => move(1));
+
+    track.addEventListener('keydown', (event) => {
+        if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+        event.preventDefault();
+        move(event.key === 'ArrowRight' ? 1 : -1);
+    });
+
+    track.addEventListener('scroll', () => {
+        cancelAnimationFrame(frame);
+        frame = requestAnimationFrame(updateState);
+    }, { passive: true });
+
+    window.addEventListener('resize', () => {
+        cancelAnimationFrame(frame);
+        frame = requestAnimationFrame(updateState);
+    }, { passive: true });
+
+    updateState();
+})();
+
+
+/* ── 7. Luz contextual en tarjetas de empresas ─────────────────────────── */
+(function initCardSpotlight() {
+    const cards = document.querySelectorAll('[data-spotlight-card]');
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!cards.length || reduceMotion || !window.matchMedia('(hover: hover)').matches) return;
+
+    cards.forEach(card => {
+        let frame = 0;
+
+        card.addEventListener('pointermove', event => {
+            cancelAnimationFrame(frame);
+            frame = requestAnimationFrame(() => {
+                const rect = card.getBoundingClientRect();
+                const x = ((event.clientX - rect.left) / rect.width) * 100;
+                const y = ((event.clientY - rect.top) / rect.height) * 100;
+                card.style.setProperty('--spot-x', `${x.toFixed(1)}%`);
+                card.style.setProperty('--spot-y', `${y.toFixed(1)}%`);
+            });
+        }, { passive: true });
+
+        card.addEventListener('pointerleave', () => {
+            card.style.setProperty('--spot-x', '50%');
+            card.style.setProperty('--spot-y', '50%');
+        }, { passive: true });
+    });
+})();
+
+
+/* ── 8. Smooth scroll para links de ancla ────────────────────────────────── */
 (function initSmoothScroll() {
     document.querySelectorAll('a[href^="#"]').forEach(link => {
         link.addEventListener('click', function(e) {
@@ -163,7 +266,7 @@
 })();
 
 
-/* ── 7. Buscador del Hero (placeholder funcional) ─────────────────────── */
+/* ── 9. Buscador del Hero (placeholder funcional) ─────────────────────── */
 (function initHeroSearch() {
     const btn   = document.getElementById('cpHeroSearchBtn');
     const input = document.getElementById('cpHeroSearch');
@@ -189,7 +292,7 @@
 })();
 
 
-/* ── 8. ScrollSpy para Navegación ───────────────────────────────────────── */
+/* ── 10. ScrollSpy para Navegación ──────────────────────────────────────── */
 (function initScrollSpy() {
     const sections = document.querySelectorAll('section[id], footer[id]');
     const navLinks = document.querySelectorAll('.cp-nav-links a');

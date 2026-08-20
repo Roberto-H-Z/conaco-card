@@ -5,10 +5,26 @@
  */
 ?>
 <footer class="cp-footer" id="contacto" role="contentinfo" aria-label="Pie de página">
+    <div class="cp-footer-watermark" aria-hidden="true">CANACO</div>
+
+    <div class="cp-footer-cta-wrap cp-fade-in">
+        <div class="cp-footer-cta">
+            <div>
+                <span class="cp-footer-cta-kicker">Impulsa tu presencia digital</span>
+                <h2>Tu empresa también puede ser parte de esta comunidad.</h2>
+                <p>Conecta con nuevos clientes y comparte beneficios exclusivos con la región.</p>
+            </div>
+            <a href="<?= base_url('afiliados') ?>" class="cp-footer-cta-button">
+                Iniciar Sesión
+                <i class="ki-filled ki-arrow-right" aria-hidden="true"></i>
+            </a>
+        </div>
+    </div>
+
     <div class="cp-footer-grid">
 
         <!-- Col 1: Brand + Descripción -->
-        <div>
+        <div class="cp-footer-brand">
             <img src="<?= asset('media/app/CANACOCARD_Logo.png') ?>"
                  alt="CANACO Card"
                  class="cp-footer-logo" />
@@ -32,7 +48,7 @@
         </div>
 
         <!-- Col 2: Links rápidos -->
-        <div>
+        <div class="cp-footer-column">
             <h3 class="cp-footer-col-title">Navegación</h3>
             <ul class="cp-footer-links" role="list">
                 <li>
@@ -64,7 +80,7 @@
         </div>
 
         <!-- Col 3: Contacto de la Cámara -->
-        <div>
+        <div class="cp-footer-column">
             <h3 class="cp-footer-col-title">Contacto</h3>
 
             <div class="cp-footer-contact-item">
@@ -77,13 +93,8 @@
             </div>
 
             <div class="cp-footer-contact-item">
-                <i class="ki-filled ki-phone" aria-hidden="true"></i>
-                <span>Por definir</span>
-            </div>
-
-            <div class="cp-footer-contact-item">
                 <i class="ki-filled ki-sms" aria-hidden="true"></i>
-                <span>contacto@canacocard.mx</span>
+                <a href="mailto:contacto@canacocard.mx">contacto@canacocard.mx</a>
             </div>
         </div>
 

@@ -133,26 +133,49 @@ function cpFechaCorta(string $fecha): string
 <!-- ═══════════════════════════════════════════════════════════════════════
      SECCIÓN 2 — ÚLTIMAS PROMOCIONES
      ═══════════════════════════════════════════════════════════════════════ -->
-<section class="cp-section" id="promociones" aria-labelledby="tituloSeccionPromos">
+<section class="cp-section cp-promos-showcase" id="promociones" aria-labelledby="tituloSeccionPromos">
+    <div class="cp-section-glow cp-section-glow--promos" aria-hidden="true"></div>
     <div class="cp-container">
 
         <!-- Encabezado de sección -->
-        <div class="cp-section-header cp-fade-in">
-            <span class="cp-section-eyebrow">
-                <i class="ki-filled ki-discount" aria-hidden="true"></i>
-                Ofertas vigentes
-            </span>
-            <h2 class="cp-section-title" id="tituloSeccionPromos">
-                <?= e($seccionPromos['titulo'] ?? 'Últimas Promociones') ?>
-            </h2>
-            <?php if (!empty($seccionPromos['subtitulo'])): ?>
-            <p class="cp-section-subtitle">
-                <?= e($seccionPromos['subtitulo']) ?>
-            </p>
+        <div class="cp-section-heading cp-fade-in">
+            <div class="cp-section-heading-copy">
+                <span class="cp-section-eyebrow">
+                    <span class="cp-eyebrow-icon" aria-hidden="true">
+                        <i class="ki-filled ki-discount"></i>
+                    </span>
+                    Beneficios para ti
+                </span>
+                <h2 class="cp-section-title" id="tituloSeccionPromos">
+                    <?= e($seccionPromos['titulo'] ?? 'Últimas Promociones') ?>
+                </h2>
+                <?php if (!empty($seccionPromos['subtitulo'])): ?>
+                <p class="cp-section-subtitle">
+                    <?= e($seccionPromos['subtitulo']) ?>
+                </p>
+                <?php endif; ?>
+            </div>
+
+            <?php if (count($promociones) > 1): ?>
+            <div class="cp-carousel-tools" aria-label="Controles de promociones">
+                <span class="cp-carousel-status" data-carousel-status aria-live="polite">
+                    01 / <?= str_pad((string) count($promociones), 2, '0', STR_PAD_LEFT) ?>
+                </span>
+                <div class="cp-carousel-buttons">
+                    <button class="cp-carousel-btn" type="button" data-carousel-prev
+                            aria-label="Ver promoción anterior" aria-controls="cpPromoRail">
+                        <i class="ki-filled ki-left" aria-hidden="true"></i>
+                    </button>
+                    <button class="cp-carousel-btn" type="button" data-carousel-next
+                            aria-label="Ver siguiente promoción" aria-controls="cpPromoRail">
+                        <i class="ki-filled ki-right" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </div>
             <?php endif; ?>
         </div>
 
-        <!-- Grid de tarjetas -->
+        <!-- Carrusel de tarjetas -->
         <?php if (empty($promociones)): ?>
         <div class="cp-empty-state cp-fade-in">
             <i class="ki-filled ki-discount" aria-hidden="true"></i>
@@ -160,17 +183,17 @@ function cpFechaCorta(string $fecha): string
         </div>
 
         <?php else: ?>
-        <div class="cp-promo-grid" aria-label="Listado de promociones">
+        <div class="cp-promo-rail cp-fade-in" id="cpPromoRail" data-carousel-track
+             role="region" aria-label="Promociones destacadas" tabindex="0">
 
             <?php foreach ($promociones as $i => $promo): ?>
             <?php
-                $delayClass  = 'cp-delay-' . min($i + 1, 4);
                 $ahora       = time();
                 $finTs       = strtotime($promo['fin_vigencia']);
                 $diasRestantes = max(0, (int) ceil(($finTs - $ahora) / 86400));
                 $proxAVencer = $diasRestantes <= 3;
             ?>
-            <article class="cp-promo-card cp-fade-in <?= $delayClass ?>"
+            <article class="cp-promo-card" data-carousel-item
                      aria-label="Promoción: <?= e($promo['titulo']) ?>">
 
                 <!-- Imagen -->
@@ -178,23 +201,30 @@ function cpFechaCorta(string $fecha): string
                     <?php if (!empty($promo['imagen_url'])): ?>
                         <img src="<?= e($promo['imagen_url']) ?>"
                              alt="Imagen de la promoción <?= e($promo['titulo']) ?>"
-                             loading="lazy" />
+                             loading="lazy" decoding="async" />
                     <?php else: ?>
-                        <div class="cp-promo-img-placeholder" aria-hidden="true">🏷️</div>
+                        <div class="cp-promo-img-placeholder" aria-hidden="true">
+                            <i class="ki-filled ki-discount"></i>
+                        </div>
                     <?php endif; ?>
 
                     <!-- Badge de estado -->
                     <span class="cp-promo-badge <?= $proxAVencer ? 'cp-promo-badge--expira' : '' ?>"
                           aria-label="<?= $proxAVencer ? "Expira en $diasRestantes días" : 'Vigente' ?>">
                         <?= $proxAVencer
-                            ? '⏳ Vence en ' . $diasRestantes . 'd'
-                            : '✓ Vigente' ?>
+                            ? '<i class="ki-filled ki-time" aria-hidden="true"></i> Vence en ' . $diasRestantes . 'd'
+                            : '<i class="ki-filled ki-verify" aria-hidden="true"></i> Vigente' ?>
+                    </span>
+
+                    <span class="cp-promo-index" aria-hidden="true">
+                        <?= str_pad((string) ($i + 1), 2, '0', STR_PAD_LEFT) ?>
                     </span>
                 </div>
 
                 <!-- Cuerpo -->
                 <div class="cp-promo-body">
                     <div class="cp-promo-empresa" aria-label="Empresa">
+                        <span aria-hidden="true"></span>
                         <?= e($promo['nombre_comercial']) ?>
                     </div>
                     <h3 class="cp-promo-title">
@@ -211,8 +241,8 @@ function cpFechaCorta(string $fecha): string
                             &ndash;
                             <?= cpFechaCorta($promo['fin_vigencia']) ?>
                         </span>
-                        <span style="font-size:0.8rem;color:var(--cp-verde);font-weight:600;">
-                            Ver detalle →
+                        <span class="cp-promo-discover" aria-hidden="true">
+                            Descubrir <i class="ki-filled ki-right"></i>
                         </span>
                     </div>
                 </div>
@@ -222,11 +252,10 @@ function cpFechaCorta(string $fecha): string
 
         </div>
 
-        <!-- CTA -->
         <div class="cp-section-cta cp-fade-in">
-            <a href="#" class="cp-btn-outline" aria-label="Ver todas las promociones disponibles">
-                <i class="ki-filled ki-discount" aria-hidden="true"></i>
-                Ver todas las promociones
+            <a href="#empresas" class="cp-text-link" aria-label="Conocer las empresas afiliadas">
+                Conoce las empresas que hacen posibles estos beneficios
+                <span aria-hidden="true"><i class="ki-filled ki-arrow-down"></i></span>
             </a>
         </div>
 
@@ -240,23 +269,38 @@ function cpFechaCorta(string $fecha): string
 <!-- ═══════════════════════════════════════════════════════════════════════
      SECCIÓN 3 — EMPRESAS AFILIADAS
      ═══════════════════════════════════════════════════════════════════════ -->
-<section class="cp-section cp-section--alt" id="empresas" aria-labelledby="tituloSeccionEmpresas">
+<section class="cp-section cp-section--alt cp-companies-showcase" id="empresas" aria-labelledby="tituloSeccionEmpresas">
+    <div class="cp-section-grid-pattern" aria-hidden="true"></div>
     <div class="cp-container">
 
         <!-- Encabezado de sección -->
-        <div class="cp-section-header cp-fade-in">
-            <span class="cp-section-eyebrow">
-                <i class="ki-filled ki-people" aria-hidden="true"></i>
-                Directorio de empresas
-            </span>
-            <h2 class="cp-section-title" id="tituloSeccionEmpresas">
-                <?= e($seccionEmpresas['titulo'] ?? 'Empresas Afiliadas') ?>
-            </h2>
-            <?php if (!empty($seccionEmpresas['subtitulo'])): ?>
-            <p class="cp-section-subtitle">
-                <?= e($seccionEmpresas['subtitulo']) ?>
-            </p>
-            <?php endif; ?>
+        <div class="cp-section-heading cp-fade-in">
+            <div class="cp-section-heading-copy">
+                <span class="cp-section-eyebrow">
+                    <span class="cp-eyebrow-icon" aria-hidden="true">
+                        <i class="ki-filled ki-people"></i>
+                    </span>
+                    Comunidad empresarial
+                </span>
+                <h2 class="cp-section-title" id="tituloSeccionEmpresas">
+                    <?= e($seccionEmpresas['titulo'] ?? 'Empresas Afiliadas') ?>
+                </h2>
+                <?php if (!empty($seccionEmpresas['subtitulo'])): ?>
+                <p class="cp-section-subtitle">
+                    <?= e($seccionEmpresas['subtitulo']) ?>
+                </p>
+                <?php endif; ?>
+            </div>
+
+            <div class="cp-section-proof" aria-label="Directorio verificado">
+                <span class="cp-section-proof-icon" aria-hidden="true">
+                    <i class="ki-filled ki-verify"></i>
+                </span>
+                <span>
+                    <strong><?= count($afiliados) ?> empresas destacadas</strong>
+                    <small>Información validada por CANACO</small>
+                </span>
+            </div>
         </div>
 
         <!-- Grid de tarjetas de empresa -->
@@ -267,6 +311,13 @@ function cpFechaCorta(string $fecha): string
         </div>
 
         <?php else: ?>
+        <svg class="cp-company-clip-defs" width="0" height="0" aria-hidden="true" focusable="false">
+            <defs>
+                <clipPath id="cpCompanyCardClip" clipPathUnits="objectBoundingBox">
+                    <path d="M0,0 H1 V.79 C1,.91 .89,1 .75,1 H0 Z" />
+                </clipPath>
+            </defs>
+        </svg>
         <div class="cp-empresa-grid" aria-label="Listado de empresas afiliadas">
 
             <?php foreach ($afiliados as $i => $empresa): ?>
@@ -276,16 +327,27 @@ function cpFechaCorta(string $fecha): string
                 $tienePromos  = (int)($empresa['promociones_activas'] ?? 0) > 0;
                 $urlFicha     = base_url('empresa/' . $empresa['slug']);
             ?>
-            <article class="cp-empresa-card cp-fade-in <?= $delayClass ?>"
+            <div class="cp-empresa-card-shell cp-fade-in <?= $delayClass ?>">
+            <article class="cp-empresa-card" data-spotlight-card
                      role="article"
                      aria-label="Ficha de <?= e($empresa['nombre_comercial']) ?>">
 
+                <div class="cp-empresa-card-top">
+                    <span class="cp-empresa-number" aria-hidden="true">
+                        <?= str_pad((string) ($i + 1), 2, '0', STR_PAD_LEFT) ?>
+                    </span>
+                    <span class="cp-empresa-verified">
+                        <i class="ki-filled ki-verify" aria-hidden="true"></i>
+                        Afiliada
+                    </span>
+                </div>
+
                 <!-- Logo o iniciales -->
-                <div class="cp-empresa-logo-wrap" aria-hidden="true">
+                <div class="cp-empresa-logo-wrap">
                     <?php if (!empty($empresa['logo_url'])): ?>
                         <img src="<?= e($empresa['logo_url']) ?>"
                              alt="Logotipo de <?= e($empresa['nombre_comercial']) ?>"
-                             loading="lazy" />
+                             loading="lazy" decoding="async" />
                     <?php else: ?>
                         <span class="cp-empresa-initials" aria-hidden="true">
                             <?= e($iniciales) ?>
@@ -300,36 +362,56 @@ function cpFechaCorta(string $fecha): string
 
                 <!-- Categoría principal -->
                 <span class="cp-empresa-cat" aria-label="Categoría">
+                    <i class="ki-filled ki-category" aria-hidden="true"></i>
                     <?= !empty($empresa['categoria_principal'])
                         ? e($empresa['categoria_principal'])
                         : 'Sin categoría' ?>
                 </span>
 
-                <!-- Badge de promociones -->
-                <?php if ($tienePromos): ?>
-                <span class="cp-empresa-promos-badge"
-                      aria-label="<?= (int)$empresa['promociones_activas'] ?> promociones activas">
-                    <i class="ki-filled ki-discount" aria-hidden="true"></i>
-                    <?= (int)$empresa['promociones_activas'] ?>
-                    <?= (int)$empresa['promociones_activas'] === 1 ? 'promoción' : 'promociones' ?>
-                </span>
-                <?php else: ?>
-                <span class="cp-empresa-promos-badge no-promos" aria-label="Sin promociones activas">
-                    Sin promociones
-                </span>
+                <?php if (!empty($empresa['descripcion'])): ?>
+                <p class="cp-empresa-desc">
+                    <?= e(cpTruncate($empresa['descripcion'], 92)) ?>
+                </p>
                 <?php endif; ?>
 
-                <span class="cp-empresa-ver-ficha">Ver ficha →</span>
+                <!-- Badge de promociones -->
+                <div class="cp-empresa-card-footer">
+                    <?php if ($tienePromos): ?>
+                    <span class="cp-empresa-promos-badge"
+                          aria-label="<?= (int)$empresa['promociones_activas'] ?> promociones activas">
+                        <i class="ki-filled ki-discount" aria-hidden="true"></i>
+                        <?= (int)$empresa['promociones_activas'] ?>
+                        <?= (int)$empresa['promociones_activas'] === 1 ? 'promoción' : 'promociones' ?>
+                    </span>
+                    <?php else: ?>
+                    <span class="cp-empresa-promos-badge no-promos" aria-label="Sin promociones activas">
+                        Sin promociones activas
+                    </span>
+                    <?php endif; ?>
+
+                </div>
             </article>
+            <span class="cp-empresa-ver-ficha" aria-hidden="true">
+                <i class="ki-filled ki-arrow-up-right"></i>
+            </span>
+            </div>
             <?php endforeach; ?>
 
         </div>
 
-        <!-- CTA: Ver directorio completo -->
-        <div class="cp-section-cta cp-fade-in">
-            <a href="#" class="cp-btn-primary" aria-label="Ver directorio completo de empresas">
-                <i class="ki-filled ki-people" aria-hidden="true"></i>
-                Ver directorio completo
+        <div class="cp-directory-banner cp-fade-in">
+            <div class="cp-directory-banner-copy">
+                <span class="cp-directory-banner-icon" aria-hidden="true">
+                    <i class="ki-filled ki-geolocation"></i>
+                </span>
+                <span>
+                    <strong>El comercio local está más cerca de lo que imaginas</strong>
+                    <small>Explora negocios, servicios y beneficios dentro de una comunidad confiable.</small>
+                </span>
+            </div>
+            <a href="#contacto" class="cp-btn-primary" aria-label="Contactar con CANACO">
+                Contactar con CANACO
+                <i class="ki-filled ki-right" aria-hidden="true"></i>
             </a>
         </div>
 
