@@ -156,21 +156,15 @@ function cpFechaCorta(string $fecha): string
                 <?php endif; ?>
             </div>
 
-            <?php if (count($promociones) > 1): ?>
-            <div class="cp-carousel-tools" aria-label="Controles de promociones">
-                <span class="cp-carousel-status" data-carousel-status aria-live="polite">
+            <?php if (!empty($promociones)): ?>
+            <div class="cp-carousel-tools" aria-label="Información del carrusel">
+                <span class="cp-carousel-drag-hint" aria-hidden="true">
+                    <i class="ki-filled ki-right-left"></i>
+                    Arrastra para explorar
+                </span>
+                <span class="cp-carousel-status" data-carousel-status aria-live="off">
                     01 / <?= str_pad((string) count($promociones), 2, '0', STR_PAD_LEFT) ?>
                 </span>
-                <div class="cp-carousel-buttons">
-                    <button class="cp-carousel-btn" type="button" data-carousel-prev
-                            aria-label="Ver promoción anterior" aria-controls="cpPromoRail">
-                        <i class="ki-filled ki-left" aria-hidden="true"></i>
-                    </button>
-                    <button class="cp-carousel-btn" type="button" data-carousel-next
-                            aria-label="Ver siguiente promoción" aria-controls="cpPromoRail">
-                        <i class="ki-filled ki-right" aria-hidden="true"></i>
-                    </button>
-                </div>
             </div>
             <?php endif; ?>
         </div>
@@ -183,8 +177,13 @@ function cpFechaCorta(string $fecha): string
         </div>
 
         <?php else: ?>
-        <div class="cp-promo-rail cp-fade-in" id="cpPromoRail" data-carousel-track
-             role="region" aria-label="Promociones destacadas" tabindex="0">
+        <div class="cp-promo-rail cp-fade-in" id="cpPromoRail" data-carousel-viewport
+             role="region" aria-roledescription="carrusel" aria-label="Promociones destacadas"
+             aria-describedby="cpPromoCarouselHint" tabindex="0">
+            <p class="cp-sr-only" id="cpPromoCarouselHint">
+                Carrusel de promociones en movimiento continuo. Usa las flechas izquierda y derecha, los botones o arrastra para explorar. El movimiento se pausa al enfocar el carrusel.
+            </p>
+            <div class="cp-promo-track" data-carousel-track>
 
             <?php foreach ($promociones as $i => $promo): ?>
             <?php
@@ -250,6 +249,7 @@ function cpFechaCorta(string $fecha): string
             </article>
             <?php endforeach; ?>
 
+            </div>
         </div>
 
         <div class="cp-section-cta cp-fade-in">

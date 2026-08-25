@@ -1155,7 +1155,19 @@
     line-height: 1.7;
 }
 
-/* Promociones: carrusel manual con scroll-snap */
+/* Promociones: carrusel continuo, arrastrable y accesible */
+.cp-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
 .cp-carousel-tools {
     flex: 0 0 auto;
     display: flex;
@@ -1177,44 +1189,22 @@
     font-variant-numeric: tabular-nums;
 }
 
-.cp-carousel-buttons {
-    display: flex;
-    gap: 10px;
-}
-
-.cp-carousel-btn {
-    width: 48px;
-    height: 48px;
+.cp-carousel-drag-hint {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    border: 1px solid var(--cp-line-strong);
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.88);
+    gap: 7px;
+    color: #65718a;
+    font-size: 11px;
+    font-weight: 750;
+    letter-spacing: 0.025em;
+    white-space: nowrap;
+}
+
+.cp-carousel-drag-hint i {
     color: var(--cp-verde);
-    cursor: pointer;
-    box-shadow: 0 8px 24px rgba(13, 27, 62, 0.06);
-    transition: transform 180ms var(--cp-ease-out), color 180ms ease,
-                background-color 180ms ease, border-color 180ms ease, opacity 180ms ease;
+    font-size: 15px;
 }
 
-.cp-carousel-btn:hover:not(:disabled) {
-    transform: translateY(-2px);
-    color: #fff;
-    background: var(--cp-verde);
-    border-color: var(--cp-verde);
-}
-
-.cp-carousel-btn:active:not(:disabled) {
-    transform: scale(0.94);
-}
-
-.cp-carousel-btn:disabled {
-    opacity: 0.34;
-    cursor: not-allowed;
-}
-
-.cp-carousel-btn:focus-visible,
 .cp-promo-rail:focus-visible,
 .cp-text-link:focus-visible,
 .cp-directory-banner a:focus-visible,
@@ -1224,27 +1214,56 @@
 }
 
 .cp-promo-rail {
-    display: grid;
-    grid-auto-flow: column;
-    grid-auto-columns: minmax(340px, calc((100% - 48px) / 3));
-    gap: 24px;
-    padding: 10px 2px 34px;
-    margin: -10px -2px 12px;
-    overflow-x: auto;
-    overscroll-behavior-inline: contain;
-    scroll-snap-type: inline mandatory;
-    scroll-padding-inline: 2px;
-    scrollbar-width: none;
-    touch-action: pan-x pan-y;
+    position: relative;
+    padding: 10px 0 34px;
+    margin: -10px -48px 12px;
+    overflow: hidden;
+    cursor: grab;
+    touch-action: pan-y;
 }
 
-.cp-promo-rail::-webkit-scrollbar {
-    display: none;
+.cp-promo-rail::before,
+.cp-promo-rail::after {
+    position: absolute;
+    top: 0;
+    bottom: 20px;
+    z-index: 2;
+    width: clamp(12px, 3vw, 42px);
+    content: '';
+    pointer-events: none;
+}
+
+.cp-promo-rail::before {
+    left: 0;
+    background: linear-gradient(90deg, var(--cp-surface, #f7f9fd), transparent);
+}
+
+.cp-promo-rail::after {
+    right: 0;
+    background: linear-gradient(270deg, var(--cp-surface, #f7f9fd), transparent);
+}
+
+.cp-promo-rail.is-dragging {
+    cursor: grabbing;
+    user-select: none;
+}
+
+.cp-promo-rail.is-dragging .cp-promo-card {
+    cursor: grabbing;
+}
+
+.cp-promo-track {
+    display: flex;
+    align-items: stretch;
+    gap: 24px;
+    width: max-content;
+    will-change: transform;
 }
 
 .cp-promo-card {
-    min-width: 0;
-    scroll-snap-align: start;
+    width: clamp(340px, 28vw, 400px);
+    min-width: 340px;
+    flex: 0 0 clamp(340px, 28vw, 400px);
     border: 1px solid rgba(30, 55, 153, 0.09);
     border-radius: var(--cp-radius-xl);
     background: rgba(255, 255, 255, 0.96);
@@ -2029,7 +2048,14 @@
 /* Responsive */
 @media (max-width: 1100px) {
     .cp-promo-rail {
-        grid-auto-columns: minmax(330px, calc((100% - 24px) / 2));
+        margin-inline: -36px;
+        padding-bottom: 32px;
+    }
+
+    .cp-promo-card {
+        width: min(40vw, 400px);
+        min-width: 330px;
+        flex-basis: min(40vw, 400px);
     }
 
     .cp-empresa-grid {
@@ -2069,7 +2095,18 @@
     }
 
     .cp-promo-rail {
-        grid-auto-columns: minmax(310px, 82vw);
+        margin-inline: -24px;
+        padding-bottom: 30px;
+    }
+
+    .cp-promo-card {
+        width: min(82vw, 400px);
+        min-width: min(82vw, 400px);
+        flex-basis: min(82vw, 400px);
+    }
+
+    .cp-carousel-drag-hint {
+        display: none;
     }
 
     .cp-section-proof {
@@ -2118,9 +2155,18 @@
     }
 
     .cp-promo-rail {
-        grid-auto-columns: calc(100vw - 52px);
-        gap: 14px;
+        margin-inline: -18px;
         padding-bottom: 26px;
+    }
+
+    .cp-promo-track {
+        gap: 14px;
+    }
+
+    .cp-promo-card {
+        width: calc(100vw - 52px);
+        min-width: calc(100vw - 52px);
+        flex-basis: calc(100vw - 52px);
     }
 
     .cp-promo-body {
@@ -2196,7 +2242,6 @@
     .cp-promo-img-wrap img,
     .cp-empresa-card,
     .cp-empresa-card::after,
-    .cp-carousel-btn,
     .cp-text-link span,
     .cp-footer-cta-button,
     .cp-directory-banner .cp-btn-primary {
@@ -2205,7 +2250,6 @@
 
     .cp-promo-card:hover,
     .cp-empresa-card:hover,
-    .cp-carousel-btn:hover:not(:disabled),
     .cp-footer-cta-button:hover,
     .cp-directory-banner .cp-btn-primary:hover {
         transform: none;
