@@ -7,6 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const botonAnterior = document.getElementById('btnAnteriorAfiliado');
     const botonPrincipal = document.getElementById('btnGuardarAfiliado');
     const pasos = [...form.querySelectorAll('.canaco-form-nav [data-section]')];
+    const crearUsuarioAcceso = document.getElementById('crear_usuario_acceso');
+    const camposUsuarioAcceso = document.getElementById('camposUsuarioAcceso');
     let cambioEstado = null;
     const abrir = e => { e.hidden = false; e.setAttribute('aria-hidden', 'false'); document.body.classList.add('overflow-hidden'); requestAnimationFrame(() => e.classList.add('is-open')); };
     const cerrar = e => { e.classList.remove('is-open'); e.setAttribute('aria-hidden', 'true'); setTimeout(() => { e.hidden = true; if (modal.hidden && modalEstado.hidden) document.body.classList.remove('overflow-hidden'); }, 180); };
@@ -17,8 +19,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const actualizarAcciones = seccion => { const indice = indicePaso(seccion); const final = indice === pasos.length - 1; botonAnterior.hidden = indice === 0; botonPrincipal.querySelector('[data-button-label]').textContent = final ? (form.elements.idAfiliado.value ? 'Guardar cambios' : 'Guardar afiliado') : 'Siguiente'; botonPrincipal.querySelector('[data-next-icon]').hidden = final; };
     const activar = seccion => { const indice = indicePaso(seccion); form.querySelectorAll('[data-section-panel]').forEach(x => x.classList.toggle('hidden', x.dataset.sectionPanel !== seccion)); pasos.forEach((x, i) => { x.classList.toggle('is-active', i === indice); x.classList.toggle('is-complete', i < indice); x.setAttribute('aria-current', i === indice ? 'step' : 'false'); }); actualizarAcciones(seccion); };
     const limpiarErrores = () => { form.querySelectorAll('[data-error]').forEach(x => x.textContent = ''); form.querySelectorAll('[aria-invalid="true"]').forEach(x => x.removeAttribute('aria-invalid')); };
+    const actualizarUsuarioAcceso = () => {
+        const esNuevo = !form.elements.idAfiliado.value;
+        crearUsuarioAcceso.disabled = !esNuevo;
+        if (!esNuevo) crearUsuarioAcceso.checked = false;
+        const activo = esNuevo && crearUsuarioAcceso.checked;
+        camposUsuarioAcceso.hidden = !activo;
+        ['usuario_nombre', 'usuario_password', 'usuario_password_confirmacion'].forEach(campo => {
+            form.elements[campo].disabled = !activo;
+            form.elements[campo].required = activo;
+        });
+    };
+    actualizarUsuarioAcceso();
     const errores = datos => { Object.entries(datos || {}).forEach(([campo, mensaje]) => { const x = form.elements.namedItem(campo) || form.querySelector('[name="' + campo + '[]"]'); const y = form.querySelector('[data-error="' + campo + '"]'); if (x) x.setAttribute('aria-invalid', 'true'); if (y) y.textContent = mensaje; }); const primero = form.querySelector('[aria-invalid="true"]'); if (primero) { activar(primero.closest('[data-section-panel]')?.dataset.sectionPanel || 'general'); primero.focus(); } };
-    const validarPaso = seccion => { const requeridos = { general: { idCamara: 'Selecciona una cámara.', rfc: 'Captura el RFC.', nombre_comercial: 'Captura el nombre comercial.', correo_general: 'Captura un correo válido.', descripcion: 'Captura la descripción.' }, contacto: { encargado: 'Captura el nombre del encargado.', telefono: 'Captura el teléfono.', idEstado: 'Selecciona un estado.', idMunicipio: 'Selecciona un municipio.', idLocalidad: 'Selecciona una ciudad o localidad.', calle: 'Captura el domicilio.' }, digital: {} }; const datos = {}; Object.entries(requeridos[seccion] || {}).forEach(([campo, mensaje]) => { const entrada = form.elements[campo]; if (!entrada?.value?.trim() || !entrada.checkValidity()) datos[campo] = mensaje; }); if (seccion === 'digital') ['facebook', 'instagram', 'sitio_web'].forEach(campo => { const entrada = form.elements[campo]; if (entrada.value && !entrada.checkValidity()) datos[campo] = 'Captura una URL válida, incluyendo https://.'; }); if (Object.keys(datos).length) { errores(datos); return false; } return true; };
+    const validarPaso = seccion => { const requeridos = { general: { idCamara: 'Selecciona una cámara.', rfc: 'Captura el RFC.', nombre_comercial: 'Captura el nombre comercial.', correo_general: 'Captura un correo válido.', descripcion: 'Captura la descripción.' }, contacto: { encargado: 'Captura el nombre del encargado.', telefono: 'Captura el teléfono.', idEstado: 'Selecciona un estado.', idMunicipio: 'Selecciona un municipio.', idLocalidad: 'Selecciona una ciudad o localidad.', calle: 'Captura el domicilio.' }, digital: {} }; const datos = {}; Object.entries(requeridos[seccion] || {}).forEach(([campo, mensaje]) => { const entrada = form.elements[campo]; if (!entrada?.value?.trim() || !entrada.checkValidity()) datos[campo] = mensaje; }); if (seccion === 'general' && crearUsuarioAcceso.checked) { if (!form.elements.usuario_nombre.value.trim()) datos.usuario_nombre = 'Captura el nombre de la persona que tendrá acceso.'; if (!form.elements.usuario_password.checkValidity()) datos.usuario_password = 'Usa mínimo 10 caracteres, incluyendo letras y números.'; if (form.elements.usuario_password.value !== form.elements.usuario_password_confirmacion.value) datos.usuario_password_confirmacion = 'Las contraseñas no coinciden.'; } if (seccion === 'digital') ['facebook', 'instagram', 'sitio_web'].forEach(campo => { const entrada = form.elements[campo]; if (entrada.value && !entrada.checkValidity()) datos[campo] = 'Captura una URL válida, incluyendo https://.'; }); if (Object.keys(datos).length) { errores(datos); return false; } return true; };
     pasos.forEach(x => x.addEventListener('click', () => { const actual = indicePaso(seccionActiva()); const destino = indicePaso(x.dataset.section); if (destino <= actual) activar(x.dataset.section); }));
     botonAnterior.addEventListener('click', () => { const indice = indicePaso(seccionActiva()); if (indice > 0) activar(pasos[indice - 1].dataset.section); });
     const cargar = async (select, ruta, parametros, valor) => {
@@ -32,14 +46,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const resetUbicacion = () => { form.elements.idMunicipio.innerHTML = '<option value="">Primero selecciona un estado</option>'; form.elements.idMunicipio.disabled = true; form.elements.idLocalidad.innerHTML = '<option value="">Primero selecciona un municipio</option>'; form.elements.idLocalidad.disabled = true; };
     form.elements.idEstado.addEventListener('change', async () => { resetUbicacion(); if (!form.elements.idEstado.value) return; try { await cargar(form.elements.idMunicipio, 'afiliados/municipios', { estado: form.elements.idEstado.value }); } catch (e) { aviso('No fue posible cargar los municipios.', 'error'); } });
     form.elements.idMunicipio.addEventListener('change', async () => { form.elements.idLocalidad.innerHTML = '<option value="">Primero selecciona un municipio</option>'; form.elements.idLocalidad.disabled = true; if (!form.elements.idMunicipio.value) return; try { await cargar(form.elements.idLocalidad, 'afiliados/localidades', { municipio: form.elements.idMunicipio.value }); } catch (e) { aviso('No fue posible cargar las localidades.', 'error'); } });
-    const nuevo = () => { form.reset(); limpiarErrores(); resetUbicacion(); activar('general'); document.getElementById('archivosActuales').innerHTML = ''; document.getElementById('modalTitulo').textContent = 'Registrar afiliado'; abrir(modal); };
+    const nuevo = () => { form.reset(); actualizarUsuarioAcceso(); limpiarErrores(); resetUbicacion(); activar('general'); document.getElementById('archivosActuales').innerHTML = ''; document.getElementById('modalTitulo').textContent = 'Registrar afiliado'; abrir(modal); };
+    crearUsuarioAcceso.addEventListener('change', actualizarUsuarioAcceso);
     document.querySelectorAll('#btnNuevoAfiliado').forEach(boton => boton.addEventListener('click', nuevo));
     modal.querySelectorAll('[data-modal-close]').forEach(x => x.addEventListener('click', () => cerrar(modal)));
     const canal = (lista, tipo) => lista.find(x => x.tipo === tipo)?.url || '';
     const telefono = (lista, tipo) => lista.find(x => x.tipo === tipo)?.numero_original || '';
     const llenar = async d => {
         form.reset(); limpiarErrores(); resetUbicacion(); activar('general');
-        ['idAfiliado','idCamara','rfc','nombre_comercial','razon_social','alias','descripcion','correo_general'].forEach(c => { if (form.elements[c]) form.elements[c].value = d[c] ?? ''; });
+        ['idAfiliado','idCamara','rfc','nombre_comercial','razon_social','alias','descripcion','correo_general'].forEach(c => { if (form.elements[c]) form.elements[c].value = d[c] ?? ''; }); actualizarUsuarioAcceso();
         const c = d.contacto || {}; form.elements.encargado.value = c.nombre || ''; form.elements.cargo_encargado.value = c.cargo || ''; form.elements.telefono.value = telefono(d.telefonos || [], 'TELEFONO'); form.elements.whatsapp.value = telefono(d.telefonos || [], 'WHATSAPP');
         form.elements.facebook.value = canal(d.canales || [], 'FACEBOOK'); form.elements.instagram.value = canal(d.canales || [], 'INSTAGRAM'); form.elements.sitio_web.value = canal(d.canales || [], 'SITIO_WEB');
         const m = d.matriz || {}; ['calle','numero_exterior','numero_interior','colonia','codigo_postal','referencias','latitud','longitud','google_place_id'].forEach(campo => { if (form.elements[campo]) form.elements[campo].value = m[campo] ?? ''; });

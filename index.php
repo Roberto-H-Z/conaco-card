@@ -4,8 +4,12 @@ declare(strict_types=1);
 require_once __DIR__ . '/config/config.php';
 
 if (session_status() === PHP_SESSION_NONE) {
+    $esHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+        || (int) ($_SERVER['SERVER_PORT'] ?? 0) === 443;
+    session_cache_limiter('nocache');
     session_start([
         'cookie_httponly' => true,
+        'cookie_secure'   => $esHttps,
         'cookie_samesite' => 'Strict',
         'use_strict_mode' => true,
     ]);
@@ -40,8 +44,26 @@ if (!isset($rutas[$rutaSolicitada])) {
 }
 
 if (($rutaConfig['auth'] ?? false) && !estaAutenticado()) {
-    http_response_code(401);
-    exit('Autenticación requerida.');
+    if (!empty($rutaConfig['api'])) {
+        http_response_code(401);
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode(['status' => 'error', 'message' => 'Tu sesión expiró. Inicia sesión nuevamente.'], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+    $_SESSION['login_error'] = 'Inicia sesión para acceder al panel administrativo.';
+    header('Location: ' . base_url('login'));
+    exit;
+}
+
+if (!empty($rutaConfig['permiso']) && !tienePermiso((string) $rutaConfig['permiso'])) {
+    if (!empty($rutaConfig['api'])) {
+        http_response_code(403);
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode(['status' => 'error', 'message' => 'No tienes permiso para realizar esta acción.'], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+    http_response_code(403);
+    exit('No tienes permiso para acceder a esta sección.');
 }
 
 $nombreControlador = $rutaConfig['controlador'];
@@ -70,9 +92,10 @@ $rutaActual   = explode('/', $rutaSolicitada)[0];
 $layout       = $rutaConfig['layout']       ?? 'admin';
 
 // Elegir la plantilla según el layout
-if ($layout === 'publico') {
+if ($layout === 'login') {
+    require VIEWS_PATH . 'modulos/login.php';
+} elseif ($layout === 'publico') {
     require VIEWS_PATH . 'plantilla_publica.php';
 } else {
     require VIEWS_PATH . 'plantilla.php';
 }
-

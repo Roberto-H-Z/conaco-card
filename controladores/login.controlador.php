@@ -1,77 +1,79 @@
 <?php
 declare(strict_types=1);
 
-/**
- * CANACO Card — Controlador de Login
- * 
- * Estructura base para la autenticación.
- * La lógica real de autenticación se implementará posteriormente.
- */
-
-class ControladorLogin
+/** Autenticación del panel administrativo. */
+final class ControladorLogin
 {
-    /**
-     * Mostrar formulario de login.
-     */
     public function index(): array
     {
-        // Si ya está autenticado, redirigir al dashboard
         if (estaAutenticado()) {
-            header('Location: ' . base_url('inicio'));
+            header('Location: ' . base_url('afiliados'));
             exit;
         }
-
         return [];
     }
 
-    /**
-     * Procesar intento de login (POST).
-     * Preparado para implementación futura con password_verify().
-     */
-    public function autenticar(): array
+    public function autenticar(): void
     {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: ' . base_url('login'));
-            exit;
+        if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
+            http_response_code(405);
+            header('Allow: POST');
+            exit('Método no permitido.');
         }
 
-        // Validar CSRF
-        $tokenCSRF = $_POST['csrf_token'] ?? '';
-        if (!validarTokenCSRF($tokenCSRF)) {
-            return ['error' => 'Token de seguridad inválido. Recargue la página.'];
+        if (!validarTokenCSRF((string) ($_POST['csrf_token'] ?? ''))) {
+            $this->fallo('La sesión del formulario expiró. Recarga la página e inténtalo nuevamente.');
         }
 
-        $correo = sanitizar($_POST['correo'] ?? '');
-        $password = $_POST['password'] ?? '';
-
-        // Validaciones básicas
-        if (!validarRequerido($correo) || !validarRequerido($password)) {
-            return ['error' => 'Complete todos los campos.'];
+        $correo = mb_strtolower(trim((string) ($_POST['correo'] ?? '')), 'UTF-8');
+        $password = (string) ($_POST['password'] ?? '');
+        if (!validarCorreo($correo) || mb_strlen($correo, 'UTF-8') > 254 || $password === '') {
+            $this->fallo();
         }
 
-        if (!validarCorreo($correo)) {
-            return ['error' => 'Formato de correo electrónico inválido.'];
+        $usuario = ModeloUsuarios::buscarParaAutenticacion($correo);
+        $ahora = new DateTimeImmutable('now', new DateTimeZone('UTC'));
+        $bloqueado = $usuario !== null
+            && !empty($usuario['bloqueado_hasta'])
+            && new DateTimeImmutable((string) $usuario['bloqueado_hasta'], new DateTimeZone('UTC')) > $ahora;
+        $asignacionValida = $usuario !== null && (
+            $usuario['rol_clave'] === 'ADMIN_GENERAL'
+            || ($usuario['rol_clave'] === 'ADMIN_CAMARA' && $usuario['idCamara'] !== null)
+            || ($usuario['rol_clave'] === 'AFILIADO' && $usuario['afiliados'] !== [])
+        );
+        $credencialValida = $usuario !== null && password_verify($password, (string) $usuario['password_hash']);
+
+        if ($usuario === null || !(bool) $usuario['activo'] || !(bool) $usuario['rol_activo'] || $bloqueado || !$asignacionValida || !$credencialValida) {
+            if ($usuario !== null && !$bloqueado) {
+                ModeloUsuarios::registrarFallo((int) $usuario['idUsuario']);
+            }
+            $this->fallo();
         }
 
-        // TODO: Implementar autenticación real
-        // 1. Buscar usuario por correo (prepared statement)
-        // 2. Verificar password_verify($password, $hash)
-        // 3. Verificar que el usuario esté activo
-        // 4. Verificar bloqueo por intentos fallidos
-        // 5. Registrar ultimo_acceso_at
-        // 6. iniciarSesionUsuario()
-        // 7. Redirigir a /inicio
-
-        return ['error' => 'Funcionalidad de login en desarrollo.'];
+        $nuevoHash = password_needs_rehash((string) $usuario['password_hash'], PASSWORD_DEFAULT)
+            ? password_hash($password, PASSWORD_DEFAULT)
+            : null;
+        ModeloUsuarios::registrarIngreso((int) $usuario['idUsuario'], $nuevoHash);
+        iniciarSesionUsuario($usuario);
+        header('Location: ' . base_url('afiliados'));
+        exit;
     }
 
-    /**
-     * Cerrar sesión.
-     */
     public function cerrar(): void
     {
+        if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST' || !validarTokenCSRF((string) ($_POST['csrf_token'] ?? ''))) {
+            http_response_code(419);
+            exit('La solicitud para cerrar sesión no es válida.');
+        }
         cerrarSesion();
         header('Location: ' . base_url('portada'));
+        exit;
+    }
+
+    private function fallo(string $mensaje = 'No fue posible iniciar sesión con esas credenciales.'): never
+    {
+        $_SESSION['login_error'] = $mensaje;
+        header('Location: ' . base_url('login'));
         exit;
     }
 }

@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 final class ModeloAfiliados
 {
-    public static function listar(array $filtros, int $pagina, int $porPagina): array
+    public static function listar(array $filtros, int $pagina, int $porPagina, ?array $alcanceAfiliados = null): array
     {
         $condiciones = [];
         $parametros = [];
@@ -15,6 +15,7 @@ final class ModeloAfiliados
         if ($filtros['camara'] > 0) { $condiciones[] = 'a.idCamara = :camara'; $parametros['camara'] = $filtros['camara']; }
         if ($filtros['localidad'] > 0) { $condiciones[] = 'EXISTS (SELECT 1 FROM sucursales sf WHERE sf.idAfiliado = a.idAfiliado AND sf.es_matriz = 1 AND sf.activo = 1 AND sf.idLocalidad = :localidad)'; $parametros['localidad'] = $filtros['localidad']; }
         if ($filtros['categoria'] > 0) { $condiciones[] = 'EXISTS (SELECT 1 FROM afiliados_categorias acf WHERE acf.idAfiliado = a.idAfiliado AND acf.idCategoria = :categoria)'; $parametros['categoria'] = $filtros['categoria']; }
+        self::aplicarAlcance($condiciones, $parametros, $alcanceAfiliados, 'a.idAfiliado');
         $where = $condiciones ? ' WHERE ' . implode(' AND ', $condiciones) : '';
         $pdo = Conexion::conectar();
         $conteo = $pdo->prepare('SELECT COUNT(*) FROM afiliados a' . $where);
@@ -30,9 +31,14 @@ final class ModeloAfiliados
         return ['registros' => $stmt->fetchAll(), 'total' => $total, 'pagina' => $pagina, 'paginas' => $paginas, 'porPagina' => $porPagina];
     }
 
-    public static function estadisticas(): array
+    public static function estadisticas(?array $alcanceAfiliados = null, ?int $idCamara = null): array
     {
-        return Conexion::conectar()->query('SELECT COUNT(*) total, COALESCE(SUM(activo=1),0) activos, COALESCE(SUM(activo=0),0) inactivos, COUNT(DISTINCT idCamara) camaras FROM afiliados')->fetch() ?: [];
+        $condiciones=[]; $parametros=[];
+        if ($idCamara !== null) { $condiciones[]='idCamara=:alcance_camara'; $parametros['alcance_camara']=$idCamara; }
+        self::aplicarAlcance($condiciones, $parametros, $alcanceAfiliados, 'idAfiliado');
+        $sql='SELECT COUNT(*) total, COALESCE(SUM(activo=1),0) activos, COALESCE(SUM(activo=0),0) inactivos, COUNT(DISTINCT idCamara) camaras FROM afiliados'.($condiciones?' WHERE '.implode(' AND ',$condiciones):'');
+        $stmt=Conexion::conectar()->prepare($sql); self::vincular($stmt,$parametros); $stmt->execute();
+        return $stmt->fetch() ?: [];
     }
 
     public static function obtenerPorId(int $id): ?array
@@ -65,11 +71,11 @@ final class ModeloAfiliados
     {
         $nulos=['razon_social','alias']; foreach($nulos as $campo) if($d[$campo]==='') $d[$campo]=null;
         if ($d['idAfiliado'] === null) {
-            $s=$pdo->prepare('INSERT INTO afiliados(idCamara,rfc,razon_social,nombre_comercial,alias,slug,descripcion,correo_general) VALUES(:idCamara,:rfc,:razon_social,:nombre_comercial,:alias,:slug,:descripcion,:correo_general)');
+            $s=$pdo->prepare('INSERT INTO afiliados(idCamara,rfc,razon_social,nombre_comercial,alias,slug,descripcion,correo_general,idUsuarioCreador,idUsuarioActualizador) VALUES(:idCamara,:rfc,:razon_social,:nombre_comercial,:alias,:slug,:descripcion,:correo_general,:idUsuario,:idUsuario)');
         } else {
-            $s=$pdo->prepare('UPDATE afiliados SET idCamara=:idCamara,rfc=:rfc,razon_social=:razon_social,nombre_comercial=:nombre_comercial,alias=:alias,slug=:slug,descripcion=:descripcion,correo_general=:correo_general WHERE idAfiliado=:idAfiliado'); $s->bindValue(':idAfiliado',$d['idAfiliado'],PDO::PARAM_INT);
+            $s=$pdo->prepare('UPDATE afiliados SET idCamara=:idCamara,rfc=:rfc,razon_social=:razon_social,nombre_comercial=:nombre_comercial,alias=:alias,slug=:slug,descripcion=:descripcion,correo_general=:correo_general,idUsuarioActualizador=:idUsuario WHERE idAfiliado=:idAfiliado'); $s->bindValue(':idAfiliado',$d['idAfiliado'],PDO::PARAM_INT);
         }
-        foreach(['idCamara','rfc','razon_social','nombre_comercial','alias','slug','descripcion','correo_general'] as $c) $s->bindValue(':'.$c,$d[$c],$c==='idCamara'?PDO::PARAM_INT:($d[$c]===null?PDO::PARAM_NULL:PDO::PARAM_STR)); $s->execute();
+        foreach(['idCamara','rfc','razon_social','nombre_comercial','alias','slug','descripcion','correo_general','idUsuario'] as $c) $s->bindValue(':'.$c,$d[$c],in_array($c,['idCamara','idUsuario'],true)?PDO::PARAM_INT:($d[$c]===null?PDO::PARAM_NULL:PDO::PARAM_STR)); $s->execute();
         $id=$d['idAfiliado']??(int)$pdo->lastInsertId(); self::guardarContacto($pdo,$id,$d); $sucursal=self::guardarMatriz($pdo,$id,$d); self::guardarTelefonos($pdo,$sucursal,$d); self::guardarCanales($pdo,$id,$d); self::guardarCategorias($pdo,$id,$d['categorias']); self::guardarPalabras($pdo,$id,$d['palabras']);
         return $id;
     }
@@ -81,7 +87,7 @@ final class ModeloAfiliados
         $pdo->prepare('INSERT INTO afiliados_archivos(idAfiliado,idArchivo,tipo,orden,texto_alternativo) VALUES(?,?,?,?,?)')->execute([$afiliado,$id,$tipo,$orden,$archivo['alt']]);
     }
 
-    public static function cambiarEstado(int $id,bool $activo,?string $motivo): bool { $s=Conexion::conectar()->prepare('UPDATE afiliados SET activo=:activo,desactivado_at=:fecha,motivo_desactivacion=:motivo WHERE idAfiliado=:id');$s->execute(['activo'=>$activo?1:0,'fecha'=>$activo?null:gmdate('Y-m-d H:i:s'),'motivo'=>$activo?null:$motivo,'id'=>$id]);return$s->rowCount()>0; }
+    public static function cambiarEstado(int $id,bool $activo,?string $motivo,int $idUsuario): bool { $s=Conexion::conectar()->prepare('UPDATE afiliados SET activo=:activo,desactivado_at=:fecha,motivo_desactivacion=:motivo,idUsuarioDesactivador=:usuario,idUsuarioActualizador=:usuario WHERE idAfiliado=:id');$s->execute(['activo'=>$activo?1:0,'fecha'=>$activo?null:gmdate('Y-m-d H:i:s'),'motivo'=>$activo?null:$motivo,'usuario'=>$idUsuario,'id'=>$id]);return$s->rowCount()>0; }
 
     private static function guardarContacto(PDO $p,int $id,array $d):void { $actual=self::fila($p,'SELECT idContactoAfiliado FROM contactos_afiliados WHERE idAfiliado=:id AND activo=1 ORDER BY es_principal DESC LIMIT 1',$id);$sql=$actual?'UPDATE contactos_afiliados SET nombre=?,cargo=?,correo=?,telefono=?,es_principal=1 WHERE idContactoAfiliado=?':'INSERT INTO contactos_afiliados(idAfiliado,nombre,cargo,correo,telefono,es_principal,es_publico) VALUES(?,?,?,?,?,1,0)';$v=$actual?[$d['encargado'],$d['cargo_encargado']?:null,$d['correo_general'],$d['telefono'],$actual['idContactoAfiliado']]:[$id,$d['encargado'],$d['cargo_encargado']?:null,$d['correo_general'],$d['telefono']];$p->prepare($sql)->execute($v); }
     private static function guardarMatriz(PDO $p,int $id,array $d):int { $a=self::fila($p,'SELECT idSucursal FROM sucursales WHERE idAfiliado=:id AND es_matriz=1 AND activo=1 LIMIT 1',$id);$campos=['idLocalidad','calle','numero_exterior','numero_interior','colonia','codigo_postal','referencias','latitud','longitud','google_place_id'];if($a){$sets=implode(',',array_map(fn($x)=>"$x=?",$campos));$v=array_map(fn($x)=>$d[$x]?:null,$campos);$v[]=$a['idSucursal'];$p->prepare("UPDATE sucursales SET $sets WHERE idSucursal=?")->execute($v);return(int)$a['idSucursal'];}$v=array_map(fn($x)=>$d[$x]?:null,$campos);array_unshift($v,$id);$p->prepare('INSERT INTO sucursales(idAfiliado,idLocalidad,calle,numero_exterior,numero_interior,colonia,codigo_postal,referencias,latitud,longitud,google_place_id,es_matriz) VALUES(?,?,?,?,?,?,?,?,?,?,?,1)')->execute($v);return(int)$p->lastInsertId(); }
@@ -93,5 +99,6 @@ final class ModeloAfiliados
     private static function existe(string $sql,int $id):bool{$s=Conexion::conectar()->prepare($sql);$s->execute(['id'=>$id]);return(bool)$s->fetchColumn();}
     private static function fila(PDO $p,string $sql,int $id,array $extra=[]):?array{$s=$p->prepare($sql);$s->execute(['id'=>$id]+$extra);return$s->fetch()?:null;}
     private static function filas(PDO $p,string $sql,int $id):array{$s=$p->prepare($sql);$s->execute(['id'=>$id]);return$s->fetchAll();}
+    private static function aplicarAlcance(array &$condiciones,array &$parametros,?array $ids,string $columna):void{if($ids===null)return;$ids=array_values(array_unique(array_filter(array_map('intval',$ids),fn($id)=>$id>0)));if(!$ids){$condiciones[]='1=0';return;}$marcadores=[];foreach($ids as $i=>$id){$nombre='alcance_'.$i;$marcadores[]=':'.$nombre;$parametros[$nombre]=$id;}$condiciones[]=$columna.' IN ('.implode(',',$marcadores).')';}
     private static function vincular(PDOStatement $s,array $p):void{foreach($p as $n=>$v)$s->bindValue(':'.$n,$v,is_int($v)?PDO::PARAM_INT:PDO::PARAM_STR);}
 }

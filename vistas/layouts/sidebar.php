@@ -1,3 +1,4 @@
+<?php $usuarioMenu = obtenerUsuarioSesion(); $esAfiliadoMenu = ($usuarioMenu['rol'] ?? '') === 'AFILIADO'; ?>
 <aside
     class="kt-sidebar bg-background border-e border-border fixed top-0 bottom-0 z-20 hidden lg:flex flex-col items-stretch shrink-0 [--kt-drawer-enable:true] lg:[--kt-drawer-enable:false]"
     data-kt-drawer="true" data-kt-drawer-class="kt-drawer kt-drawer-start flex top-0 bottom-0" id="sidebar">
@@ -18,7 +19,7 @@
                     href="<?= base_url('afiliados') ?>">
                     <span class="kt-menu-icon text-muted-foreground w-5"><i
                             class="ki-filled ki-people text-lg"></i></span>
-                    <span class="kt-menu-title">Afiliados</span>
+                    <span class="kt-menu-title"><?= $esAfiliadoMenu ? 'Mi empresa' : 'Afiliados' ?></span>
                 </a>
             </div>
             <div class="kt-menu-item <?= $rutaActual === 'promociones' ? 'active' : '' ?>">
@@ -31,15 +32,17 @@
                 </a>
             </div>
             <div class="kt-menu-item mt-6">
-                <a class="kt-menu-link canaco-nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-accent/60 text-sm font-medium text-foreground"
-                    href="<?= base_url('logout') ?>">
+                <form method="post" action="<?= base_url('logout') ?>">
+                    <?= campoCSRF() ?>
+                    <button class="kt-menu-link canaco-nav-link flex w-full items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-accent/60 text-sm font-medium text-foreground" type="submit">
                     <span class="kt-menu-icon text-muted-foreground w-5">
                         <i class="ki-filled ki-exit-left text-lg"></i>
                     </span>
                     <span class="kt-menu-title">Cerrar sesión</span>
-                </a>
+                    </button>
+                </form>
             </div>
         </nav>
     </div>
-    <div class="px-5 py-4 border-t border-border text-xs text-muted-foreground">Panel administrativo</div>
+    <div class="px-5 py-4 border-t border-border text-xs text-muted-foreground">Sesión activa · <?= e($usuarioMenu['correo'] ?? '') ?></div>
 </aside>

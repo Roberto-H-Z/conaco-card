@@ -23,8 +23,7 @@
 
         <!-- Acciones -->
         <div class="cp-nav-actions">
-            <!-- Botón Iniciar Sesión (por ahora va directo al panel) -->
-            <a href="<?= base_url('afiliados') ?>" class="cp-btn-login" id="btnIniciarSesion" aria-label="Acceso al panel de administración">
+            <a href="<?= base_url('login') ?>" class="cp-btn-login" id="btnIniciarSesion" aria-label="Iniciar sesión en el panel de administración">
                 <i class="ki-filled ki-entrance-right" aria-hidden="true"></i>
                 Iniciar sesión
             </a>
@@ -48,7 +47,7 @@
     <a href="#empresas"   onclick="closeMobileNav()">Empresas</a>
     <a href="#promociones" onclick="closeMobileNav()">Promociones</a>
     <a href="#contacto"   onclick="closeMobileNav()">Contacto</a>
-    <a href="<?= base_url('afiliados') ?>" class="cp-btn-login" style="margin-top:1rem;">
+    <a href="<?= base_url('login') ?>" class="cp-btn-login" style="margin-top:1rem;">
         <i class="ki-filled ki-entrance-right" aria-hidden="true"></i>
         Iniciar sesión
     </a>

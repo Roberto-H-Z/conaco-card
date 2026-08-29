@@ -14,7 +14,7 @@
                 <h2>Tu empresa también puede ser parte de esta comunidad.</h2>
                 <p>Conecta con nuevos clientes y comparte beneficios exclusivos con la región.</p>
             </div>
-            <a href="<?= base_url('afiliados') ?>" class="cp-footer-cta-button">
+            <a href="<?= base_url('login') ?>" class="cp-footer-cta-button">
                 Iniciar Sesión
                 <i class="ki-filled ki-arrow-right" aria-hidden="true"></i>
             </a>
