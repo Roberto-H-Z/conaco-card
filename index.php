@@ -25,8 +25,25 @@ $rutas = require CONFIG_PATH . 'routes.php';
 // Obtener ruta solicitada; la raíz ('') cargará la portada pública
 $rutaSolicitada = trim((string) ($_GET['ruta'] ?? ''), '/');
 
-// Buscar configuración de ruta (incluye la clave vacía '' para la raíz)
-if (!isset($rutas[$rutaSolicitada])) {
+// Buscar configuración de ruta (incluye la clave vacía '' para la raíz).
+// Las rutas con patrón conservan parámetros validados en la URL pública.
+$rutaConfig = $rutas[$rutaSolicitada] ?? null;
+if ($rutaConfig === null) {
+    foreach ($rutas as $configuracion) {
+        if (empty($configuracion['patron']) || !preg_match($configuracion['patron'], $rutaSolicitada, $coincidencias)) {
+            continue;
+        }
+        foreach ($coincidencias as $nombre => $valor) {
+            if (is_string($nombre)) {
+                $_GET[$nombre] = $valor;
+            }
+        }
+        $rutaConfig = $configuracion;
+        break;
+    }
+}
+
+if ($rutaConfig === null) {
     http_response_code(404);
     $rutaConfig = [
         'controlador' => 'ControladorPlantilla',
@@ -39,8 +56,6 @@ if (!isset($rutas[$rutaSolicitada])) {
         'js'          => [],
         'layout'      => 'admin',
     ];
-} else {
-    $rutaConfig = $rutas[$rutaSolicitada];
 }
 
 if (($rutaConfig['auth'] ?? false) && !estaAutenticado()) {

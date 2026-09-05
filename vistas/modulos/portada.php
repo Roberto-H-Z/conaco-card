@@ -192,8 +192,10 @@ function cpFechaCorta(string $fecha): string
                 $diasRestantes = max(0, (int) ceil(($finTs - $ahora) / 86400));
                 $proxAVencer = $diasRestantes <= 3;
             ?>
-            <article class="cp-promo-card" data-carousel-item
-                     aria-label="Promoción: <?= e($promo['titulo']) ?>">
+            <a class="cp-promo-card-link" data-carousel-item data-affiliate-link data-affiliate-source="promotion" data-affiliate-slug="<?= e($promo['afiliado_slug']) ?>"
+               href="<?= base_url('empresa/' . $promo['afiliado_slug']) ?>"
+               aria-label="Ver ficha de <?= e($promo['nombre_comercial']) ?> y su promoción <?= e($promo['titulo']) ?>">
+            <article class="cp-promo-card">
 
                 <!-- Imagen -->
                 <div class="cp-promo-img-wrap">
@@ -247,6 +249,7 @@ function cpFechaCorta(string $fecha): string
                 </div>
 
             </article>
+            </a>
             <?php endforeach; ?>
 
             </div>
@@ -327,7 +330,9 @@ function cpFechaCorta(string $fecha): string
                 $tienePromos  = (int)($empresa['promociones_activas'] ?? 0) > 0;
                 $urlFicha     = base_url('empresa/' . $empresa['slug']);
             ?>
-            <div class="cp-empresa-card-shell cp-fade-in <?= $delayClass ?>">
+            <a class="cp-empresa-card-shell cp-fade-in <?= $delayClass ?>" data-affiliate-link data-affiliate-source="directory" data-affiliate-slug="<?= e($empresa['slug']) ?>"
+               href="<?= e($urlFicha) ?>"
+               aria-label="Ver ficha de <?= e($empresa['nombre_comercial']) ?>">
             <article class="cp-empresa-card" data-spotlight-card
                      role="article"
                      aria-label="Ficha de <?= e($empresa['nombre_comercial']) ?>">
@@ -394,7 +399,7 @@ function cpFechaCorta(string $fecha): string
             <span class="cp-empresa-ver-ficha" aria-hidden="true">
                 <i class="ki-filled ki-arrow-up-right"></i>
             </span>
-            </div>
+            </a>
             <?php endforeach; ?>
 
         </div>

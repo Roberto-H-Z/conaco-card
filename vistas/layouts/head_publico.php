@@ -3,8 +3,9 @@
  * CANACO Card — <head> del Sitio Público
  * Usa recursos de Metronic (keenicons, core CSS) pero sin clases admin.
  */
-$tituloMeta = $tituloModulo ?? 'Directorio de Empresas Afiliadas';
-$descMeta = 'Descubre las empresas afiliadas a CANACO SERVYTUR. Encuentra promociones, sucursales y canales digitales de los mejores negocios de la región.';
+$tituloMeta = $datosVista['meta_titulo'] ?? $tituloModulo ?? 'Directorio de Empresas Afiliadas';
+$descMeta = $datosVista['meta_descripcion'] ?? 'Descubre las empresas afiliadas a CANACO SERVYTUR. Encuentra promociones, sucursales y canales digitales de los mejores negocios de la región.';
+$imagenMeta = $datosVista['meta_imagen'] ?? asset('media/app/hero_portada.png');
 ?>
 
 <head>
@@ -18,7 +19,7 @@ $descMeta = 'Descubre las empresas afiliadas a CANACO SERVYTUR. Encuentra promoc
     <meta property="og:type" content="website" />
     <meta property="og:title" content="<?= e($tituloMeta) ?> | CANACO Card" />
     <meta property="og:description" content="<?= e($descMeta) ?>" />
-    <meta property="og:image" content="<?= asset('media/app/hero_portada.png') ?>" />
+    <meta property="og:image" content="<?= e($imagenMeta) ?>" />
     <meta property="og:locale" content="es_MX" />
 
     <!-- Favicons -->

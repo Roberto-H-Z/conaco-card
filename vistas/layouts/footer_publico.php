@@ -7,7 +7,7 @@
 <footer class="cp-footer" id="contacto" role="contentinfo" aria-label="Pie de página">
     <div class="cp-footer-watermark" aria-hidden="true">CANACO</div>
 
-    <div class="cp-footer-cta-wrap cp-fade-in">
+    <div class="cp-footer-cta-wrap">
         <div class="cp-footer-cta">
             <div>
                 <span class="cp-footer-cta-kicker">Impulsa tu presencia digital</span>
@@ -57,17 +57,17 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#empresas">
+                    <a href="<?= base_url('portada#empresas') ?>">
                         <i class="ki-filled ki-people" aria-hidden="true"></i> Directorio de Empresas
                     </a>
                 </li>
                 <li>
-                    <a href="#promociones">
+                    <a href="<?= base_url('portada#promociones') ?>">
                         <i class="ki-filled ki-discount" aria-hidden="true"></i> Promociones
                     </a>
                 </li>
                 <li>
-                    <a href="#contacto">
+                    <a href="<?= base_url('portada#contacto') ?>">
                         <i class="ki-filled ki-message-text" aria-hidden="true"></i> Contacto
                     </a>
                 </li>

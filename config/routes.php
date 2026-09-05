@@ -29,6 +29,17 @@ return [
         'layout'      => 'publico',
         'js_publico'  => ['portada.js'],
     ],
+    'empresa/{slug}' => [
+        'patron'      => '#^empresa/(?P<slug>[a-z0-9]+(?:-[a-z0-9]+)*)$#',
+        'controlador' => 'ControladorFichaAfiliado',
+        'metodo'      => 'mostrar',
+        'vista'       => 'ficha-afiliado',
+        'auth'        => false,
+        'roles'       => [],
+        'titulo'      => 'Ficha de afiliado',
+        'layout'      => 'publico',
+        'js_publico'  => ['ficha-afiliado.js'],
+    ],
 
     /* ── PANEL ADMINISTRATIVO ────────────────────────────────────────── */
     'afiliados' => [

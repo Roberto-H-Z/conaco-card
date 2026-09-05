@@ -26,6 +26,16 @@
     updateNav(); // Estado inicial
 })();
 
+/* Conserva el punto exacto del directorio al abrir una ficha desde una tarjeta. */
+(function rememberAffiliateOrigin() {
+    document.querySelectorAll('[data-affiliate-link]').forEach((link) => {
+        link.addEventListener('click', (event) => {
+            if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+            sessionStorage.setItem('cp_profile_return_origin', link.dataset.affiliateSource || '');
+        });
+    });
+})();
+
 
 /* ── 2. Menú hamburguesa ────────────────────────────────────────────────── */
 (function initMobileNav() {
