@@ -199,20 +199,107 @@ final class ControladorAfiliados
         $host=preg_replace('/:\d+$/','',$host);
         $remitente=(string)(getenv('MAIL_FROM')?:('no-reply@'.$host));
         if(!filter_var($remitente,FILTER_VALIDATE_EMAIL))$remitente='no-reply@canacocard.mx';
+        $seguro=(!empty($_SERVER['HTTPS'])&&$_SERVER['HTTPS']!=='off')||((string)($_SERVER['HTTP_X_FORWARDED_PROTO']??'')==='https');
+        $origen=($seguro?'https':'http').'://'.$host;
         $login=base_url('login');
-        if(!preg_match('#^https?://#i',$login)){
-            $seguro=(!empty($_SERVER['HTTPS'])&&$_SERVER['HTTPS']!=='off')||((string)($_SERVER['HTTP_X_FORWARDED_PROTO']??'')==='https');
-            $login=($seguro?'https':'http').'://'.$host.'/'.ltrim($login,'/');
-        }
+        if(!preg_match('#^https?://#i',$login))$login=$origen.'/'.ltrim($login,'/');
+        $logo=asset('media/app/CANACOCARD_Logo.png');
+        if(!preg_match('#^https?://#i',$logo))$logo=$origen.'/'.ltrim($logo,'/');
         $asunto=mb_encode_mimeheader('Datos de acceso a CANACO Card','UTF-8');
-        $mensaje="Hola {$acceso['usuario_nombre']},\n\n".
-            "Estos son tus datos para acceder al panel de {$acceso['nombre_comercial']}:\n\n".
-            'Portal: '.$login."\n".
-            "Usuario: {$acceso['correo']}\n".
-            "Contraseña temporal: {$acceso['password_temporal']}\n\n".
-            "Esta contraseña sustituye la anterior. Consérvala en un lugar seguro y no compartas este correo.\n\nCANACO Card";
-        $headers=['From: CANACO Card <'.$remitente.'>','Reply-To: '.$remitente,'MIME-Version: 1.0','Content-Type: text/plain; charset=UTF-8','X-Mailer: PHP/'.PHP_VERSION];
+        $mensaje=$this->generarHtmlCorreoAcceso($acceso,$login,$logo);
+        $headers=['From: CANACO Card <'.$remitente.'>','Reply-To: '.$remitente,'MIME-Version: 1.0','Content-Type: text/html; charset=UTF-8','Content-Transfer-Encoding: 8bit','X-CANACO-Template: acceso-afiliado-v2','X-Mailer: PHP/'.PHP_VERSION];
         return mail((string)$acceso['correo'],$asunto,$mensaje,implode("\r\n",$headers));
+    }
+
+    private function generarHtmlCorreoAcceso(array $acceso,string $login,string $logo):string
+    {
+        $nombre=htmlspecialchars((string)$acceso['usuario_nombre'],ENT_QUOTES|ENT_SUBSTITUTE,'UTF-8');
+        $empresa=htmlspecialchars((string)$acceso['nombre_comercial'],ENT_QUOTES|ENT_SUBSTITUTE,'UTF-8');
+        $correo=htmlspecialchars((string)$acceso['correo'],ENT_QUOTES|ENT_SUBSTITUTE,'UTF-8');
+        $password=htmlspecialchars((string)$acceso['password_temporal'],ENT_QUOTES|ENT_SUBSTITUTE,'UTF-8');
+        $loginSeguro=htmlspecialchars($login,ENT_QUOTES|ENT_SUBSTITUTE,'UTF-8');
+        $logoSeguro=htmlspecialchars($logo,ENT_QUOTES|ENT_SUBSTITUTE,'UTF-8');
+
+        return <<<HTML
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light only">
+    <title>Datos de acceso a CANACO Card</title>
+</head>
+<body style="margin:0;padding:0;background:#f5f8fc;color:#162255;font-family:Arial,Helvetica,sans-serif;-webkit-text-size-adjust:100%;">
+    <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;">Tu acceso al panel de {$empresa} ya está disponible.</div>
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="width:100%;background:#f5f8fc;">
+        <tr>
+            <td align="center" style="padding:32px 16px;">
+                <table role="presentation" width="620" cellspacing="0" cellpadding="0" border="0" style="width:100%;max-width:620px;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 18px 48px rgba(22,34,85,.12);">
+                    <tr>
+                        <td style="height:6px;background:#39a8dd;font-size:0;line-height:0;">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:28px 40px 24px;background:#ffffff;border-bottom:1px solid #e5ebf5;">
+                            <img src="{$logoSeguro}" width="176" alt="CANACO Card — De la montaña al mar" style="display:block;width:176px;max-width:100%;height:auto;border:0;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding:38px 40px 34px;background:#162255;">
+                            <h1 style="margin:0;color:#ffffff;font-size:30px;line-height:1.15;letter-spacing:-.02em;font-weight:700;">Tu acceso está listo</h1>
+                            <p style="margin:12px 0 0;color:#cbd5ee;font-size:16px;line-height:1.6;">Hola, {$nombre}. Ya puedes administrar la información de <strong style="color:#ffffff;">{$empresa}</strong> desde CANACO Card.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding:36px 40px 18px;background:#ffffff;">
+                            <p style="margin:0 0 18px;color:#52617c;font-size:14px;line-height:1.65;">Utiliza estos datos para iniciar sesión. La contraseña mostrada sustituye cualquier contraseña anterior asociada a esta cuenta.</p>
+                            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="width:100%;background:#f5f8fc;border:1px solid #dce5f2;border-radius:12px;">
+                                <tr>
+                                    <td style="padding:20px 22px 8px;color:#71809a;font-size:11px;line-height:1.4;font-weight:700;text-transform:uppercase;letter-spacing:.06em;">Correo de acceso</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:0 22px 20px;color:#162255;font-family:'Courier New',Courier,monospace;font-size:16px;line-height:1.5;font-weight:700;word-break:break-word;">{$correo}</td>
+                                </tr>
+                                <tr>
+                                    <td style="height:1px;padding:0 22px;background:#dce5f2;font-size:0;line-height:0;">&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:20px 22px 8px;color:#71809a;font-size:11px;line-height:1.4;font-weight:700;text-transform:uppercase;letter-spacing:.06em;">Contraseña temporal</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:0 22px 20px;color:#26318c;font-family:'Courier New',Courier,monospace;font-size:19px;line-height:1.5;font-weight:700;letter-spacing:.02em;word-break:break-word;">{$password}</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding:14px 40px 30px;background:#ffffff;">
+                            <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                                <tr>
+                                    <td align="center" bgcolor="#39a8dd" style="border-radius:12px;">
+                                        <a href="{$loginSeguro}" target="_blank" rel="noopener noreferrer" style="display:inline-block;padding:15px 24px;color:#082044;font-size:14px;line-height:1.2;font-weight:700;text-decoration:none;">Ingresar al panel&nbsp;&nbsp;→</a>
+                                    </td>
+                                </tr>
+                            </table>
+                            <p style="margin:18px 0 0;color:#71809a;font-size:12px;line-height:1.6;">Si el botón no funciona, copia esta dirección en tu navegador:<br><a href="{$loginSeguro}" style="color:#1778bd;text-decoration:underline;word-break:break-all;">{$loginSeguro}</a></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding:22px 40px;background:#edf6e5;border-top:1px solid #d8ebc8;">
+                            <p style="margin:0;color:#2f5d24;font-size:13px;line-height:1.6;"><strong>Protege tu acceso.</strong> No compartas estas credenciales. Si no solicitaste este correo, comunícate con tu Cámara CANACO.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center" style="padding:24px 32px;background:#f5f8fc;color:#71809a;font-size:11px;line-height:1.6;">
+                            CANACO Card · De la montaña al mar<br>Este mensaje fue generado automáticamente; por favor, no compartas su contenido.
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
+HTML;
     }
     private function subirUno(?array $file,string $tipo):?array
     {
