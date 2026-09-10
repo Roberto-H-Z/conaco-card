@@ -22,13 +22,25 @@ class ControladorFichaAfiliado
             return $this->noEncontrada();
         }
 
+        ControladorBuscador::registrarFicha((int)$afiliado['idAfiliado']);
         $descripcion = trim((string) ($afiliado['descripcion'] ?? ''));
         $metaDescripcion = $descripcion !== ''
             ? mb_substr($descripcion, 0, 155)
             : 'Consulta la ficha pública de ' . $afiliado['nombre_comercial'] . ' en CANACO Card.';
 
+        $retorno = base_url('portada#empresas');
+        $token = $_GET['busqueda'] ?? '';
+        if (is_string($token)) {
+            foreach (($_SESSION['buscador_registros'] ?? []) as $registro) {
+                if (hash_equals($registro['token'], $token) && isset($registro['filtros'])) {
+                    $retorno = base_url('buscar').'?'.http_build_query($registro['filtros']);
+                    break;
+                }
+            }
+        }
         return [
             'afiliado' => $afiliado,
+            'retorno_directorio' => $retorno,
             'meta_titulo' => $afiliado['nombre_comercial'],
             'meta_descripcion' => $metaDescripcion,
             'meta_imagen' => $afiliado['logo']['url_publica'] ?? null,

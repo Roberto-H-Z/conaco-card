@@ -92,7 +92,8 @@ class ModeloPortada
 
     /**
      * Retorna afiliados activos con su logotipo y categoría principal.
-     * Ordenados por nombre comercial.
+     * Las empresas con promociones vigentes se muestran primero. Dentro de
+     * cada grupo, el orden se rota diariamente de forma determinista.
      *
      * @param int $limite Número máximo de afiliados
      */
@@ -129,7 +130,10 @@ class ModeloPortada
                  WHERE aa.tipo = \'LOGOTIPO\' AND aa.activo = 1
             ) f ON f.idAfiliado = a.idAfiliado
             WHERE a.activo = 1
-            ORDER BY a.nombre_comercial ASC
+            ORDER BY
+                CASE WHEN promociones_activas > 0 THEN 0 ELSE 1 END ASC,
+                CRC32(CONCAT(CURDATE(), \':\', a.idAfiliado)) ASC,
+                a.idAfiliado ASC
             LIMIT :limite
         ';
 

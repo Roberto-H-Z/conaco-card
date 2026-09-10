@@ -36,6 +36,25 @@
     });
 })();
 
+(function initPromotionNavigation() {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion || !('startViewTransition' in document)) return;
+
+    document.querySelectorAll('[data-promotion-link]').forEach((link) => {
+        link.addEventListener('click', (event) => {
+            if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+            const id = link.dataset.promotionId;
+            const card = link.querySelector('.cp-promo-card') || link;
+            if (/^[1-9][0-9]*$/.test(id || '')) card.style.viewTransitionName = `cp-promocion-${id}`;
+            link.classList.add('is-navigating');
+        });
+    });
+
+    window.addEventListener('pageshow', () => {
+        document.querySelectorAll('[data-promotion-link].is-navigating').forEach((link) => link.classList.remove('is-navigating'));
+    });
+})();
+
 
 /* ── 2. Menú hamburguesa ────────────────────────────────────────────────── */
 (function initMobileNav() {
@@ -181,6 +200,8 @@
     let dragStartPosition = 0;
     let controlAnimation = null;
     let resizeFrame = 0;
+    let wheelResumeTimer = 0;
+    let isWheelInteracting = false;
 
     originals.forEach((item, index) => {
         item.dataset.carouselOriginalIndex = String(index);
@@ -248,7 +269,7 @@
     }
 
     function autoPaused() {
-        return reduceMotion.matches || isFocused || document.hidden;
+        return reduceMotion.matches || isFocused || isWheelInteracting || document.hidden;
     }
 
     function move(direction) {
@@ -342,6 +363,32 @@
     viewport.addEventListener('pointerup', stopDrag);
     viewport.addEventListener('pointercancel', stopDrag);
 
+    viewport.addEventListener('wheel', event => {
+        if (event.ctrlKey || !loopWidth) return;
+
+        const primaryDelta = Math.abs(event.deltaX) > Math.abs(event.deltaY)
+            ? event.deltaX
+            : event.deltaY;
+        if (primaryDelta === 0) return;
+
+        event.preventDefault();
+        controlAnimation = null;
+        velocity = 0;
+        isWheelInteracting = true;
+
+        const unit = event.deltaMode === WheelEvent.DOM_DELTA_LINE ? 16 : 1;
+        const distance = Math.max(-180, Math.min(180, primaryDelta * unit));
+        position = normalize(position + distance);
+        syncCurrentIndex();
+        render();
+
+        window.clearTimeout(wheelResumeTimer);
+        wheelResumeTimer = window.setTimeout(() => {
+            isWheelInteracting = false;
+            velocity = 0;
+        }, 1000);
+    }, { passive: false });
+
     viewport.addEventListener('keydown', event => {
         if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
             event.preventDefault();
@@ -415,30 +462,7 @@
 })();
 
 
-/* ── 9. Buscador del Hero (placeholder funcional) ─────────────────────── */
-(function initHeroSearch() {
-    const btn   = document.getElementById('cpHeroSearchBtn');
-    const input = document.getElementById('cpHeroSearch');
-    if (!btn || !input) return;
-
-    function doSearch() {
-        const q = input.value.trim();
-        if (!q) {
-            input.focus();
-            return;
-        }
-        // TODO: implementar búsqueda real — por ahora scroll a directorio
-        const dir = document.getElementById('empresas');
-        if (dir) {
-            dir.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-    }
-
-    btn.addEventListener('click', doSearch);
-    input.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') doSearch();
-    });
-})();
+/* El buscador usa un formulario GET nativo para conservar URL e historial. */
 
 
 /* ── 10. ScrollSpy para Navegación ──────────────────────────────────────── */

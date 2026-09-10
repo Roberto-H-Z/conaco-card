@@ -27,7 +27,8 @@
             const origin = sessionStorage.getItem('cp_profile_return_origin');
             sessionStorage.removeItem('cp_profile_return_origin');
 
-            if (fromDirectory && origin === 'directory' && window.history.length > 1) {
+            const fromSearch = referrer && referrer.origin === window.location.origin && /\/buscar\/?$/.test(referrer.pathname);
+            if ((fromSearch || (fromDirectory && origin === 'directory')) && window.history.length > 1) {
                 event.preventDefault();
                 window.history.back();
             }
@@ -63,5 +64,23 @@
         document.querySelectorAll('[data-affiliate-link].is-navigating').forEach((link) => {
             link.classList.remove('is-navigating');
         });
+    });
+})();
+
+(function initPromotionNavigation() {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion || !('startViewTransition' in document)) return;
+
+    document.querySelectorAll('[data-promotion-link]').forEach((link) => {
+        link.addEventListener('click', (event) => {
+            if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+            const id = link.dataset.promotionId;
+            if (/^[1-9][0-9]*$/.test(id || '')) link.style.viewTransitionName = `cp-promocion-${id}`;
+            link.classList.add('is-navigating');
+        });
+    });
+
+    window.addEventListener('pageshow', () => {
+        document.querySelectorAll('[data-promotion-link].is-navigating').forEach((link) => link.classList.remove('is-navigating'));
     });
 })();

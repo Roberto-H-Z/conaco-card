@@ -80,7 +80,7 @@ function cpFechaCorta(string $fecha): string
         </p>
 
         <!-- Buscador -->
-        <div class="cp-hero-search" role="search" aria-label="Buscador de empresas y promociones">
+        <form class="cp-hero-search" role="search" aria-label="Buscador de empresas y promociones" action="<?= e(base_url('buscar')) ?>" method="get">
             <span class="cp-hero-search-icon" aria-hidden="true">
                 <i class="ki-filled ki-magnifier"></i>
             </span>
@@ -88,14 +88,16 @@ function cpFechaCorta(string $fecha): string
                 type="search"
                 id="cpHeroSearch"
                 name="q"
+                maxlength="120"
                 placeholder="Busca empresa, producto o categoría…"
                 autocomplete="off"
                 aria-label="Término de búsqueda"
             />
-            <button class="cp-hero-search-btn" type="button" id="cpHeroSearchBtn" aria-label="Buscar">
+            <button class="cp-hero-search-btn" type="submit" id="cpHeroSearchBtn" aria-label="Buscar">
                 Buscar
             </button>
-        </div>
+        </form>
+        <a class="cp-search-advanced-link" href="<?= e(base_url('buscar')) ?>">Búsqueda avanzada por ciudad y categoría <i class="ki-filled ki-arrow-right" aria-hidden="true"></i></a>
 
         <!-- Contadores estadísticos -->
         <div class="cp-hero-stats" role="list" aria-label="Estadísticas del directorio">
@@ -160,7 +162,7 @@ function cpFechaCorta(string $fecha): string
             <div class="cp-carousel-tools" aria-label="Información del carrusel">
                 <span class="cp-carousel-drag-hint" aria-hidden="true">
                     <i class="ki-filled ki-right-left"></i>
-                    Arrastra para explorar
+                    Arrastra o usa la rueda
                 </span>
                 <span class="cp-carousel-status" data-carousel-status aria-live="off">
                     01 / <?= str_pad((string) count($promociones), 2, '0', STR_PAD_LEFT) ?>
@@ -181,7 +183,7 @@ function cpFechaCorta(string $fecha): string
              role="region" aria-roledescription="carrusel" aria-label="Promociones destacadas"
              aria-describedby="cpPromoCarouselHint" tabindex="0">
             <p class="cp-sr-only" id="cpPromoCarouselHint">
-                Carrusel de promociones en movimiento continuo. Usa las flechas izquierda y derecha, los botones o arrastra para explorar. El movimiento se pausa al enfocar el carrusel.
+                Carrusel de promociones en movimiento continuo. Usa las flechas izquierda y derecha, arrastra o utiliza la rueda del mouse para explorar. Después de usar la rueda, el movimiento se reanuda automáticamente.
             </p>
             <div class="cp-promo-track" data-carousel-track>
 
@@ -192,9 +194,9 @@ function cpFechaCorta(string $fecha): string
                 $diasRestantes = max(0, (int) ceil(($finTs - $ahora) / 86400));
                 $proxAVencer = $diasRestantes <= 3;
             ?>
-            <a class="cp-promo-card-link" data-carousel-item data-affiliate-link data-affiliate-source="promotion" data-affiliate-slug="<?= e($promo['afiliado_slug']) ?>"
-               href="<?= base_url('empresa/' . $promo['afiliado_slug']) ?>"
-               aria-label="Ver ficha de <?= e($promo['nombre_comercial']) ?> y su promoción <?= e($promo['titulo']) ?>">
+            <a class="cp-promo-card-link" data-carousel-item data-promotion-link data-promotion-id="<?= (int) $promo['idPromocion'] ?>"
+               href="<?= base_url('promocion/' . $promo['idPromocion']) ?>"
+               aria-label="Ver detalles de la promoción <?= e($promo['titulo']) ?> de <?= e($promo['nombre_comercial']) ?>">
             <article class="cp-promo-card">
 
                 <!-- Imagen -->

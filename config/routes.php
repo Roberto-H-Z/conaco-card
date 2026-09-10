@@ -40,8 +40,25 @@ return [
         'layout'      => 'publico',
         'js_publico'  => ['ficha-afiliado.js'],
     ],
+    'promocion/{id}' => [
+        'patron'      => '#^promocion/(?P<id>[1-9][0-9]*)$#',
+        'controlador' => 'ControladorFichaPromocion',
+        'metodo'      => 'mostrar',
+        'vista'       => 'ficha-promocion',
+        'auth'        => false,
+        'roles'       => [],
+        'titulo'      => 'Ficha de promoción',
+        'layout'      => 'publico',
+        'js_publico'  => ['ficha-promocion.js'],
+    ],
 
     /* ── PANEL ADMINISTRATIVO ────────────────────────────────────────── */
+    'buscar' => [
+        'controlador'=>'ControladorBuscador', 'metodo'=>'index', 'vista'=>'buscar',
+        'auth'=>false, 'roles'=>[], 'titulo'=>'Buscar empresas', 'layout'=>'publico',
+        'js_publico'=>['ficha-promocion.js', 'buscar.js'],
+    ],
+
     'afiliados' => [
         'controlador' => 'ControladorAfiliados',
         'metodo'      => 'index',

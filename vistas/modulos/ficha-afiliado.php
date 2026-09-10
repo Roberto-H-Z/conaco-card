@@ -115,7 +115,7 @@ foreach ($sucursales as $sucursal) {
 <div class="cp-profile-page" data-profile-page>
     <section class="cp-profile-hero" aria-labelledby="cpFichaTitulo">
         <div class="cp-profile-container">
-            <a class="cp-profile-back" href="<?= base_url('portada#empresas') ?>" data-profile-back>
+            <a class="cp-profile-back" href="<?= e($datosVista['retorno_directorio'] ?? base_url('portada#empresas')) ?>" data-profile-back>
                 <i class="ki-filled ki-arrow-left" aria-hidden="true"></i>
                 Volver al directorio
             </a>
@@ -257,7 +257,7 @@ foreach ($sucursales as $sucursal) {
                 <?php else: ?>
                     <div class="cp-profile-promotion-list">
                         <?php foreach ($promociones as $promocion): ?>
-                            <article class="cp-profile-promotion">
+                            <a class="cp-profile-promotion<?= empty($promocion['imagen_url']) ? ' cp-profile-promotion--no-image' : '' ?>" href="<?= base_url('promocion/' . $promocion['idPromocion']) ?>" data-promotion-link data-promotion-id="<?= (int) $promocion['idPromocion'] ?>" aria-label="Ver promoción <?= e($promocion['titulo']) ?>">
                                 <?php if (!empty($promocion['imagen_url'])): ?>
                                     <img src="<?= e($promocion['imagen_url']) ?>" alt="<?= e($promocion['texto_alternativo'] ?: 'Promoción: ' . $promocion['titulo']) ?>" loading="lazy" decoding="async" />
                                 <?php endif; ?>
@@ -267,7 +267,7 @@ foreach ($sucursales as $sucursal) {
                                     <p><?= e($promocion['descripcion']) ?></p>
                                     <?php if (!empty($promocion['restricciones'])): ?><small>Condiciones: <?= e($promocion['restricciones']) ?></small><?php endif; ?>
                                 </div>
-                            </article>
+                            </a>
                         <?php endforeach; ?>
                     </div>
                 <?php endif; ?>
