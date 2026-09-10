@@ -87,6 +87,23 @@ final class ModeloUsuarios
         return $idUsuario;
     }
 
+    /** Sustituye la contraseña del acceso afiliado dentro de una transacción controlada. */
+    public static function actualizarPasswordAcceso(PDO $db, int $idUsuario, string $passwordHash): void
+    {
+        $stmt = $db->prepare(
+            'UPDATE usuarios
+             SET password_hash = :password,
+                 password_actualizado_at = UTC_TIMESTAMP(6),
+                 intentos_fallidos = 0,
+                 bloqueado_hasta = NULL
+             WHERE idUsuario = :usuario AND activo = 1'
+        );
+        $stmt->execute(['password' => $passwordHash, 'usuario' => $idUsuario]);
+        if ($stmt->rowCount() !== 1) {
+            throw new RuntimeException('No fue posible actualizar la contraseña del usuario afiliado.');
+        }
+    }
+
     private static function permisos(int $idRol): array
     {
         $stmt = Conexion::conectar()->prepare(

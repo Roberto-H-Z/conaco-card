@@ -340,12 +340,9 @@ function cpFechaCorta(string $fecha): string
                      aria-label="Ficha de <?= e($empresa['nombre_comercial']) ?>">
 
                 <div class="cp-empresa-card-top">
-                    <span class="cp-empresa-number" aria-hidden="true">
-                        <?= str_pad((string) ($i + 1), 2, '0', STR_PAD_LEFT) ?>
-                    </span>
-                    <span class="cp-empresa-verified">
-                        <i class="ki-filled ki-verify" aria-hidden="true"></i>
-                        Afiliada
+                    <span class="cp-empresa-camera">
+                        <i class="ki-filled ki-bank" aria-hidden="true"></i>
+                        <?= e($empresa['camara_nombre'] ?? 'Cámara CANACO') ?>
                     </span>
                 </div>
 

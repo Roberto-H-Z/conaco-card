@@ -86,16 +86,28 @@ async function canacoAjax(ruta, datos = {}, metodo = 'POST') {
     }
 
     const respuesta = await fetch(url, opciones);
+    const textoRespuesta = await respuesta.text();
     let cuerpo;
     try {
-        cuerpo = await respuesta.json();
+        cuerpo = textoRespuesta ? JSON.parse(textoRespuesta) : {};
     } catch (_) {
-        throw new Error('El servidor devolvió una respuesta inválida.');
+        const referencia = respuesta.headers.get('X-Request-ID') || '';
+        console.error('Respuesta no JSON del servidor.', {
+            url: url.toString(),
+            status: respuesta.status,
+            contentType: respuesta.headers.get('Content-Type') || '',
+            referencia,
+            respuesta: textoRespuesta.slice(0, 1000)
+        });
+        const sufijo = referencia ? ` Referencia: ${referencia}.` : '';
+        throw new Error(`El servidor respondió con HTTP ${respuesta.status}, pero no entregó un mensaje válido.${sufijo}`);
     }
 
     if (!respuesta.ok) {
         const error = new Error(cuerpo.message || `Error HTTP ${respuesta.status}`);
         error.errors = cuerpo.errors || {};
+        error.reference = cuerpo.reference || respuesta.headers.get('X-Request-ID') || '';
+        error.httpStatus = respuesta.status;
         throw error;
     }
 

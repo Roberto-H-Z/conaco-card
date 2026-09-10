@@ -101,6 +101,14 @@ return [
         'roles'       => [],
         'api'         => true,
     ],
+    'afiliados/enviar-acceso' => [
+        'controlador' => 'ControladorAfiliados',
+        'metodo'      => 'enviarAcceso',
+        'auth'        => true,
+        'permiso'     => 'afiliados.ver',
+        'roles'       => [],
+        'api'         => true,
+    ],
     'promociones' => [
         'controlador' => 'ControladorPromociones',
         'metodo'      => 'index',

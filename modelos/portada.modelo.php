@@ -107,6 +107,7 @@ class ModeloPortada
                 a.slug,
                 a.descripcion,
                 a.correo_general,
+                c.nombre         AS camara_nombre,
                 cat.nombre       AS categoria_principal,
                 f.url_publica    AS logo_url,
                 f.storage_key    AS logo_key,

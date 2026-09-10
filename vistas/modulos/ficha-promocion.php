@@ -163,25 +163,40 @@ if ($whatsApp !== null) {
     </section>
 
     <div class="cp-promotion-main cp-profile-container">
-        <div class="cp-promotion-details cp-promotion-reveal" style="--cp-promotion-delay: 80ms">
-            <section class="cp-promotion-validity" aria-labelledby="cpPromocionVigencia">
-                <h2 id="cpPromocionVigencia">Vigencia</h2>
-                <dl>
-                    <div><dt>Inicia</dt><dd><?= e(cpPromocionFecha((string) $promocion['inicio_vigencia'])) ?></dd></div>
-                    <div><dt>Termina</dt><dd><?= e(cpPromocionFecha((string) $promocion['fin_vigencia'])) ?></dd></div>
-                </dl>
-            </section>
-        </div>
-
-        <?php if (trim((string) ($promocion['restricciones'] ?? '')) !== ''): ?>
-            <section class="cp-promotion-terms cp-promotion-reveal" style="--cp-promotion-delay: 120ms" aria-labelledby="cpPromocionCondiciones">
-                <div><i class="ki-filled ki-information-2" aria-hidden="true"></i></div>
+        <section class="cp-promotion-overview cp-promotion-reveal" style="--cp-promotion-delay: 80ms" aria-labelledby="cpPromocionVigencia">
+            <div class="cp-promotion-overview__heading">
                 <div>
-                    <h2 id="cpPromocionCondiciones">Condiciones y restricciones</h2>
-                    <p><?= nl2br(e($promocion['restricciones'])) ?></p>
+                    <h2 id="cpPromocionVigencia">Vigencia</h2>
+                    <p>Fechas y entidad que respaldan este beneficio.</p>
                 </div>
-            </section>
-        <?php endif; ?>
+                <span class="cp-promotion-overview__status"><i class="ki-filled ki-verify" aria-hidden="true"></i><?= $diasRestantes === 0 ? 'Último día' : $diasRestantes . ' ' . ($diasRestantes === 1 ? 'día restante' : 'días restantes') ?></span>
+            </div>
+
+            <dl class="cp-promotion-validity">
+                <div class="cp-promotion-validity__date">
+                    <span class="cp-promotion-validity__icon" aria-hidden="true"><i class="ki-filled ki-calendar-add"></i></span>
+                    <dt>Inicia</dt><dd><time datetime="<?= e((string) $promocion['inicio_vigencia']) ?>"><?= e(cpPromocionFecha((string) $promocion['inicio_vigencia'])) ?></time></dd>
+                </div>
+                <div class="cp-promotion-validity__date">
+                    <span class="cp-promotion-validity__icon" aria-hidden="true"><i class="ki-filled ki-calendar-tick"></i></span>
+                    <dt>Termina</dt><dd><time datetime="<?= e((string) $promocion['fin_vigencia']) ?>"><?= e(cpPromocionFecha((string) $promocion['fin_vigencia'])) ?></time></dd>
+                </div>
+                <div class="cp-promotion-validity-camera">
+                    <span class="cp-promotion-validity__icon" aria-hidden="true"><i class="ki-filled ki-bank"></i></span>
+                    <dt>Cámara afiliada</dt><dd><?= e($promocion['camara_nombre']) ?></dd>
+                </div>
+            </dl>
+
+            <?php if (trim((string) ($promocion['restricciones'] ?? '')) !== ''): ?>
+                <div class="cp-promotion-terms" aria-labelledby="cpPromocionCondiciones">
+                    <span class="cp-promotion-terms__icon" aria-hidden="true"><i class="ki-filled ki-information-2"></i></span>
+                    <div>
+                        <h2 id="cpPromocionCondiciones">Condiciones y restricciones</h2>
+                        <p><?= nl2br(e($promocion['restricciones'])) ?></p>
+                    </div>
+                </div>
+            <?php endif; ?>
+        </section>
 
         <?php if ($otrasImagenes !== []): ?>
             <section class="cp-promotion-gallery cp-promotion-reveal" style="--cp-promotion-delay: 160ms" aria-labelledby="cpPromocionGaleria">

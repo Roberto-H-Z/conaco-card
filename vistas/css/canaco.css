@@ -129,8 +129,9 @@ html.dark .canaco-auth-error { border-color: rgba(255, 132, 145, .35); color: #f
 .canaco-table tbody tr:has(.kt-badge-danger) { opacity: .56; filter: grayscale(.9); }
 .canaco-table tbody tr:has(.kt-badge-danger):hover { opacity: .8; }
 .canaco-table tbody tr:has(.kt-badge-danger) a { color: var(--muted-foreground); }
-.canaco-table .btn-editar, .canaco-table .btn-estado { width: 2.35rem; height: 2.35rem; }
-.canaco-table .btn-editar i, .canaco-table .btn-estado i { font-size: 1.15rem; }
+.canaco-table .btn-editar, .canaco-table .btn-estado, .canaco-table .btn-ver, .canaco-table .btn-enviar-acceso { width: 2.35rem; height: 2.35rem; }
+.canaco-table .btn-editar i, .canaco-table .btn-estado i, .canaco-table .btn-ver i, .canaco-table .btn-enviar-acceso i { font-size: 1.15rem; }
+.canaco-table .btn-enviar-acceso:disabled { cursor: not-allowed; opacity: .35; }
 .canaco-promo-thumb { width: 2.5rem; height: 2.5rem; flex: 0 0 auto; border-radius: .7rem; object-fit: cover; }
 .canaco-nav-link { transition: transform .18s ease, color .18s ease, background .18s ease; }
 .canaco-nav-link:hover { transform: translateX(.2rem); }
@@ -168,6 +169,39 @@ section[aria-labelledby="titulo-panel"] > div:first-child #btnNuevoAfiliado { di
 .canaco-field label { font-size: .82rem; font-weight: 500; color: var(--foreground); }
 .canaco-field-error { min-height: .9rem; font-size: .72rem; color: var(--destructive); }
 .canaco-field > [data-error] { min-height: .9rem; font-size: .72rem; color: var(--destructive); }
+.canaco-label-with-info { display: flex; align-items: center; gap: .4rem; min-height: 1.35rem; }
+.canaco-info-button { display: inline-grid; width: 1.25rem; height: 1.25rem; flex: 0 0 auto; place-items: center; border: 0; border-radius: 999px; color: var(--primary); background: color-mix(in srgb, var(--primary) 10%, transparent); cursor: pointer; }
+.canaco-info-button i { font-size: .9rem; }
+.canaco-info-button:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.canaco-info-button[aria-expanded="true"] { color: var(--primary-foreground); background: var(--primary); }
+.canaco-capture-info { width: fit-content; padding: .35rem .55rem; border: 1px solid color-mix(in srgb, var(--primary) 22%, var(--border)); border-radius: .45rem; color: var(--muted-foreground); background: color-mix(in srgb, var(--primary) 5%, var(--background)); font-size: .7rem; font-weight: 600; letter-spacing: .03em; }
+.canaco-capture-info[hidden] { display: none; }
+.canaco-input-icon { position: relative; display: flex; align-items: center; }
+.canaco-input-icon > i { position: absolute; left: .8rem; z-index: 1; color: var(--muted-foreground); font-size: 1rem; pointer-events: none; }
+.canaco-input-icon > .kt-input { padding-left: 2.45rem; }
+.canaco-input-icon > .canaco-social-facebook { color: #1877f2; }
+.canaco-input-icon > .canaco-social-instagram { color: #e4405f; }
+.canaco-input-icon > .canaco-social-tiktok { color: #111827; text-shadow: 1px 0 #25f4ee, -1px 0 #fe2c55; }
+.canaco-input-icon > .canaco-social-website { color: var(--canaco-primary); }
+html.dark .canaco-input-icon > .canaco-social-tiktok { color: #f8fafc; }
+.canaco-address-search { padding: 1rem; border: 1px solid var(--border); border-radius: .75rem; background: color-mix(in srgb, var(--accent) 32%, transparent); }
+#googlePlacesMount:empty { display: none; }
+.canaco-google-place { width: 100%; color-scheme: light; }
+html.dark .canaco-google-place { color-scheme: dark; }
+.canaco-modal-quick { display: flex; max-height: min(52rem, calc(100vh - 2rem)); flex-direction: column; overflow: hidden; background: var(--background); }
+.canaco-modal-quick .canaco-modal-header, .canaco-modal-quick .canaco-modal-footer { flex: 0 0 auto; background: var(--background); }
+.canaco-modal-quick .canaco-modal-body { min-height: 0; flex: 1 1 auto; overflow-y: auto; overscroll-behavior: contain; }
+.canaco-quick-loading { min-height: 10rem; display: grid; place-items: center; color: var(--muted-foreground); }
+.canaco-quick-heading { display: flex; align-items: center; gap: .85rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--border); }
+.canaco-quick-heading h4 { margin: 0; color: var(--foreground); font-size: 1.05rem; font-weight: 650; }
+.canaco-quick-heading p { margin: .2rem 0 0; color: var(--muted-foreground); font-size: .8rem; }
+.canaco-quick-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 1.5rem; margin: 1rem 0 0; }
+.canaco-quick-grid > div { min-width: 0; padding: .8rem 0; border-bottom: 1px solid var(--border); }
+.canaco-quick-grid dt { color: var(--muted-foreground); font-size: .7rem; font-weight: 650; letter-spacing: .035em; text-transform: uppercase; }
+.canaco-quick-grid dd { margin: .3rem 0 0; color: var(--foreground); font-size: .84rem; line-height: 1.45; overflow-wrap: anywhere; }
+.canaco-quick-description { margin-top: 1.25rem; padding: 1rem; border-radius: .65rem; background: var(--accent); }
+.canaco-quick-description strong { color: var(--foreground); font-size: .78rem; }
+.canaco-quick-description p { margin: .45rem 0 0; color: var(--muted-foreground); font-size: .84rem; line-height: 1.6; white-space: pre-wrap; }
 [aria-invalid="true"] { border-color: var(--destructive) !important; }
 #motivoEstado { min-height: 2.5rem; height: 2.5rem; padding-block: .55rem; line-height: 1.25rem; resize: vertical; }
 #motivoEstado::placeholder { line-height: 1.25rem; }
@@ -227,6 +261,7 @@ form[role="search"] > button[type="submit"] { order: 2; }
  .canaco-step-number { width: 1.8rem; height: 1.8rem; font-size: .7rem; }
  .canaco-directory-toolbar { align-items: flex-start; flex-direction: column; }
  .canaco-directory-toolbar .kt-btn { width: 100%; }
+ .canaco-quick-grid { grid-template-columns: 1fr; }
 }
 
 @media (min-width: 1024px) and (max-width: 1279px) {

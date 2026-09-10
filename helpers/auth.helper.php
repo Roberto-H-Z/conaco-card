@@ -73,8 +73,17 @@ function puedeVerAfiliado(int $idAfiliado): bool
 {
     $usuario = obtenerUsuarioSesion();
     if ($usuario === null || !tienePermiso('afiliados.ver')) return false;
-    if (in_array($usuario['rol'], ['ADMIN_GENERAL', 'ADMIN_CAMARA'], true)) return true;
+    if ($usuario['rol'] === 'ADMIN_GENERAL') return true;
+    if ($usuario['rol'] === 'ADMIN_CAMARA') {
+        return $usuario['idCamara'] !== null
+            && ModeloUsuarios::afiliadoPerteneceACamara($idAfiliado, $usuario['idCamara']);
+    }
     return in_array($idAfiliado, $usuario['afiliados'], true);
+}
+
+function puedeEnviarAccesoAfiliado(int $idAfiliado): bool
+{
+    return tieneRol('ADMIN_GENERAL', 'ADMIN_CAMARA') && puedeVerAfiliado($idAfiliado);
 }
 
 function puedeModificarAfiliado(int $idAfiliado): bool
