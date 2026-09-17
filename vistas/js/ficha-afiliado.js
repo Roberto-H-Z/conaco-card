@@ -38,49 +38,36 @@
     });
 })();
 
-(function initAffiliateProfileNavigation() {
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const supportsViewTransitions = 'startViewTransition' in document;
+(function initGoogleMaps() {
+    const section = document.querySelector('[data-google-maps-key]');
+    const containers = [...document.querySelectorAll('[data-google-map]')];
+    if (!section || containers.length === 0) return;
 
-    document.documentElement.dataset.viewTransitions = supportsViewTransitions ? 'native' : 'fallback';
+    const key = section.dataset.googleMapsKey || '';
+    if (!key) {
+        containers.forEach(container => { container.textContent = 'Mapa no disponible.'; });
+        return;
+    }
 
-    if (reduceMotion || !supportsViewTransitions) return;
-
-    document.querySelectorAll('[data-affiliate-link]').forEach((link) => {
-        link.addEventListener('click', (event) => {
-            if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
-                return;
-            }
-            const slug = link.dataset.affiliateSlug;
-            const sharedElement = link.querySelector('.cp-empresa-card, .cp-promo-card') || link;
-            if (slug && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
-                sharedElement.style.viewTransitionName = `cp-ficha-${slug}`;
-            }
-            link.classList.add('is-navigating');
+    window.canacoPublicMapsReady = () => {
+        containers.forEach(container => {
+            const position = { lat: Number(container.dataset.lat), lng: Number(container.dataset.lng) };
+            if (!Number.isFinite(position.lat) || !Number.isFinite(position.lng)) return;
+            const map = new google.maps.Map(container, {
+                center: position,
+                zoom: 16,
+                mapTypeControl: false,
+                streetViewControl: false,
+                fullscreenControl: true,
+                gestureHandling: 'cooperative'
+            });
+            new google.maps.Marker({ map, position, title: container.dataset.title || 'Ubicación' });
         });
-    });
+    };
 
-    window.addEventListener('pageshow', () => {
-        document.querySelectorAll('[data-affiliate-link].is-navigating').forEach((link) => {
-            link.classList.remove('is-navigating');
-        });
-    });
-})();
-
-(function initPromotionNavigation() {
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduceMotion || !('startViewTransition' in document)) return;
-
-    document.querySelectorAll('[data-promotion-link]').forEach((link) => {
-        link.addEventListener('click', (event) => {
-            if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-            const id = link.dataset.promotionId;
-            if (/^[1-9][0-9]*$/.test(id || '')) link.style.viewTransitionName = `cp-promocion-${id}`;
-            link.classList.add('is-navigating');
-        });
-    });
-
-    window.addEventListener('pageshow', () => {
-        document.querySelectorAll('[data-promotion-link].is-navigating').forEach((link) => link.classList.remove('is-navigating'));
-    });
+    const script = document.createElement('script');
+    script.src = 'https://maps.googleapis.com/maps/api/js?key=' + encodeURIComponent(key) + '&loading=async&language=es&region=MX&callback=canacoPublicMapsReady';
+    script.async = true;
+    script.onerror = () => containers.forEach(container => { container.textContent = 'No fue posible cargar el mapa.'; });
+    document.head.append(script);
 })();

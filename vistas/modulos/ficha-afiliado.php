@@ -121,7 +121,7 @@ foreach ($sucursales as $sucursal) {
             </a>
 
             <div class="cp-profile-hero__grid">
-                <div class="cp-profile-identity cp-profile-reveal" style="--cp-reveal-index: 0; view-transition-name: cp-ficha-<?= e($slug) ?>">
+                <div class="cp-profile-identity cp-profile-reveal" style="--cp-reveal-index: 0">
                     <div class="cp-profile-logo" aria-label="Logotipo de <?= e($nombre) ?>">
                         <?php if (!empty($afiliado['logo']['url_publica'])): ?>
                             <img src="<?= e($afiliado['logo']['url_publica']) ?>"
@@ -221,7 +221,7 @@ foreach ($sucursales as $sucursal) {
         <?php endif; ?>
 
         <div class="cp-profile-columns">
-            <section class="cp-profile-section cp-profile-section--locations cp-profile-reveal" style="--cp-reveal-index: 3" aria-labelledby="cpFichaUbicaciones">
+            <section class="cp-profile-section cp-profile-section--locations cp-profile-reveal" style="--cp-reveal-index: 3" aria-labelledby="cpFichaUbicaciones" data-google-maps-key="<?= e($datosVista['google_maps_key'] ?? '') ?>">
                 <div class="cp-profile-section__heading"><h2 id="cpFichaUbicaciones">Ubicación y sucursales</h2><span><?= count($sucursales) ?> <?= count($sucursales) === 1 ? 'ubicación' : 'ubicaciones' ?></span></div>
                 <?php if ($sucursales === []): ?>
                     <p class="cp-profile-empty"><i class="ki-filled ki-geolocation" aria-hidden="true"></i> Esta empresa aún no cuenta con una ubicación pública.</p>
@@ -242,7 +242,14 @@ foreach ($sucursales as $sucursal) {
                                     <?php endforeach; ?>
                                 </div>
                                 <?php if ($mapa !== null): ?>
-                                    <a class="cp-profile-map-link" href="<?= e($mapa) ?>" target="_blank" rel="noopener noreferrer"><i class="ki-filled ki-geolocation" aria-hidden="true"></i> Ver en mapa</a>
+                                    <div class="cp-profile-map-panel">
+                                        <?php if ($sucursal['latitud'] !== null && $sucursal['longitud'] !== null): ?>
+                                            <div class="cp-profile-map" data-google-map data-lat="<?= e((string) $sucursal['latitud']) ?>" data-lng="<?= e((string) $sucursal['longitud']) ?>" data-title="<?= e($sucursal['nombre'] ?: ($sucursal['es_matriz'] ? 'Sucursal matriz' : 'Sucursal')) ?>" aria-label="Mapa de <?= e($sucursal['nombre'] ?: $afiliado['nombre_comercial']) ?>"></div>
+                                        <?php elseif ($direccion !== ''): ?>
+                                            <iframe class="cp-profile-map" title="Mapa de <?= e($sucursal['nombre'] ?: $afiliado['nombre_comercial']) ?>" src="https://www.google.com/maps?q=<?= rawurlencode($direccion) ?>&amp;output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+                                        <?php endif; ?>
+                                        <a class="cp-profile-map-link" href="<?= e($mapa) ?>" target="_blank" rel="noopener noreferrer"><i class="ki-filled ki-geolocation" aria-hidden="true"></i> Abrir en Google Maps</a>
+                                    </div>
                                 <?php endif; ?>
                             </article>
                         <?php endforeach; ?>

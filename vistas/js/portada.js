@@ -36,24 +36,7 @@
     });
 })();
 
-(function initPromotionNavigation() {
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduceMotion || !('startViewTransition' in document)) return;
 
-    document.querySelectorAll('[data-promotion-link]').forEach((link) => {
-        link.addEventListener('click', (event) => {
-            if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-            const id = link.dataset.promotionId;
-            const card = link.querySelector('.cp-promo-card') || link;
-            if (/^[1-9][0-9]*$/.test(id || '')) card.style.viewTransitionName = `cp-promocion-${id}`;
-            link.classList.add('is-navigating');
-        });
-    });
-
-    window.addEventListener('pageshow', () => {
-        document.querySelectorAll('[data-promotion-link].is-navigating').forEach((link) => link.classList.remove('is-navigating'));
-    });
-})();
 
 
 /* ── 2. Menú hamburguesa ────────────────────────────────────────────────── */

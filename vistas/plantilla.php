@@ -15,7 +15,7 @@
  */
 ?>
 <!DOCTYPE html>
-<html class="h-full" data-kt-theme="true" data-kt-theme-mode="light" dir="ltr" lang="es">
+<html class="h-full" data-canaco-panel="true" data-kt-theme="true" data-kt-theme-mode="light" dir="ltr" lang="es">
 
 <?php require VIEWS_PATH . 'layouts/head.php'; ?>
 

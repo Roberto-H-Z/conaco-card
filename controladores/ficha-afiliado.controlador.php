@@ -41,6 +41,7 @@ class ControladorFichaAfiliado
         return [
             'afiliado' => $afiliado,
             'retorno_directorio' => $retorno,
+            'google_maps_key' => (string) (getenv('GOOGLE_MAPS_API_KEY') ?: ''),
             'meta_titulo' => $afiliado['nombre_comercial'],
             'meta_descripcion' => $metaDescripcion,
             'meta_imagen' => $afiliado['logo']['url_publica'] ?? null,

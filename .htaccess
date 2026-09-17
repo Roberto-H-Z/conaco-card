@@ -21,7 +21,7 @@ RewriteRule ^(.+)$ index.php?ruta=$1 [QSA,L]
 RewriteRule ^$ index.php [L]
 
 # ── Seguridad: bloquear acceso directo a archivos sensibles ──
-<FilesMatch "\.(php|sql|md|env|log|json)$">
+<FilesMatch "(^\.env(?:\..*)?$|\.(php|sql|md|log|json)$)">
     # Permitir solo index.php y archivos en vistas/assets
     Order Deny,Allow
     Deny from all

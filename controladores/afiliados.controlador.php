@@ -175,14 +175,16 @@ final class ControladorAfiliados
         if(!filter_var($d['correo_general'],FILTER_VALIDATE_EMAIL))$e['correo_general']='Captura un correo válido.';
         if($d['encargado']==='')$e['encargado']='El nombre del encargado es obligatorio.';
         if(!$d['idLocalidad']||!ModeloAfiliados::localidadActivaExiste($d['idLocalidad']))$e['idLocalidad']='Selecciona una localidad válida.';
-        if($d['calle']==='')$e['calle']='El domicilio es obligatorio.';
+        if($d['calle']===''||$d['google_place_id']===''||$d['latitud']===''||$d['longitud']==='')$e['google_place_id']='Selecciona un domicilio de las sugerencias de Google Maps.';
         if(preg_replace('/\D+/','',$d['telefono'])==='')$e['telefono']='El teléfono es obligatorio.';
         if(!$d['categorias']||!ModeloAfiliados::categoriasValidas($d['categorias']))$e['categorias']='Selecciona al menos una categoría activa.';
         if(count($d['palabras'])>10)$e['palabras_clave']='Puedes registrar máximo 10 palabras clave.';
         foreach($d['palabras'] as $p)if(mb_strlen($p)>80){$e['palabras_clave']='Cada palabra clave admite hasta 80 caracteres.';break;}
         foreach(['facebook','instagram','tiktok','sitio_web']as$campo)if($d[$campo]!==''&&!filter_var($d[$campo],FILTER_VALIDATE_URL))$e[$campo]='Captura una URL válida, incluyendo https://.';
         if($d['codigo_postal']!==''&&!preg_match('/^\d{5}$/',$d['codigo_postal']))$e['codigo_postal']='El código postal debe tener 5 dígitos.';
-        if(($d['latitud']!==''&&!is_numeric($d['latitud']))||($d['longitud']!==''&&!is_numeric($d['longitud'])))$e['latitud']='Las coordenadas deben ser numéricas.';
+        if(($d['latitud']!==''&&!is_numeric($d['latitud']))||($d['longitud']!==''&&!is_numeric($d['longitud'])))$e['google_place_id']='Google Maps devolvió coordenadas inválidas. Selecciona nuevamente el domicilio.';
+        if(is_numeric($d['latitud'])&&((float)$d['latitud'] < -90||(float)$d['latitud'] > 90))$e['google_place_id']='Google Maps devolvió una latitud inválida.';
+        if(is_numeric($d['longitud'])&&((float)$d['longitud'] < -180||(float)$d['longitud'] > 180))$e['google_place_id']='Google Maps devolvió una longitud inválida.';
         if($d['crearUsuarioAcceso']){
             if($d['idAfiliado']!==null)$e['crear_usuario_acceso']='El usuario de acceso solo se crea al registrar un nuevo afiliado.';
             if($d['usuarioNombre']==='')$e['usuario_nombre']='Captura el nombre de la persona que tendrá acceso.';

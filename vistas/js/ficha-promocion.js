@@ -72,23 +72,3 @@
         }
     });
 })();
-
-(function initSharedNavigation() {
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduceMotion || !('startViewTransition' in document)) return;
-
-    document.querySelectorAll('[data-promotion-link], [data-affiliate-link]').forEach((link) => {
-        link.addEventListener('click', (event) => {
-            if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-            const promotionId = link.dataset.promotionId;
-            const affiliateSlug = link.dataset.affiliateSlug;
-            if (/^[1-9][0-9]*$/.test(promotionId || '')) link.style.viewTransitionName = `cp-promocion-${promotionId}`;
-            if (/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(affiliateSlug || '')) link.style.viewTransitionName = `cp-ficha-${affiliateSlug}`;
-            link.classList.add('is-navigating');
-        });
-    });
-
-    window.addEventListener('pageshow', () => {
-        document.querySelectorAll('.is-navigating').forEach((link) => link.classList.remove('is-navigating'));
-    });
-})();

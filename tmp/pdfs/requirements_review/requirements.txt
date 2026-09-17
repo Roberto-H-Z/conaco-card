@@ -1,0 +1,1301 @@
+===== PAGINA 1 =====
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+           ESPECIFICACIÓN    DE  REQUERIMIENTOS     DE SOFTWARE     (ERS)           
+                                                  Proyecto: Plataforma CANACO Card  
+                        Estado del documento: Versión 1.1, para validación funcional con el cliente.
+                                                                                    
+                                                                                    
+                       1. Descripción  general  del proyecto                        
+                                                                                    
+        1.1 Objetivo del documento                                                  
+                                                                                    
+        El presente documento tiene como finalidad describir los requerimientos funcionales y no funcionales para el
+        desarrollo de la Plataforma CANACO Card, permitiendo establecer un entendimiento común entre el cliente y
+        el equipo de desarrollo respecto al alcance del proyecto.                   
+                                                                                    
+                                                                                    
+        Este documento servirá como base para la validación de los requerimientos, el desarrollo del sistema, la
+        ejecución de pruebas funcionales y el control de cambios durante todo el ciclo de vida del proyecto.
+        La presente versión corresponde a un documento de validación funcional, por lo que algunos apartados podrán
+        ajustarse conforme se obtengan acuerdos derivados de las sesiones de análisis con el cliente.
+                                                                                    
+                                                                                    
+        1.2 Objetivo del proyecto                                                   
+        Desarrollar una plataforma web que permita administrar y consultar el directorio comercial de empresas
+        afiliadas al programa CANACO Card, ofreciendo un portal moderno de consulta pública y un panel
+                                                                                    
+        administrativo para la gestión de la información.                           
+                                                                                    
+        El sistema deberá facilitar la promoción de los negocios afiliados mediante un buscador avanzado, publicación
+        de promociones comerciales y herramientas administrativas que permitan mantener actualizada la información
+        de cada empresa participante.                                               
+                                                                                    
+                                                                                    
+        Uno de los principales objetivos del proyecto consiste en mejorar significativamente la experiencia de
+        búsqueda respecto al sistema actualmente en operación, permitiendo localizar establecimientos mediante
+        distintos criterios y ofreciendo resultados relevantes para los visitantes. 
+                                                                                    
+                                                                                    
+        1.3 Alcance del proyecto                                                    
+        El desarrollo contempla la construcción de una aplicación web compuesta por dos grandes componentes:
+                                                                                    
+        Panel Administrativo                                                        
+                                                                                    
+        Corresponde al módulo privado del sistema desde donde se administrará toda la información del directorio.
+        Dentro del Panel Administrativo existirán tres perfiles de acceso con diferentes niveles de permisos:
+            Administrador General.                                                 
+            Administrador de Cámara.                                               
+                                                                                    
+            Afiliado.                                                              
+                                                                                    
+        Cada perfil visualizará únicamente las funcionalidades autorizadas conforme a sus permisos.
+        El Panel Administrativo permitirá la gestión de afiliados, promociones, usuarios, ciudades, categorías
+        comerciales, configuración del sitio web, reportes y estadísticas.          
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+
+===== PAGINA 2 =====
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+        Sitio Web Público                                                           
+        Corresponde al portal público que consultarán los visitantes.               
+        Toda la información publicada será obtenida desde el Panel Administrativo.  
+        El sitio web permitirá consultar empresas afiliadas, promociones vigentes y utilizar un buscador avanzado para
+                                                                                    
+        localizar negocios mediante distintos criterios.                            
+        El sitio será de consulta pública y no requerirá autenticación para los visitantes.
+                                                                                    
+        1.4 Objetivos específicos                                                   
+                                                                                    
+        El sistema deberá permitir:                                                 
+            Administrar la información de las empresas afiliadas.                  
+            Facilitar la actualización de información por parte de los afiliados autorizados.
+            Publicar promociones comerciales.                                      
+                                                                                    
+            Mostrar un directorio comercial organizado por ciudades y categorías.  
+            Proporcionar un buscador avanzado que permita localizar negocios utilizando distintos criterios.
+            Generar reportes administrativos.                                      
+            Obtener estadísticas relacionadas con búsquedas y consultas realizadas por los visitantes.
+            Administrar el contenido dinámico de la portada del sitio web.         
+                                                                                    
+            Facilitar el crecimiento del sistema mediante una arquitectura modular.
+                                                                                    
+        2. Descripción General  del Sistema                                         
+                                                                                    
+        La Plataforma CANACO Card será una aplicación web desarrollada a la medida para administrar un directorio
+        comercial de empresas afiliadas.                                            
+                                                                                    
+                                                                                    
+        El sistema estará integrado por un panel administrativo y un sitio web público que compartirán una misma
+        base de datos.                                                              
+                                                                                    
+        Toda la administración de información será realizada desde el Panel Administrativo, mientras que el Sitio Web
+        únicamente consultará la información autorizada para publicación.           
+                                                                                    
+                                                                                    
+        La plataforma permitirá administrar información comercial de empresas, sucursales, promociones y categorías
+        comerciales, ofreciendo un buscador avanzado como principal funcionalidad para los visitantes.
+                                                                                    
+        3. Actores del Sistema                                                      
+                                                                                    
+        3.1 Administrador General                                                   
+                                                                                    
+        Usuario con acceso total al sistema.                                        
+        Entre sus principales responsabilidades se encuentran:                      
+            Administración de usuarios.                                            
+                                                                                    
+            Administración de cámaras.                                             
+            Administración de afiliados.                                           
+            Administración de promociones.                                         
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+
+===== PAGINA 3 =====
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+            Administración de ciudades.                                            
+            Administración de categorías.                                          
+            Configuración del sitio web.                                           
+            Consulta de reportes.                                                  
+            Consulta de estadísticas.                                              
+            Configuración general del sistema.                                     
+                                                                                    
+                                                                                    
+        3.2 Administrador de Cámara                                                 
+        Usuario responsable de administrar la información correspondiente a los afiliados registrados por la cámara
+                                                                                    
+        que representa.                                                             
+                                                                                    
+        Podrá consultar todos los afiliados registrados en el sistema; sin embargo, únicamente podrá modificar
+        aquellos que hayan sido registrados por su propia cámara.                   
+                                                                                    
+                                                                                    
+        Entre sus funciones principales se encuentran:                              
+            Registrar afiliados.                                                   
+            Actualizar afiliados propios.                                          
+            Registrar promociones.                                                 
+            Consultar reportes.                                                    
+                                                                                    
+            Consultar estadísticas.                                                
+            Dar seguimiento a las promociones de sus afiliados.                    
+                                                                                    
+        3.3 Afiliado                                                                
+                                                                                    
+        Corresponde a la empresa participante en el programa CANACO Card.           
+        Cada afiliado contará con un usuario y contraseña para ingresar al Panel Administrativo.
+                                                                                    
+        Sus permisos estarán limitados a la administración de la información correspondiente a su propio negocio.
+        Podrá:                                                                      
+                                                                                    
+            Actualizar la información de su empresa.                               
+            Administrar sucursales.                                                
+            Registrar promociones.                                                 
+            Consultar estadísticas relacionadas con su empresa.                    
+            Consultar información de sus promociones.                              
+                                                                                    
+                                                                                    
+        No podrá acceder a información correspondiente a otros afiliados.           
+                                                                                    
+        3.4 Visitante                                                               
+                                                                                    
+        Persona que consulta el Sitio Web Público.                                  
+        No requiere autenticación.                                                  
+                                                                                    
+        Podrá:                                                                      
+                                                                                    
+            Consultar empresas.                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+
+===== PAGINA 4 =====
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+            Buscar promociones.                                                    
+            Utilizar el buscador.                                                  
+            Visualizar mapas.                                                      
+            Consultar fichas comerciales.                                          
+            Acceder a redes sociales y medios de contacto de los afiliados.        
+                                                                                    
+                                                                                    
+        4. Glosario                                                                 
+                                                                                    
+        Afiliado                                                                    
+        Empresa participante dentro del programa CANACO Card.                       
+                                                                                    
+        Cámara                                                                      
+        Organización responsable de administrar un conjunto de empresas afiliadas pertenecientes a una región
+                                                                                    
+        determinada.                                                                
+                                                                                    
+        Administrador General                                                       
+        Usuario con acceso completo a todas las funcionalidades del sistema.        
+                                                                                    
+                                                                                    
+        Administrador de Cámara                                                     
+        Usuario responsable de administrar la información de los afiliados pertenecientes a la cámara que representa.
+                                                                                    
+        Promoción                                                                   
+        Oferta comercial publicada por un afiliado con un periodo de vigencia determinado.
+                                                                                    
+                                                                                    
+        Sucursal                                                                    
+        Ubicación física adicional perteneciente a un afiliado.                     
+                                                                                    
+        Categoría Comercial                                                         
+        Clasificación utilizada para agrupar empresas de acuerdo con su actividad económica.
+                                                                                    
+                                                                                    
+        Palabras de búsqueda                                                        
+        Conjunto de términos asociados a un afiliado que permiten mejorar la localización de empresas dentro del
+        buscador.                                                                   
+                                                                                    
+                                                                                    
+        Sitio Web Público                                                           
+        Portal accesible para cualquier visitante donde se consulta la información publicada por los afiliados.
+                                                                                    
+        Panel Administrativo                                                        
+        Aplicación privada utilizada para administrar la información del sistema.   
+                                                                                    
+                                                                                    
+        5. Supuestos  del Proyecto                                                  
+                                                                                    
+        Para el desarrollo del sistema se consideran los siguientes supuestos:      
+            El cliente proporcionará la información inicial de cámaras, afiliados, categorías y ciudades.
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+
+===== PAGINA 5 =====
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+            El cliente proporcionará logotipos, imágenes institucionales y material gráfico necesario para el sitio
+             web.                                                                   
+            El cliente validará oportunamente los requerimientos documentados.     
+            La infraestructura tecnológica (hosting, dominio y certificados de seguridad) será proporcionada por el
+             cliente.                                                               
+            El desarrollo se realizará sobre el dominio actual del cliente, utilizando inicialmente una subcarpeta de
+                                                                                    
+             trabajo para pruebas y validación.                                     
+            Las modificaciones posteriores a la aprobación de este documento podrán considerarse solicitudes de
+             cambio y deberán evaluarse en tiempo, costo y alcance.                 
+                                                                                    
+        6. Exclusiones del Proyecto                                                 
+                                                                                    
+        Salvo que se acuerde lo contrario durante el desarrollo, el presente proyecto no contempla:
+                                                                                    
+            Desarrollo de aplicación móvil nativa.                                 
+            Integración con sistemas ERP o CRM.                                    
+            Facturación electrónica.                                               
+            Pasarelas de pago.                                                     
+            Comercio electrónico.                                                  
+                                                                                    
+            Chat en línea.                                                         
+            Integración automática con redes sociales para publicación de promociones.
+            Importación masiva de información mediante archivos CSV o Excel una vez concluida la carga inicial.
+            Desarrollo de aplicaciones de escritorio.                              
+            Integraciones mediante APIs de terceros distintas a Google Maps, salvo autorización expresa del
+                                                                                    
+             cliente.                                                               
+                                                                                    
+        7. Consideraciones  Generales                                               
+                                                                                    
+            El sistema será desarrollado completamente a la medida.                
+            La solución deberá ser responsiva y adaptable a dispositivos móviles.  
+            Toda la información será almacenada en una base de datos relacional.   
+                                                                                    
+            El código fuente será propiedad del cliente al concluir el proyecto.   
+            La arquitectura del sistema deberá facilitar futuras ampliaciones y nuevos módulos.
+            Todas las operaciones deberán respetar el esquema de permisos definido para cada perfil de usuario.
+            La eliminación de información será preferentemente lógica mediante estatus de activación.
+            El buscador constituirá la funcionalidad principal del sistema y deberá recibir especial atención durante
+             el análisis, desarrollo y pruebas.                                     
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+
+===== PAGINA 6 =====
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+        8. Reglas de Negocio                                                        
+        Las reglas de negocio representan las políticas de operación que deberán respetarse durante el funcionamiento
+                                                                                    
+        del sistema, independientemente de la tecnología utilizada para su desarrollo.
+                                                                                    
+        Nota: Algunas reglas descritas en este capítulo corresponden a políticas funcionales definidas para el desarrollo
+        del sistema con el propósito de garantizar la integridad de la información, la seguridad operativa y la facilidad
+        de mantenimiento. Estas políticas forman parte del alcance funcional del proyecto y deberán validarse
+                                                                                    
+        conjuntamente con el cliente.                                               
+                                                                                    
+        8.1 Reglas generales                                                        
+        RN-001 Administración centralizada                                          
+                                                                                    
+        Toda la información del sistema será administrada desde el Panel Administrativo.
+        El Sitio Web Público únicamente mostrará la información autorizada para publicación.
+                                                                                    
+        RN-002 Usuarios del sistema                                                 
+                                                                                    
+        El sistema contará con tres perfiles de acceso:                             
+            Administrador General.                                                 
+            Administrador de Cámara.                                               
+            Afiliado.                                                              
+        Cada perfil visualizará únicamente las opciones autorizadas conforme a sus permisos.
+                                                                                    
+                                                                                    
+        RN-003 Autenticación                                                        
+        Todo usuario del Panel Administrativo deberá autenticarse mediante usuario y contraseña.
+                                                                                    
+        Pendiente de validación                                                     
+                                                                                    
+        Definir si se implementará recuperación automática de contraseña mediante correo electrónico o si dicho
+        proceso será realizado por un Administrador.                                
+                                                                                    
+        RN-004 Cambio de contraseña                                                 
+        Pendiente de validación                                                     
+                                                                                    
+        Definir si el afiliado podrá modificar su propia contraseña después del primer acceso al sistema.
+                                                                                    
+        RN-005 Administración de registros                                          
+        Con el propósito de preservar la integridad de la información y mantener la trazabilidad histórica de los datos,
+                                                                                    
+        el sistema no permitirá la eliminación física de los registros administrados.
+                                                                                    
+        Todas las entidades del sistema deberán administrarse mediante un estatus que permita activar o desactivar su
+        disponibilidad dentro de la aplicación.                                     
+                                                                                    
+        Esta regla aplicará, como mínimo, para las siguientes entidades:            
+                                                                                    
+                                                                                    
+            Usuarios.                                                              
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+
+===== PAGINA 7 =====
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+            Cámaras.                                                               
+            Ciudades.                                                              
+            Categorías comerciales.                                                
+            Afiliados.                                                             
+            Sucursales.                                                            
+            Promociones.                                                           
+                                                                                    
+                                                                                    
+        Los registros inactivos no deberán mostrarse en el Sitio Web Público y únicamente serán visibles para los
+        usuarios autorizados dentro del Panel Administrativo.                       
+                                                                                    
+        RN-006 Permisos                                                             
+        Todo usuario únicamente podrá ejecutar las acciones permitidas por su perfil.
+                                                                                    
+        Las funcionalidades no autorizadas no deberán mostrarse dentro del sistema. 
+                                                                                    
+        8.2 Reglas para Administradores                                             
+                                                                                    
+        RN-007 Administrador General                                                
+        El Administrador General tendrá acceso completo a toda la información del sistema.
+        Podrá crear, modificar, activar, desactivar y consultar cualquier entidad del aplicativo.
+                                                                                    
+        RN-008 Administrador de Cámara                                              
+                                                                                    
+        El Administrador de Cámara podrá consultar todos los afiliados registrados. 
+        Únicamente podrá modificar aquellos afiliados que hayan sido registrados por la cámara que administra.
+                                                                                    
+        RN-009 Usuarios                                                             
+                                                                                    
+        La administración de usuarios será responsabilidad exclusiva del Administrador General.
+                                                                                    
+        Pendiente de validación                                                     
+        Definir si un Administrador de Cámara podrá crear usuarios afiliados o únicamente el Administrador General.
+                                                                                    
+                                                                                    
+        8.3 Reglas para Afiliados                                                   
+        RN-010 Información propia                                                   
+        Cada afiliado únicamente podrá administrar la información correspondiente a su empresa.
+        No podrá consultar ni modificar información perteneciente a otros afiliados.
+                                                                                    
+                                                                                    
+        RN-011 Promociones                                                          
+        Cada afiliado podrá registrar múltiples promociones comerciales.            
+                                                                                    
+                                                                                    
+        RN-012 Estadísticas                                                         
+        Cada afiliado únicamente podrá consultar estadísticas relacionadas con su propia empresa.
+                                                                                    
+        RN-013 Sucursales                                                           
+        Cada afiliado podrá registrar una o varias sucursales.                      
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+
+===== PAGINA 8 =====
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+        Cada sucursal pertenecerá únicamente a un afiliado.                         
+                                                                                    
+                                                                                    
+        8.4 Reglas para Afiliados                                                   
+        RN-014 Categorías                                                           
+                                                                                    
+        Un afiliado podrá pertenecer a una o varias categorías comerciales.         
+        Una categoría podrá contener múltiples afiliados.                           
+                                                                                    
+        RN-015 Ciudades                                                             
+                                                                                    
+        Cada sucursal deberá pertenecer a una ciudad previamente registrada en el catálogo correspondiente.
+                                                                                    
+        RN-016 Estados                                                              
+        Cada ciudad deberá pertenecer a un estado.                                  
+        Inicialmente se trabajará con ciudades del Estado de Veracruz.              
+                                                                                    
+        El sistema deberá permitir el crecimiento hacia otros estados sin requerir modificaciones estructurales.
+                                                                                    
+        8.5 Reglas para Promociones                                                 
+                                                                                    
+        RN-017 Vigencia                                                             
+        Toda promoción deberá contar con una fecha inicial y una fecha final de vigencia.
+                                                                                    
+        RN-018 Publicación                                                          
+        Las promociones únicamente deberán mostrarse durante su periodo de vigencia.
+                                                                                    
+        Las promociones vencidas dejarán de visualizarse automáticamente en el Sitio Web.
+                                                                                    
+        RN-019 Programación                                                         
+        El sistema permitirá capturar promociones con fecha futura de publicación.  
+                                                                                    
+                                                                                    
+        RN-020 Imágenes                                                             
+        Cada promoción podrá contener hasta cinco imágenes.                         
+                                                                                    
+        RN-021 Tipo de promoción                                                    
+                                                                                    
+        En la versión actual del proyecto no se contempla un catálogo de tipos de promoción.
+                                                                                    
+        RN-022 Flujo de autorización                                                
+        Pendiente de validación                                                     
+                                                                                    
+        Definir si una promoción publicada por un afiliado requiere autorización previa antes de aparecer en el Sitio
+        Web.                                                                        
+                                                                                    
+        RN-023 Notificaciones                                                       
+        Cada vez que un afiliado registre, modifique o elimine lógicamente una promoción, el sistema enviará una
+                                                                                    
+        notificación por correo electrónico al Administrador de Cámara correspondiente.
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+
+===== PAGINA 9 =====
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+        8.6 Reglas para el Buscador                                                 
+        RN-024 Funcionalidad principal                                              
+        El buscador constituye la funcionalidad principal del proyecto.             
+        Todas las decisiones relacionadas con la búsqueda deberán privilegiar la facilidad para localizar empresas.
+                                                                                    
+                                                                                    
+        RN-025 Búsqueda por palabra                                                 
+        El buscador deberá localizar coincidencias considerando múltiples campos de información.
+        Como mínimo:                                                                
+                                                                                    
+            Nombre comercial.                                                      
+            Descripción.                                                           
+            Categorías.                                                            
+            Palabras clave.                                                        
+            Promociones.                                                           
+                                                                                    
+                                                                                    
+        RN-026 Palabras clave                                                       
+        Cada afiliado podrá registrar hasta diez palabras clave para mejorar su localización.
+                                                                                    
+        RN-027 Resultados                                                           
+                                                                                    
+        Cuando una búsqueda no produzca coincidencias, el sistema deberá informar claramente al visitante.
+                                                                                    
+        RN-028 Ordenamiento                                                         
+        Pendiente de validación                                                     
+                                                                                    
+        Definir el algoritmo utilizado para ordenar los resultados de búsqueda.     
+        Opciones analizadas hasta el momento:                                       
+            Orden de captura.                                                      
+            Aparición aleatoria.                                                   
+            Ranking por relevancia.                                                
+            Ranking por estrellas.                                                 
+                                                                                    
+            Algoritmo combinado.                                                   
+                                                                                    
+        8.7 Reglas para el Sitio Web                                                
+                                                                                    
+        RN-029 Publicación                                                          
+        Toda la información mostrada en el Sitio Web deberá provenir del Panel Administrativo.
+                                                                                    
+        RN-030 Redes sociales                                                       
+                                                                                    
+        Las redes sociales deberán abrirse en una nueva pestaña del navegador.      
+                                                                                    
+        RN-031 Teléfono                                                             
+        En dispositivos móviles el número telefónico deberá iniciar automáticamente la llamada.
+                                                                                    
+                                                                                    
+        RN-032 WhatsApp                                                             
+        Al seleccionar WhatsApp deberá abrirse la conversación correspondiente.     
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+
+===== PAGINA 10 =====
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+        RN-033 Ubicación                                                            
+        Cada ficha comercial mostrará el mapa correspondiente utilizando Google Maps.
+                                                                                    
+        RN-034 Empresas relacionadas                                                
+                                                                                    
+        Cada ficha comercial mostrará empresas similares.                           
+                                                                                    
+        Pendiente de validación                                                     
+        Definir el criterio utilizado para determinar la similitud entre empresas.  
+                                                                                    
+                                                                                    
+        8.8 Reglas para Reportes                                                    
+        RN-035 Exportación                                                          
+        Los reportes deberán permitir exportación en formato PDF y Excel.           
+                                                                                    
+                                                                                    
+        RN-036 Estadísticas                                                         
+        Las estadísticas deberán obtenerse automáticamente a partir de la actividad registrada en el sistema.
+                                                                                    
+                                                                                    
+        9. Pendientes de Validación                                                 
+        Durante las sesiones de análisis se identificaron los siguientes puntos que requieren validación por parte del
+                                                                                    
+        cliente antes del inicio del desarrollo.                                    
+                                                                                    
+           ID                             Pendiente                                 
+                                                                                    
+        P-001  Definir recuperación de contraseña.                                  
+        P-002  Definir si el afiliado podrá cambiar su contraseña.                  
+        P-003  Definir quién crea los usuarios afiliados.                           
+                                                                                    
+        P-004  Definir si las promociones requieren autorización previa.            
+        P-005  Definir el algoritmo de ordenamiento del buscador.                   
+                                                                                    
+        P-006  Definir el criterio para mostrar empresas similares.                 
+        P-007  Definir las secciones definitivas de la portada del Sitio Web.       
+        P-008  Definir si existirá límite de promociones activas por afiliado.      
+                                                                                    
+        P-009  Definir tamaño máximo permitido para la galería de imágenes del afiliado.
+               Definir si la geolocalización automática del visitante podrá utilizarse para mostrar promociones
+        P-010                                                                       
+               cercanas.                                                            
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+
+===== PAGINA 11 =====
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+        10. Requerimientos   Funcionales                                            
+                                                                                    
+        Los requerimientos funcionales describen las funcionalidades que deberá proporcionar el sistema para
+        satisfacer las necesidades del cliente.                                     
+                                                                                    
+        Módulo   1. Autenticación  y Administración  de Usuarios                    
+                                                                                    
+        RF-001 Inicio de sesión                                                     
+                                                                                    
+        Objetivo                                                                    
+        Permitir el acceso seguro al Panel Administrativo de la Plataforma CANACO Card.
+                                                                                    
+                                                                                    
+        Descripción                                                                 
+        El sistema deberá permitir que los usuarios autorizados ingresen mediante un usuario (correo electrónico) y
+        contraseña.                                                                 
+        Una vez autenticado, el sistema mostrará únicamente las opciones correspondientes al perfil del usuario.
+                                                                                    
+                                                                                    
+        Actores                                                                     
+            Administrador General.                                                 
+            Administrador de Cámara.                                               
+                                                                                    
+            Afiliado.                                                              
+                                                                                    
+        Requerimientos                                                              
+        El sistema deberá:                                                          
+                                                                                    
+            Solicitar usuario y contraseña.                                        
+            Validar las credenciales.                                              
+            Identificar el perfil del usuario.                                     
+            Mostrar el menú correspondiente al perfil.                             
+            Registrar la fecha y hora del último acceso.                           
+                                                                                    
+                                                                                    
+        Validaciones                                                                
+            El usuario deberá encontrarse activo.                                  
+            La contraseña deberá ser correcta.                                     
+            No se permitirá el acceso a usuarios deshabilitados.                   
+                                                                                    
+                                                                                    
+        Reglas relacionadas                                                         
+        RN-002                                                                      
+        RN-003                                                                      
+                                                                                    
+        RN-006                                                                      
+                                                                                    
+        RF-002 Cierre de sesión                                                     
+                                                                                    
+        El sistema permitirá finalizar la sesión del usuario en cualquier momento.  
+        Al cerrar sesión se eliminará la información temporal correspondiente a la autenticación.
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+
+===== PAGINA 12 =====
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+        RF-003 Administración de Usuarios                                           
+        Objetivo                                                                    
+        Permitir la administración de los usuarios que tendrán acceso al Panel Administrativo.
+                                                                                    
+                                                                                    
+        Actor principal                                                             
+        Administrador General.                                                      
+                                                                                    
+                                                                                    
+        Funcionalidades                                                             
+            Registrar usuarios.                                                    
+            Modificar usuarios.                                                    
+            Activar usuarios.                                                      
+                                                                                    
+            Desactivar usuarios.                                                   
+            Consultar usuarios.                                                    
+        No se permitirá la eliminación física de usuarios.                          
+                                                                                    
+        Información del usuario                                                     
+                                                                                    
+                              Campo          Obligatorio                            
+                          Nombre      Sí                                            
+                                                                                    
+                          Correo electrónico Sí                                     
+                          Contraseña  Sí                                            
+                                                                                    
+                          Perfil      Sí                                            
+                          Cámara asignada Solo Administradores de Cámara            
+                                                                                    
+                          Estatus     Sí                                            
+                                                                                    
+                                                                                    
+        Validaciones                                                                
+            No deberá existir otro usuario con el mismo correo electrónico.        
+            El correo deberá tener un formato válido.                              
+                                                                                    
+                                                                                    
+        Pendientes                                                                  
+        P-003                                                                       
+        Definir si el Administrador de Cámara podrá registrar usuarios Afiliados.   
+                                                                                    
+                                                                                    
+        Módulo   2. Gestión de Afiliados                                            
+                                                                                    
+        RF-004 Administración de Afiliados                                          
+        Objetivo                                                                    
+                                                                                    
+        Permitir registrar y administrar la información de las empresas afiliadas al programa CANACO Card.
+        Esta funcionalidad constituye el principal proceso administrativo del sistema.
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+
+===== PAGINA 13 =====
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+        Actores                                                                     
+            Administrador General.                                                 
+            Administrador de Cámara.                                               
+            Afiliado (edición de su propia información).                           
+                                                                                    
+                                                                                    
+        Funcionalidades                                                             
+        El sistema permitirá:                                                       
+            Registrar afiliados.                                                   
+            Modificar afiliados.                                                   
+                                                                                    
+            Consultar afiliados.                                                   
+            Activar afiliados.                                                     
+            Desactivar afiliados.                                                  
+        No se permitirá la eliminación física de registros.                         
+                                                                                    
+                                                                                    
+        Información General del Afiliado                                            
+                               Campo     Obligatorio Visible Público                
+                                                                                    
+                          Nombre comercial Sí    Sí                                 
+                          Alias          No      Sí                                 
+                                                                                    
+                          Descripción    Sí      Sí                                 
+                          RFC            Sí      No                                 
+                          Nombre del encargado Sí No                                
+                                                                                    
+                          Domicilio      Sí      Sí                                 
+                          Ciudad         Sí      Sí                                 
+                                                                                    
+                          Estado         Sí      Sí                                 
+                          Teléfono       Sí      Sí                                 
+                                                                                    
+                          WhatsApp       No      Sí                                 
+                          Facebook       No      Sí                                 
+                                                                                    
+                          Instagram      No      Sí                                 
+                          Sitio Web      No      Sí                                 
+                                                                                    
+                          Correo electrónico Sí  No                                 
+                          Logotipo       Sí      Sí                                 
+                          Ubicación Google Maps Sí Sí                               
+                                                                                    
+                                                                                    
+        Información Comercial                                                       
+                                                                                    
+        El sistema permitirá asignar una o varias categorías comerciales.           
+        Cada afiliado podrá registrar hasta diez palabras clave que servirán para mejorar los resultados del buscador.
+                                                                                    
+        Galería de Imágenes                                                         
+        El afiliado podrá registrar una galería fotográfica de su negocio.          
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+
+===== PAGINA 14 =====
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+        Propuesta funcional                                                         
+                                                                                    
+        Se recomienda permitir hasta diez imágenes por empresa.                     
+        Formatos permitidos:                                                        
+            JPG                                                                    
+            JPEG                                                                   
+            PNG                                                                    
+                                                                                    
+            WEBP                                                                   
+        Tamaño máximo recomendado:                                                  
+        2 MB por imagen.                                                            
+                                                                                    
+        Pendiente de validación                                                     
+                                                                                    
+        Confirmar el número máximo de imágenes permitidas.                          
+                                                                                    
+        Validaciones                                                                
+        El sistema deberá validar:                                                  
+                                                                                    
+            Existencia del nombre comercial.                                       
+            Existencia de la ciudad.                                               
+            Existencia de al menos una categoría.                                  
+            Formato del correo.                                                    
+            Formato del sitio Web.                                                 
+                                                                                    
+            Formato de redes sociales.                                             
+            Peso máximo de imágenes.                                               
+            Formato permitido de imágenes.                                         
+                                                                                    
+        Reglas relacionadas                                                         
+                                                                                    
+        RN-005                                                                      
+        RN-010                                                                      
+        RN-014                                                                      
+        RN-026                                                                      
+                                                                                    
+                                                                                    
+        RF-005 Consulta de Afiliados                                                
+        El sistema permitirá consultar los afiliados registrados mediante filtros.  
+                                                                                    
+                                                                                    
+        Como mínimo:                                                                
+            Nombre.                                                                
+            Ciudad.                                                                
+            Categoría.                                                             
+            Cámara.                                                                
+                                                                                    
+            Estatus.                                                               
+                                                                                    
+        RF-006 Activación y Desactivación de Afiliados                              
+        El sistema permitirá activar o desactivar un afiliado.                      
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+
+===== PAGINA 15 =====
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+        Los afiliados inactivos:                                                    
+                                                                                    
+            No aparecerán en el Sitio Web.                                         
+            No podrán iniciar sesión.                                              
+            No participarán en resultados de búsqueda.                             
+        La información permanecerá almacenada para fines históricos.                
+                                                                                    
+                                                                                    
+        RF-007 Gestión de Sucursales                                                
+        Cada afiliado podrá registrar una o varias sucursales.                      
+        Cada sucursal contará con:                                                  
+                                                                                    
+                                    Campo        Obligatorio                        
+                            Nombre de la sucursal (opcional) No                     
+                                                                                    
+                            Ciudad               Sí                                 
+                            Domicilio            Sí                                 
+                                                                                    
+                            Teléfono             Sí                                 
+                            Ubicación Google Maps Sí                                
+                                                                                    
+                                                                                    
+        El sistema permitirá:                                                       
+            Registrar.                                                             
+            Modificar.                                                             
+            Activar.                                                               
+                                                                                    
+            Desactivar.                                                            
+            Consultar.                                                             
+        No se permitirá la eliminación física.                                      
+                                                                                    
+        RF-008 Consulta de Estadísticas del Afiliado                                
+                                                                                    
+        Cada afiliado podrá consultar información estadística relacionada con su negocio.
+                                                                                    
+        Como mínimo:                                                                
+            Número de apariciones en búsquedas.                                    
+                                                                                    
+            Número de visitas a su ficha.                                          
+            Clics en teléfono.                                                     
+            Clics en WhatsApp.                                                     
+            Clics en sitio Web.                                                    
+            Clics en redes sociales.                                               
+                                                                                    
+                                                                                    
+        Pendiente de validación                                                     
+        Definir el periodo histórico disponible para consulta de estadísticas.      
+                                                                                    
+        Notas:                                                                      
+                                                                                    
+        Durante el análisis funcional se identifican las siguientes recomendaciones:
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+
+===== PAGINA 16 =====
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+          1. Toda imagen cargada al sistema debería generar automáticamente una versión optimizada para el Sitio
+                                                                                    
+             Web, con el objetivo de mejorar el rendimiento de carga.               
+          2. Se recomienda almacenar las coordenadas geográficas de cada sucursal para facilitar futuras
+             funcionalidades basadas en geolocalización.                            
+          3. Se recomienda mantener un historial de modificaciones realizadas sobre la información de los afiliados,
+             indicando usuario, fecha y tipo de cambio. Aunque esta funcionalidad no forma parte del alcance
+                                                                                    
+             inicial, facilitaría futuras auditorías y soporte técnico.             
+          4. El formulario de afiliados deberá diseñarse de forma modular, agrupando la información por secciones
+             (Datos generales, Información de contacto, Redes sociales, Categorías, Sucursales, Galería y
+             Promociones), mejorando la experiencia del usuario y facilitando el mantenimiento del sistema.
+                                                                                    
+                                                                                    
+        11. Módulo   de Gestión  de Promociones                                     
+                                                                                    
+        Objetivo del módulo                                                         
+        El módulo de Promociones permitirá que los afiliados publiquen ofertas comerciales asociadas a su negocio,
+        con la finalidad de mantener actualizado el contenido del portal, incentivar el consumo local y aumentar la
+        visibilidad de los establecimientos participantes en el programa CANACO Card.
+                                                                                    
+                                                                                    
+        Las promociones deberán administrarse desde el Panel Administrativo y serán visibles en el Sitio Web
+        únicamente durante el periodo de vigencia definido.                         
+                                                                                    
+                                                                                    
+        RF-009 Administración de Promociones                                        
+        Actores                                                                     
+                                                                                    
+            Administrador General.                                                 
+            Administrador de Cámara.                                               
+            Afiliado.                                                              
+                                                                                    
+        Descripción                                                                 
+                                                                                    
+        El sistema permitirá administrar promociones asociadas a un afiliado.       
+        Cada afiliado podrá registrar múltiples promociones.                        
+        Cada promoción pertenecerá únicamente a un afiliado.                        
+                                                                                    
+        Operaciones disponibles                                                     
+                                                                                    
+        El sistema permitirá:                                                       
+            Registrar promociones.                                                 
+            Modificar promociones.                                                 
+            Consultar promociones.                                                 
+                                                                                    
+            Activar promociones.                                                   
+            Desactivar promociones.                                                
+        No existirá eliminación física de promociones.                              
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+
+===== PAGINA 17 =====
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+        Información de la promoción                                                 
+                               Campo      Obligatorio Visible al público            
+                                                                                    
+                         Título              Sí       Sí                            
+                         Descripción         Sí       Sí                            
+                         Fecha de inicio     Sí       No                            
+                                                                                    
+                         Fecha de fin        Sí       No                            
+                         Galería (hasta 5 imágenes) Sí Sí                           
+                                                                                    
+                         Estatus             Sí       No                            
+                                                                                    
+                                                                                    
+        Reglas funcionales                                                          
+        Las promociones deberán cumplir las siguientes condiciones:                 
+            La fecha final no podrá ser menor que la fecha inicial.                
+            Una promoción podrá programarse para aparecer en una fecha futura.     
+                                                                                    
+            Las promociones vencidas dejarán de mostrarse automáticamente en el Sitio Web.
+            El afiliado podrá tener varias promociones vigentes al mismo tiempo.   
+            Las promociones desactivadas no aparecerán en el Sitio Web Público.    
+                                                                                    
+        Validaciones                                                                
+                                                                                    
+        El sistema deberá validar:                                                  
+            Título obligatorio.                                                    
+            Descripción obligatoria.                                               
+            Fechas válidas.                                                        
+                                                                                    
+            Máximo cinco imágenes por promoción.                                   
+            Formatos permitidos para las imágenes.                                 
+            Peso máximo permitido por imagen.                                      
+                                                                                    
+        Notificaciones                                                              
+                                                                                    
+        Cada vez que un afiliado:                                                   
+            Registre una promoción.                                                
+            Modifique una promoción.                                               
+            Active una promoción.                                                  
+                                                                                    
+            Desactive una promoción.                                               
+        El sistema enviará una notificación por correo electrónico al Administrador de Cámara correspondiente,
+        indicando la acción realizada.                                              
+                                                                                    
+        Reglas relacionadas                                                         
+                                                                                    
+            RN-005                                                                 
+            RN-011                                                                 
+            RN-017                                                                 
+            RN-018                                                                 
+            RN-019                                                                 
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+
+===== PAGINA 18 =====
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+            RN-020                                                                 
+            RN-023                                                                 
+                                                                                    
+        Pendientes de validación                                                    
+                                                                                    
+        PV-011                                                                      
+        Definir si una promoción deberá pasar por un flujo de autorización antes de publicarse en el Sitio Web.
+                                                                                    
+        Notas                                                                       
+                                                                                    
+        Se recomienda permitir programar promociones con varios días de anticipación.
+        Asimismo, se recomienda que las promociones vencidas permanezcan almacenadas para efectos estadísticos e
+        históricos, aunque ya no sean visibles al público.                          
+                                                                                    
+                                                                                    
+        12. Módulo   Buscador  Avanzado                                             
+                                                                                    
+        Objetivo del módulo                                                         
+        El Buscador Avanzado constituye el principal componente funcional de la Plataforma CANACO Card.
+                                                                                    
+                                                                                    
+        Su propósito es facilitar la localización de empresas afiliadas mediante diferentes criterios de búsqueda,
+        proporcionando resultados relevantes, rápidos y fáciles de interpretar para los visitantes.
+                                                                                    
+        RF-010 Búsqueda General                                                     
+                                                                                    
+        El sistema deberá permitir localizar afiliados utilizando una caja principal de búsqueda.
+                                                                                    
+        La búsqueda deberá aceptar palabras completas o parciales.                  
+                                                                                    
+                                                                                    
+        RF-011 Filtros de búsqueda                                                  
+        Adicionalmente podrán utilizarse los siguientes filtros:                    
+            Ciudad.                                                                
+                                                                                    
+            Categoría comercial.                                                   
+                                                                                    
+        La arquitectura deberá permitir incorporar nuevos filtros en futuras versiones sin afectar el funcionamiento del
+        sistema.                                                                    
+                                                                                    
+                                                                                    
+        RF-012 Motor de búsqueda                                                    
+        El motor de búsqueda deberá consultar simultáneamente la siguiente información:
+            Nombre comercial.                                                      
+                                                                                    
+            Alias.                                                                 
+            Descripción.                                                           
+            Categorías comerciales.                                                
+            Palabras clave.                                                        
+            Promociones vigentes.                                                  
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+
+===== PAGINA 19 =====
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+        RF-013 Niveles de coincidencia                                              
+        El buscador deberá considerar distintos niveles de coincidencia.            
+                                                                                    
+                                                                                    
+        Nivel 1. Coincidencia exacta                                                
+        Ejemplo: "Hotel Trueba".                                                    
+                                                                                    
+        Nivel 2. Coincidencia parcial                                               
+                                                                                    
+        Ejemplo: "Hotel".                                                           
+                                                                                    
+        Nivel 3. Coincidencia por categoría                                         
+        Ejemplo: "Ferretería".                                                      
+                                                                                    
+                                                                                    
+        Nivel 4. Coincidencia mediante palabras clave                               
+        Ejemplo: "Tornillos".                                                       
+                                                                                    
+                                                                                    
+        Nivel 5. Coincidencia dentro de promociones vigentes                        
+        Ejemplo: "Descuento".                                                       
+                                                                                    
+        Nivel 6. Coincidencia dentro de la descripción comercial (Propuesta)        
+                                                                                    
+        Permitir localizar empresas mediante palabras contenidas en la descripción de su negocio, mejorando la
+        relevancia de los resultados.                                               
+                                                                                    
+                                                                                    
+        RF-014 Resultados de búsqueda                                               
+        Cada resultado deberá mostrar como mínimo:                                  
+            Logotipo.                                                              
+            Nombre comercial.                                                      
+                                                                                    
+            Categoría principal.                                                   
+            Ciudad.                                                                
+            Descripción resumida.                                                  
+            Promoción destacada, cuando exista.                                    
+                                                                                    
+                                                                                    
+        RF-015 Ficha del afiliado                                                   
+        Al seleccionar un resultado de búsqueda deberá mostrarse una página con la información completa del
+        afiliado.                                                                   
+                                                                                    
+                                                                                    
+        La ficha incluirá como mínimo:                                              
+            Información general.                                                   
+            Galería de imágenes.                                                   
+            Redes sociales.                                                        
+                                                                                    
+            WhatsApp.                                                              
+            Teléfono.                                                              
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+
+===== PAGINA 20 =====
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+            Sitio Web.                                                             
+            Mapa de ubicación.                                                     
+            Promociones vigentes.                                                  
+            Empresas relacionadas.                                                 
+                                                                                    
+                                                                                    
+        RF-016 Ordenamiento de resultados                                           
+        El sistema deberá implementar un algoritmo para determinar el orden de aparición de los resultados.
+                                                                                    
+                                                                                    
+        Pendiente de validación                                                     
+        Analizar cuál de las siguientes alternativas será utilizada:                
+            Orden de captura.                                                      
+            Aparición aleatoria.                                                   
+            Orden por relevancia.                                                  
+                                                                                    
+            Ranking de estrellas.                                                  
+            Algoritmo híbrido.                                                     
+                                                                                    
+        RF-017 Estadísticas del buscador                                            
+                                                                                    
+        El sistema registrará información relacionada con las búsquedas realizadas por los visitantes.
+                                                                                    
+        Como mínimo deberá almacenar:                                               
+            Palabras buscadas.                                                     
+                                                                                    
+            Cantidad de búsquedas.                                                 
+            Ciudad seleccionada.                                                   
+            Categoría seleccionada.                                                
+            Afiliados consultados.                                                 
+                                                                                    
+                                                                                    
+        RF-018 Búsquedas sin resultados                                             
+        Cuando una búsqueda no encuentre coincidencias, el sistema deberá mostrar un mensaje claro al visitante.
+                                                                                    
+        Se recomienda además sugerir:                                               
+                                                                                    
+            Empresas relacionadas.                                                 
+            Categorías disponibles.                                                
+            Eliminación de filtros para ampliar la búsqueda.                       
+                                                                                    
+                                                                                    
+        RF-019 Rendimiento del buscador                                             
+        El tiempo de respuesta del buscador deberá ser suficientemente bajo para ofrecer una experiencia de uso
+        fluida, incluso con un crecimiento considerable del número de afiliados.    
+                                                                                    
+                                                                                    
+        Notas                                                                       
+        Se recomienda incorporar las siguientes mejoras funcionales en la evolución del sistema:
+            Paginación de resultados.                                              
+                                                                                    
+            Mantener los filtros seleccionados cuando el usuario regrese desde la ficha del afiliado.
+                                                                                    
+                                                                                    
+                                                                                    
+
+===== PAGINA 21 =====
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+            Registrar las búsquedas sin resultados para futuros análisis.          
+            Incorporar autocompletado de términos de búsqueda en una fase posterior del proyecto.
+            Permitir la incorporación futura de sinónimos y términos relacionados para enriquecer los resultados
+             sin modificar la estructura del sistema.                               
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    

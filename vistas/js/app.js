@@ -1,10 +1,11 @@
 /** Utilidades globales del panel CANACO Card. */
+// Las entradas por sección se coordinan en fichas-motion.js, sin retrasar los enlaces.
 document.addEventListener('DOMContentLoaded', () => {
-    const contenido = document.getElementById('content_container');
-    if (contenido) contenido.classList.add('canaco-module-enter');
-    document.querySelectorAll('.canaco-nav-link').forEach(enlace => enlace.addEventListener('click', () => {
-        document.body.classList.add('canaco-module-leaving');
-    }));
+    // Son enlaces directos, no submenús. Enter conserva su navegación nativa;
+    // evita que KTMenu intente abrir un submenú inexistente en estas dos opciones.
+    document.querySelectorAll('#sidebar a.canaco-nav-link').forEach(link => {
+        link.addEventListener('keydown', event => { if (event.key === 'Enter') event.stopPropagation(); });
+    });
 });
 
 document.addEventListener('DOMContentLoaded', () => {

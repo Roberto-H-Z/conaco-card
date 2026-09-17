@@ -2274,43 +2274,7 @@
 }
 
 /* ── Ficha pública de afiliado ─────────────────────────────────────────── */
-@view-transition {
-    navigation: auto;
-}
-
-::view-transition-old(root) {
-    animation: cp-profile-page-out 170ms cubic-bezier(.4, 0, 1, 1) both;
-}
-
-::view-transition-new(root) {
-    animation: cp-profile-page-in 280ms cubic-bezier(.23, 1, .32, 1) both;
-}
-
-::view-transition-old(*) {
-    animation: cp-profile-shared-out 170ms cubic-bezier(.23, 1, .32, 1) both;
-}
-
-::view-transition-new(*) {
-    animation: cp-profile-shared-in 280ms cubic-bezier(.23, 1, .32, 1) both;
-}
-
-@keyframes cp-profile-page-out {
-    to { opacity: 0; transform: translateY(-8px); }
-}
-
-@keyframes cp-profile-page-in {
-    from { opacity: 0; transform: translateY(12px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes cp-profile-shared-out {
-    to { opacity: 0; transform: translateY(-8px) scale(.985); }
-}
-
-@keyframes cp-profile-shared-in {
-    from { opacity: 0; transform: translateY(18px) scale(.985); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
-}
+/* Las transiciones compartidas se definen en fichas-motion.css. */
 
 .cp-promo-card-link,
 .cp-empresa-card-shell {
@@ -2575,7 +2539,10 @@
 .cp-profile-location p { max-width: 51ch; margin: 9px 0 0; color: var(--cp-gris-medio); font-size: 14px; line-height: 1.6; }
 .cp-profile-location p.cp-profile-location__reference { color: #6c7891; font-size: 12px; }
 .cp-profile-location > div > a { display: inline-flex; align-items: center; gap: 7px; margin: 10px 13px 0 0; color: var(--cp-verde); font-size: 13px; font-weight: 700; text-decoration: none; }
+.cp-profile-map-panel { width: min(270px, 42%); flex: 0 0 min(270px, 42%); }
+.cp-profile-map { width: 100%; aspect-ratio: 4 / 3; display: block; overflow: hidden; border: 1px solid var(--cp-profile-line); border-radius: 12px; background: var(--cp-profile-soft); }
 .cp-profile-map-link { display: inline-flex; align-items: center; gap: 6px; flex: 0 0 auto; color: var(--cp-verde); font-size: 13px; font-weight: 800; text-decoration: none; white-space: nowrap; }
+.cp-profile-map-panel .cp-profile-map-link { margin-top: 9px; }
 .cp-profile-map-link:hover, .cp-profile-location > div > a:hover { color: var(--cp-dorado); }
 
 .cp-profile-promotion { display: grid; grid-template-columns: 104px minmax(0, 1fr); gap: 17px; padding: 17px; border: 1px solid transparent; border-radius: 14px; background: var(--cp-profile-soft); transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms cubic-bezier(.23, 1, .32, 1); }
@@ -2639,6 +2606,8 @@
     .cp-profile-gallery { grid-template-columns: 1fr; }
     .cp-profile-gallery figure, .cp-profile-gallery figure:first-child, .cp-profile-gallery figure:not(:first-child) { grid-column: auto; grid-row: auto; min-height: 220px; }
     .cp-profile-location { flex-direction: column; gap: 12px; }
+    .cp-profile-map-panel { width: 100%; flex-basis: auto; }
+    .cp-profile-map { aspect-ratio: 16 / 10; }
     .cp-profile-promotion { grid-template-columns: 1fr; }
     .cp-profile-promotion img { width: 100%; height: 180px; }
     .cp-profile-related-grid { grid-template-columns: 1fr; }

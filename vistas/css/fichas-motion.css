@@ -1,0 +1,93 @@
+/* La entrada pausada (500 ms) es deliberada para estas fichas y diálogos. */
+:root { --canaco-ficha-enter: 500ms; --canaco-ficha-exit: 250ms; --canaco-ficha-ease: var(--cp-ease-out, cubic-bezier(.23, 1, .32, 1)); }
+[data-canaco-panel="true"] { --canaco-panel-enter: 700ms; --canaco-panel-exit: 250ms; --canaco-panel-ease: cubic-bezier(.23, 1, .32, 1); }
+@view-transition { navigation: auto; }
+::view-transition-group(*) { animation-duration: 500ms; animation-timing-function: var(--canaco-ficha-ease); }
+::view-transition-group(root), ::view-transition-group(cp-public-nav) { animation: none; }
+::view-transition-old(root) { animation: canaco-ficha-out 250ms var(--canaco-ficha-ease) both; }
+::view-transition-new(root) { animation: canaco-ficha-in 500ms var(--canaco-ficha-ease) both; }
+::view-transition-group(cp-card-media) {
+    animation: canaco-shared-move var(--canaco-ficha-enter) var(--canaco-ficha-ease) both; transform-origin: 0 0;
+    width: var(--cp-shared-width); height: var(--cp-shared-height);
+    transform: translate(var(--cp-shared-x), var(--cp-shared-y));
+}
+::view-transition-old(cp-card-media) { animation: canaco-media-out 250ms var(--canaco-ficha-ease) both; }
+::view-transition-new(cp-card-media) { animation: canaco-media-in 500ms var(--canaco-ficha-ease) both; }
+::view-transition-old(cp-public-nav) { animation: none; opacity: 0; }
+::view-transition-new(cp-public-nav) { animation: none; }
+#cpNav { view-transition-name: cp-public-nav; }
+@keyframes canaco-ficha-in { from { opacity: 0; transform: translateY(24px) scale(.97); } to { opacity: 1; transform: none; } }
+@keyframes canaco-ficha-out { to { opacity: 0; transform: translateY(-12px) scale(.985); } }
+@keyframes canaco-media-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes canaco-media-out { to { opacity: 0; } }
+@keyframes canaco-shared-move {
+    from { transform: var(--cp-shared-from); }
+    to { transform: translate(var(--cp-shared-x), var(--cp-shared-y)) scale(1); }
+}
+
+/* Panel: el marco permanece fijo; título, indicadores y resultados entran por capas.
+   500 ms permite apreciar el cambio solicitado; nunca retrasa la navegación ni los controles. */
+[data-panel-motion="title"] { --panel-delay: 0ms; }
+[data-panel-motion="stat"] { --panel-delay: 70ms; }
+[data-panel-motion="stat"]:nth-child(2) { --panel-delay: 140ms; }
+[data-panel-motion="stat"]:nth-child(3) { --panel-delay: 210ms; }
+[data-panel-motion="stat"]:nth-child(4) { --panel-delay: 280ms; }
+[data-panel-motion="tools"] { --panel-delay: 210ms; }
+[data-panel-motion="results"] { --panel-delay: 280ms; }
+.canaco-panel-enter:not(.canaco-panel-native) [data-panel-motion] {
+    transform-origin: 50% 0;
+    animation: canaco-panel-in var(--canaco-panel-enter) var(--canaco-panel-ease) var(--panel-delay, 0ms) backwards;
+}
+@keyframes canaco-panel-in {
+    from { opacity: 0; transform: translateY(36px) scale(.95); }
+    to { opacity: 1; transform: none; }
+}
+@keyframes canaco-panel-out { to { opacity: 0; transform: translateY(12px) scale(.985); } }
+/* No se escala toda la página ni se interpolan las dimensiones entre módulos. */
+.canaco-panel-transition::view-transition { pointer-events: none; }
+.canaco-panel-transition::view-transition-old(root) { animation: none; opacity: 0; }
+.canaco-panel-transition::view-transition-new(root) { animation: none; }
+::view-transition-group(canaco-panel-title),
+::view-transition-group(canaco-panel-stat-0),
+::view-transition-group(canaco-panel-stat-1),
+::view-transition-group(canaco-panel-stat-2),
+::view-transition-group(canaco-panel-stat-3),
+::view-transition-group(canaco-panel-tools),
+::view-transition-group(canaco-panel-results) { animation: none; }
+::view-transition-new(canaco-panel-title),
+::view-transition-new(canaco-panel-stat-0),
+::view-transition-new(canaco-panel-stat-1),
+::view-transition-new(canaco-panel-stat-2),
+::view-transition-new(canaco-panel-stat-3),
+::view-transition-new(canaco-panel-tools),
+::view-transition-new(canaco-panel-results) { animation: canaco-panel-in var(--canaco-panel-enter) var(--canaco-panel-ease) both; }
+::view-transition-new(canaco-panel-stat-0) { animation-delay: 70ms; }
+::view-transition-new(canaco-panel-stat-1) { animation-delay: 140ms; }
+::view-transition-new(canaco-panel-stat-2), ::view-transition-new(canaco-panel-tools) { animation-delay: 210ms; }
+::view-transition-new(canaco-panel-stat-3), ::view-transition-new(canaco-panel-results) { animation-delay: 280ms; }
+::view-transition-old(canaco-panel-title),
+::view-transition-old(canaco-panel-stat-0),
+::view-transition-old(canaco-panel-stat-1),
+::view-transition-old(canaco-panel-stat-2),
+::view-transition-old(canaco-panel-stat-3),
+::view-transition-old(canaco-panel-tools),
+::view-transition-old(canaco-panel-results) { animation: canaco-panel-out var(--canaco-panel-exit) var(--canaco-panel-ease) both; }
+
+/* La entrada CSS también funciona con JavaScript desactivado o sin View Transitions. */
+.cp-profile-reveal { animation-duration: var(--canaco-ficha-enter); animation-timing-function: var(--cp-ease-out, var(--canaco-ficha-ease)); animation-delay: calc(min(var(--cp-reveal-index, 0), 4) * 50ms); }
+.cp-promotion-reveal { animation-duration: var(--canaco-ficha-enter); animation-timing-function: var(--cp-ease-out, var(--canaco-ficha-ease)); }
+.cp-native-entry .cp-profile-reveal, .cp-native-entry .cp-promotion-reveal,
+.cp-motion-quiet .cp-profile-reveal, .cp-motion-quiet .cp-promotion-reveal { animation: none; }
+
+.canaco-modal { transition: opacity var(--canaco-ficha-exit) var(--canaco-ficha-ease); }
+.canaco-modal .canaco-modal-dialog { transform: translateY(24px) scale(.96); transition: transform var(--canaco-ficha-exit) var(--canaco-ficha-ease); }
+.canaco-modal.is-open { transition-duration: var(--canaco-ficha-enter); }
+.canaco-modal.is-open .canaco-modal-dialog { transform: translateY(0) scale(1); transition-duration: var(--canaco-ficha-enter); }
+.canaco-modal.canaco-motion-quiet, .canaco-modal.canaco-motion-quiet .canaco-modal-dialog { transition: none; }
+@media (prefers-reduced-motion: reduce) {
+    .canaco-panel-enter [data-panel-motion] { animation: none !important; }
+    ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
+    .cp-profile-reveal, .cp-promotion-reveal { animation: none; }
+    .canaco-modal, .canaco-modal .canaco-modal-dialog { transition: none; }
+    .canaco-modal .canaco-modal-dialog { transform: none; }
+}

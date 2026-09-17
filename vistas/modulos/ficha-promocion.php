@@ -115,7 +115,7 @@ if ($whatsApp !== null) {
             </a>
 
             <div class="cp-promotion-hero__grid">
-                <figure class="cp-promotion-visual cp-promotion-reveal" style="--cp-promotion-delay: 0ms; view-transition-name: cp-promocion-<?= $idPromocion ?>">
+                <figure class="cp-promotion-visual cp-promotion-reveal" style="--cp-promotion-delay: 0ms">
                     <?php if ($imagenPrincipal !== null): ?>
                         <img src="<?= e($imagenPrincipal['url_publica']) ?>"
                              alt="<?= e($imagenPrincipal['texto_alternativo'] ?: 'Promoción ' . $titulo . ' de ' . $empresa) ?>"

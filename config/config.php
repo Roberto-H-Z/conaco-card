@@ -1,6 +1,29 @@
 <?php
 declare(strict_types=1);
 
+// Cargar configuración local sin depender de Composer. Las variables definidas
+// por Apache/servidor tienen prioridad; .env.local y .env no se versionan.
+foreach ([dirname(__DIR__) . '/.env.local', dirname(__DIR__) . '/.env'] as $archivoEntorno) {
+    if (!is_readable($archivoEntorno)) {
+        continue;
+    }
+    foreach (file($archivoEntorno, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) ?: [] as $linea) {
+        $linea = trim($linea);
+        if ($linea === '' || str_starts_with($linea, '#') || !str_contains($linea, '=')) {
+            continue;
+        }
+        [$nombre, $valor] = array_map('trim', explode('=', $linea, 2));
+        if (!preg_match('/^[A-Z_][A-Z0-9_]*$/', $nombre) || getenv($nombre) !== false) {
+            continue;
+        }
+        if (strlen($valor) >= 2 && (($valor[0] === '"' && $valor[-1] === '"') || ($valor[0] === "'" && $valor[-1] === "'"))) {
+            $valor = substr($valor, 1, -1);
+        }
+        putenv($nombre . '=' . $valor);
+        $_ENV[$nombre] = $valor;
+    }
+}
+
 /**
  * CANACO Card — Configuración general de la aplicación
  * 
