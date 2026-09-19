@@ -1,4 +1,4 @@
-<?php $usuarioMenu = obtenerUsuarioSesion(); $esAfiliadoMenu = ($usuarioMenu['rol'] ?? '') === 'AFILIADO'; ?>
+<?php $usuarioMenu = obtenerUsuarioSesion(); $esAfiliadoMenu = ($usuarioMenu['rol'] ?? '') === 'AFILIADO'; $esAdminGeneralMenu = ($usuarioMenu['rol'] ?? '') === 'ADMIN_GENERAL'; ?>
 <aside
     class="kt-sidebar bg-background border-e border-border fixed top-0 bottom-0 z-20 hidden lg:flex flex-col items-stretch shrink-0 [--kt-drawer-enable:true] lg:[--kt-drawer-enable:false]"
     data-kt-drawer="true" data-kt-drawer-class="kt-drawer kt-drawer-start flex top-0 bottom-0" id="sidebar">
@@ -31,6 +31,14 @@
                     <span class="kt-menu-title">Promociones</span>
                 </a>
             </div>
+            <?php if($esAdminGeneralMenu): ?>
+            <div class="kt-menu-item <?= $rutaActual === 'usuarios' ? 'active' : '' ?>">
+                <a class="kt-menu-link canaco-nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-accent/60 text-sm font-medium text-foreground" href="<?= base_url('usuarios') ?>">
+                    <span class="kt-menu-icon text-muted-foreground w-5"><i class="ki-filled ki-user-square text-lg"></i></span>
+                    <span class="kt-menu-title">Usuarios</span>
+                </a>
+            </div>
+            <?php endif; ?>
             <div class="kt-menu-item mt-6">
                 <form method="post" action="<?= base_url('logout') ?>">
                     <?= campoCSRF() ?>

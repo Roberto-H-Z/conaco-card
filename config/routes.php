@@ -109,6 +109,12 @@ return [
         'roles'       => [],
         'api'         => true,
     ],
+    'usuarios' => [
+        'controlador'=>'ControladorUsuarios','metodo'=>'index','vista'=>'usuarios','auth'=>true,'permiso'=>'usuarios.ver','roles'=>['ADMIN_GENERAL'],'titulo'=>'Usuarios','breadcrumbs'=>[],'js'=>['usuarios.js'],'layout'=>'admin',
+    ],
+    'usuarios/obtener' => ['controlador'=>'ControladorUsuarios','metodo'=>'obtener','auth'=>true,'permiso'=>'usuarios.ver','roles'=>['ADMIN_GENERAL'],'api'=>true],
+    'usuarios/guardar' => ['controlador'=>'ControladorUsuarios','metodo'=>'guardar','auth'=>true,'permiso'=>'usuarios.crear','roles'=>['ADMIN_GENERAL'],'api'=>true],
+    'usuarios/cambiar-estado' => ['controlador'=>'ControladorUsuarios','metodo'=>'cambiarEstado','auth'=>true,'permiso'=>'usuarios.activar','roles'=>['ADMIN_GENERAL'],'api'=>true],
     'promociones' => [
         'controlador' => 'ControladorPromociones',
         'metodo'      => 'index',
