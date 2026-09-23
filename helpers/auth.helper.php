@@ -38,8 +38,69 @@ function iniciarSesionUsuario(array $usuario): void
     $_SESSION['usuario_idCamara']  = $usuario['idCamara'] ?? null;
     $_SESSION['usuario_afiliados'] = array_values(array_map('intval', (array) ($usuario['afiliados'] ?? [])));
     $_SESSION['usuario_permisos']  = array_values(array_map('strval', (array) ($usuario['permisos'] ?? [])));
+    $_SESSION['usuario_firma']     = firmaAutorizacion($usuario);
     $_SESSION['login_timestamp']   = time();
+    $_SESSION['ultima_actividad_at'] = $_SESSION['login_timestamp'];
     generarTokenCSRF();
+}
+
+/** El vencimiento se calcula en el servidor, sin depender de la cookie ni del navegador. */
+function sesionDentroDeLimites(array $sesion, int $ahora): bool
+{
+    $inicio = $sesion['login_timestamp'] ?? null;
+    $ultimaActividad = $sesion['ultima_actividad_at'] ?? null;
+    return is_int($inicio) && is_int($ultimaActividad)
+        && $inicio > 0 && $inicio <= $ultimaActividad && $ultimaActividad <= $ahora
+        && ($ahora - $ultimaActividad) < SESSION_IDLE_TIMEOUT
+        && ($ahora - $inicio) < SESSION_ABSOLUTE_TIMEOUT;
+}
+
+/** Solo las interacciones del usuario renuevan el plazo de inactividad. */
+function registrarActividadSesion(): void
+{
+    if (!estaAutenticado()) return;
+    $_SESSION['ultima_actividad_at'] = time();
+    // El CSRF del formulario también debe mantenerse vigente mientras hay actividad.
+    if (!empty($_SESSION['csrf_token'])) $_SESSION['csrf_token_time'] = $_SESSION['ultima_actividad_at'];
+}
+
+/** Los datos de acceso guardados al iniciar sesión deben seguir iguales en la BD. */
+function firmaAutorizacion(array $usuario): string
+{
+    $permisos = array_values(array_map('strval', (array) ($usuario['permisos'] ?? [])));
+    $afiliados = array_values(array_map('intval', (array) ($usuario['afiliados'] ?? [])));
+    sort($permisos, SORT_STRING);
+    sort($afiliados, SORT_NUMERIC);
+    return hash('sha256', json_encode([
+        (int) $usuario['idUsuario'],
+        (string) $usuario['password_hash'],
+        (int) $usuario['activo'],
+        (int) $usuario['rol_activo'],
+        (int) $usuario['idRol'],
+        (string) $usuario['rol_clave'],
+        $usuario['idCamara'] === null ? null : (int) $usuario['idCamara'],
+        $afiliados,
+        $permisos,
+    ], JSON_THROW_ON_ERROR));
+}
+
+/** Revoca la sesión si la cuenta, sus credenciales o sus permisos cambiaron. */
+function validarSesionActual(): bool
+{
+    if (!estaAutenticado()) return false;
+    if (!sesionDentroDeLimites($_SESSION, time())) {
+        cerrarSesion();
+        return false;
+    }
+    $usuario = ModeloUsuarios::buscarParaSesion((int) $_SESSION['usuario_id']);
+    $firma = $_SESSION['usuario_firma'] ?? null;
+    $valida = $usuario !== null
+        && (int) $usuario['activo'] === 1
+        && (int) $usuario['rol_activo'] === 1
+        && is_string($firma)
+        && hash_equals($firma, firmaAutorizacion($usuario));
+    if (!$valida) cerrarSesion();
+    return $valida;
 }
 
 function cerrarSesion(): void

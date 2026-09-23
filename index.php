@@ -20,6 +20,8 @@ require_once HELPERS_PATH . 'funciones.php';
 require_once HELPERS_PATH . 'auth.helper.php';
 require_once HELPERS_PATH . 'validation.helper.php';
 
+$sesionTerminada = estaAutenticado() && !validarSesionActual();
+
 $rutas = require CONFIG_PATH . 'routes.php';
 
 // Obtener ruta solicitada; la raíz ('') cargará la portada pública
@@ -65,8 +67,12 @@ if (($rutaConfig['auth'] ?? false) && !estaAutenticado()) {
         echo json_encode(['status' => 'error', 'message' => 'Tu sesión expiró. Inicia sesión nuevamente.'], JSON_UNESCAPED_UNICODE);
         exit;
     }
-    $_SESSION['login_error'] = 'Inicia sesión para acceder al panel administrativo.';
-    header('Location: ' . base_url('login'));
+    if ($sesionTerminada) {
+        header('Location: ' . base_url('login?sesion=terminada'));
+    } else {
+        $_SESSION['login_error'] = 'Inicia sesión para acceder al panel administrativo.';
+        header('Location: ' . base_url('login'));
+    }
     exit;
 }
 
@@ -79,6 +85,15 @@ if (!empty($rutaConfig['permiso']) && !tienePermiso((string) $rutaConfig['permis
     }
     http_response_code(403);
     exit('No tienes permiso para acceder a esta sección.');
+}
+
+// Fetch Metadata distingue una navegación del usuario de una recarga automática
+// cuando el navegador la envía. Las interacciones en la página usan sesion/actividad.
+$navegacionUsuario = !isset($_SERVER['HTTP_SEC_FETCH_MODE'])
+    || (($_SERVER['HTTP_SEC_FETCH_MODE'] === 'navigate') && (($_SERVER['HTTP_SEC_FETCH_USER'] ?? '') === '?1'));
+if (estaAutenticado() && !empty($rutaConfig['auth']) && empty($rutaConfig['api'])
+    && ($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'GET' && $navegacionUsuario) {
+    registrarActividadSesion();
 }
 
 $nombreControlador = $rutaConfig['controlador'];

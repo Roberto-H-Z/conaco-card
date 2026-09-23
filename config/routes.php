@@ -38,7 +38,7 @@ return [
         'roles'       => [],
         'titulo'      => 'Ficha de afiliado',
         'layout'      => 'publico',
-        'js_publico'  => ['ficha-afiliado.js'],
+        'js_publico'  => ['estadisticas-publicas.js', 'ficha-afiliado.js'],
     ],
     'promocion/{id}' => [
         'patron'      => '#^promocion/(?P<id>[1-9][0-9]*)$#',
@@ -49,10 +49,21 @@ return [
         'roles'       => [],
         'titulo'      => 'Ficha de promoción',
         'layout'      => 'publico',
-        'js_publico'  => ['ficha-promocion.js'],
+        'js_publico'  => ['estadisticas-publicas.js', 'ficha-promocion.js'],
     ],
 
     /* ── PANEL ADMINISTRATIVO ────────────────────────────────────────── */
+    'inicio' => [
+        'controlador'=>'ControladorInicio', 'metodo'=>'index', 'vista'=>'inicio',
+        'auth'=>true, 'permiso'=>'estadisticas.ver', 'roles'=>['AFILIADO'],
+        'titulo'=>'Inicio', 'breadcrumbs'=>[], 'layout'=>'admin',
+    ],
+
+    'estadisticas/evento' => [
+        'controlador'=>'ControladorEventoPublico', 'metodo'=>'registrar',
+        'auth'=>false, 'roles'=>[], 'api'=>true,
+    ],
+
     'buscar' => [
         'controlador'=>'ControladorBuscador', 'metodo'=>'index', 'vista'=>'buscar',
         'auth'=>false, 'roles'=>[], 'titulo'=>'Buscar empresas', 'layout'=>'publico',
@@ -145,6 +156,12 @@ return [
         'metodo'      => 'autenticar',
         'auth'        => false,
         'roles'       => [],
+    ],
+    'sesion/actividad' => [
+        'controlador' => 'ControladorLogin',
+        'metodo'      => 'actividad',
+        'auth'        => true,
+        'api'         => true,
     ],
     'logout' => [
         'controlador' => 'ControladorLogin',

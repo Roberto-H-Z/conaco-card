@@ -35,6 +35,8 @@ foreach ([dirname(__DIR__) . '/.env.local', dirname(__DIR__) . '/.env'] as $arch
 define('APP_NAME', 'CANACO Card');
 define('APP_ENV', 'development'); // development | production
 define('APP_VERSION', '1.0.0');
+define('SESSION_IDLE_TIMEOUT', 15 * 60); // 15 minutos sin actividad
+define('SESSION_ABSOLUTE_TIMEOUT', 8 * 60 * 60); // 8 horas desde el login
 
 // ── URL base ─────────────────────────────────────────────────
 // Ajustar al dominio real en producción
