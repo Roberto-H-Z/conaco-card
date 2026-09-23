@@ -32,6 +32,9 @@
 
     <!-- CANACO Custom Styles -->
     <link href="<?= canaco_css('canaco.css') ?>?v=<?= filemtime(VIEWS_PATH . 'css/canaco.css') ?>" rel="stylesheet" />
+    <?php if (($vista ?? '') === 'inicio'): ?>
+    <link href="<?= canaco_css('inicio.css') ?>?v=<?= filemtime(VIEWS_PATH . 'css/inicio.css') ?>" rel="stylesheet" />
+    <?php endif; ?>
     <link href="<?= canaco_css('fichas-motion.css') ?>?v=<?= filemtime(VIEWS_PATH . 'css/fichas-motion.css') ?>" rel="stylesheet" />
     <script src="<?= canaco_js('fichas-motion.js') ?>?v=<?= filemtime(VIEWS_PATH . 'js/fichas-motion.js') ?>"></script>
 </head>

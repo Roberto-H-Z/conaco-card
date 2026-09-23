@@ -1,0 +1,149 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-23T00:00:00Z",
+  "title": "Design System: CANACO Card — Inicio",
+  "extensions": {
+    "shadows": [],
+    "motion": [
+      {
+        "name": "ease-inicio",
+        "value": "cubic-bezier(.23, 1, .32, 1)",
+        "purpose": "Entrada y cambios de estado."
+      },
+      {
+        "name": "entrance",
+        "value": "opacity 0 → 1; translateY(36px) → 0; scale(.95) → 1; 700ms; stagger 70ms",
+        "purpose": "Entrada compartida con Afiliados y Promociones mediante data-panel-motion."
+      },
+      {
+        "name": "controls",
+        "value": "160ms",
+        "purpose": "Opacidad y presión de controles."
+      },
+      {
+        "name": "series",
+        "value": "180ms",
+        "purpose": "Opacidad de líneas; 0ms al activar por teclado."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "animation: none; transition: none; transform: none; initial opacity: 1",
+        "purpose": "Respeta prefers-reduced-motion: reduce."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "compact-desktop",
+        "value": "max-width: 1200px"
+      },
+      {
+        "name": "sidebar-narrow",
+        "value": "min-width: 1024px and max-width: 1050px"
+      },
+      {
+        "name": "mobile-shell",
+        "value": "max-width: 1023px"
+      },
+      {
+        "name": "stacked-panels",
+        "value": "max-width: 760px"
+      },
+      {
+        "name": "mobile",
+        "value": "max-width: 600px"
+      }
+    ],
+    "focus": [
+      {
+        "name": "visible",
+        "value": "3px solid var(--inicio-blue); outline-offset: 4px"
+      }
+    ],
+    "sourceFiles": [
+      "vistas/css/inicio.css",
+      "vistas/modulos/inicio.php",
+      "vistas/js/inicio.js",
+      "vistas/plantilla.php"
+    ],
+    "scope": "Inicio solamente. Los snippets reproducen controles en claro; la fuente normativa de ambos temas es el frontmatter. Los tokens CSS de Inicio están en un contenedor de ruta, por lo que estos previews usan valores literales para ser autocontenidos.",
+    "validation": "Pruebas visuales e interactivas con fixtures sintéticos. Ver .impeccable/review/inicio-verdict.md y capturas inicio-*.png. Corrupción de tablas locales fuera de alcance; tablas originales sin modificaciones.",
+    "generatedAtPrecision": "Fecha de documentación; hora normalizada a medianoche."
+  },
+  "components": [
+    {
+      "name": "Acción principal",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Acceso a ficha pública; preview de apariencia.",
+      "html": "<button class=\"ds-control ds-primary\">Ver ficha pública</button>",
+      "css": ".ds-primary{font:600 .8125rem Inter,sans-serif;display:inline-flex;align-items:center;justify-content:center;min-height:2.75rem;padding:.65rem 1rem;border:1px solid transparent;border-radius:.5rem;background:#235ad1;color:#fff;cursor:pointer;transition:opacity 160ms cubic-bezier(.23,1,.32,1),transform 160ms cubic-bezier(.23,1,.32,1)}@media(hover:hover) and (pointer:fine){.ds-primary:hover{opacity:.88}}.ds-primary:active{transform:scale(.97)}.ds-control:focus-visible{outline:3px solid #235ad1;outline-offset:4px}@media(prefers-reduced-motion:reduce){.ds-primary{transition:none}.ds-primary:active{transform:none}}"
+    },
+    {
+      "name": "Acción discreta",
+      "kind": "button",
+      "refersTo": "button-quiet",
+      "description": "Confirmación del selector de empresa.",
+      "html": "<button class=\"ds-control ds-quiet\">Ver</button>",
+      "css": ".ds-quiet{font:600 .8125rem Inter,sans-serif;min-height:2.75rem;padding:.65rem 1rem;border:1px solid #dbe3ec;border-radius:.5rem;background:#fff;color:#172a42;cursor:pointer;transition:opacity 160ms cubic-bezier(.23,1,.32,1),transform 160ms cubic-bezier(.23,1,.32,1)}@media(hover:hover) and (pointer:fine){.ds-quiet:hover{opacity:.88}}.ds-quiet:active{transform:scale(.97)}.ds-control:focus-visible{outline:3px solid #235ad1;outline-offset:4px}@media(prefers-reduced-motion:reduce){.ds-quiet{transition:none}.ds-quiet:active{transform:none}}"
+    },
+    {
+      "name": "Selector de empresa",
+      "kind": "input",
+      "description": "Select nativo con etiqueta accesible.",
+      "html": "<label class=\"ds-select-label\" for=\"ds-company\">Empresa</label><select class=\"ds-control ds-select\" id=\"ds-company\"><option>Empresa de ejemplo</option></select>",
+      "css": ".ds-select-label{display:block;font:400 .75rem Inter,sans-serif;color:#59697d;margin-bottom:.5rem}.ds-select{font:400 .875rem Inter,sans-serif;min-height:2.75rem;max-width:14rem;padding:.5rem .75rem;border:1px solid #dbe3ec;border-radius:.5rem;background:#fff;color:#172a42;cursor:pointer}.ds-control:focus-visible{outline:3px solid #235ad1;outline-offset:4px}"
+    },
+    {
+      "name": "Panel de informe",
+      "kind": "card",
+      "refersTo": "panel",
+      "description": "Superficie plana para tendencias y listas.",
+      "html": "<section class=\"ds-panel\"><h2>Actividad de tu negocio</h2><p>Del descubrimiento al contacto, día a día.</p></section>",
+      "css": ".ds-panel{border:1px solid #dbe3ec;border-radius:1rem;background:#fff;padding:1.5rem;color:#172a42;font-family:Inter,sans-serif}.ds-panel h2{margin:0;font-size:1rem;font-weight:650;line-height:1.35;letter-spacing:-.015em}.ds-panel p{margin:.35rem 0 0;color:#59697d;font-size:.8125rem;line-height:1.5}"
+    },
+    {
+      "name": "Control de serie",
+      "kind": "custom",
+      "description": "Estado visible/oculto expresado por aria-pressed; preview estático del estado visible.",
+      "html": "<button class=\"ds-control ds-series\" aria-pressed=\"true\"><span class=\"ds-key\" aria-hidden=\"true\"></span>Apariciones</button>",
+      "css": ".ds-series{display:inline-flex;align-items:center;gap:.45rem;background:transparent;color:#172a42;min-height:2.75rem;padding:.5rem;border:0;border-radius:.35rem;font:400 .75rem Inter,sans-serif;cursor:pointer;transition:opacity 160ms cubic-bezier(.23,1,.32,1)}.ds-key{width:1rem;border-top:3px solid #235ad1}.ds-series[aria-pressed=\"false\"]{color:#59697d;text-decoration:line-through}.ds-series[aria-pressed=\"false\"] .ds-key{opacity:.35}@media(hover:hover) and (pointer:fine){.ds-series:hover{background:#edf2f8}}.ds-control:focus-visible{outline:3px solid #235ad1;outline-offset:4px}@media(prefers-reduced-motion:reduce){.ds-series{transition:none}}"
+    },
+    {
+      "name": "Inspector diario",
+      "kind": "input",
+      "refersTo": "inspector",
+      "description": "Range nativo para la fecha; preview sin datos de negocio.",
+      "html": "<div class=\"ds-inspector\"><label for=\"ds-day\">Explorar un día</label><input class=\"ds-control\" id=\"ds-day\" type=\"range\" min=\"0\" max=\"29\" value=\"29\" aria-label=\"Día del periodo\"></div>",
+      "css": ".ds-inspector{padding:.8rem 1rem;background:#edf2f8;border-radius:.5rem;font:400 .75rem Inter,sans-serif;color:#59697d}.ds-inspector input{display:block;width:100%;height:2rem;margin:.25rem 0;accent-color:#235ad1;cursor:ew-resize}.ds-control:focus-visible{outline:3px solid #235ad1;outline-offset:4px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "Informe visual de actividad comercial",
+    "overview": "Inicio presenta la actividad de la empresa como un informe legible: la tendencia diaria ocupa el espacio principal, seguida por la comparación de canales y el mantenimiento de la información comercial. Superficies de tinta y papel, Inter y cifras tabulares sostienen la lectura sin depender de ilustraciones.\n\nEste documento describe únicamente el diseño implementado de Inicio. El documento raíz conserva su autoridad para las otras superficies. La dirección procede del contrato emitido en `vistas/plantilla.php` y de `vistas/css/inicio.css`, `vistas/modulos/inicio.php` y `vistas/js/inicio.js`; no establece una sustitución global de identidad.",
+    "keyCharacteristics": [
+      "Tendencia diaria y comparación de canales como contenido principal.",
+      "Azul para apariciones, turquesa para visitas y ámbar para contactos.",
+      "Superficies planas en temas claro y oscuro.",
+      "Tabla diaria disponible sin JavaScript y exploración progresiva con teclado."
+    ],
+    "rules": [
+      {
+        "name": "The Series Identity Rule",
+        "body": "Las series conservan color, etiqueta y trazo: apariciones continuo, visitas discontinuo, contactos punteado.",
+        "section": "colors"
+      }
+    ],
+    "dos": [
+      "Do conservar etiquetas, cifras y tabla como alternativas al color y a la gráfica.",
+      "Do aplicar los tokens de Inicio dentro de su ámbito de ruta y conservar ambos temas.",
+      "Do comparar canales y búsquedas contra el máximo de su propio grupo.",
+      "Do respetar teclado, foco visible y movimiento reducido."
+    ],
+    "donts": [
+      "Don't presentar fixtures sintéticos como actividad real del negocio.",
+      "Don't interpretar contactos como conversaciones o ventas confirmadas.",
+      "Don't sustituir el documento de diseño raíz con las decisiones locales de Inicio.",
+      "Don't introducir animación continua en la lectura de actividad."
+    ]
+  }
+}

@@ -56,7 +56,7 @@ return [
     'inicio' => [
         'controlador'=>'ControladorInicio', 'metodo'=>'index', 'vista'=>'inicio',
         'auth'=>true, 'permiso'=>'estadisticas.ver', 'roles'=>['AFILIADO'],
-        'titulo'=>'Inicio', 'breadcrumbs'=>[], 'layout'=>'admin',
+        'titulo'=>'Inicio', 'breadcrumbs'=>[], 'layout'=>'admin', 'js'=>['inicio.js'],
     ],
 
     'estadisticas/evento' => [

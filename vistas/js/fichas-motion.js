@@ -10,7 +10,7 @@
     const detail = url => /\/(empresa\/[^/]+|promocion\/[1-9][0-9]*)\/?$/.test(new URL(url, location.href).pathname);
     const quiet = () => reduced.matches || keyboard;
     const native = 'onpageswap' in window && 'onpagereveal' in window;
-    const panelSection = url => /\/(afiliados|promociones)\/?$/.exec(new URL(url, location.href).pathname)?.[1];
+    const panelSection = url => /\/(inicio|afiliados|promociones)\/?$/.exec(new URL(url, location.href).pathname)?.[1];
     const isPanel = root.dataset.canacoPanel === 'true';
     let incomingPanel;
     try { incomingPanel = JSON.parse(sessionStorage.getItem(key)); } catch (_) {}

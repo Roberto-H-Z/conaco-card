@@ -19,7 +19,15 @@
 
 <?php require VIEWS_PATH . 'layouts/head.php'; ?>
 
-<body class="antialiased flex h-full text-base text-foreground bg-background demo1 kt-sidebar-fixed kt-header-fixed" data-base-url="<?= e(base_url()) ?>">
+<body class="antialiased flex h-full text-base text-foreground bg-background demo1 kt-sidebar-fixed kt-header-fixed<?= $vista === 'inicio' ? ' canaco-home-page' : '' ?>" data-base-url="<?= e(base_url()) ?>">
+ <?php if ($vista === 'inicio'): ?>
+ <!-- THESIS: La actividad del negocio se entiende como un informe visual mensual.
+ OWN-WORLD: Superficies tinta y papel, azul para alcance, turquesa para visitas, ámbar para contacto; Inter y cifras tabulares.
+ STORY: Leer la tendencia, comparar canales y mantener vigente la información comercial.
+ FIRST VIEWPORT: Encabezado y periodo; lienzo de tendencia de dos tercios junto a barras de contacto; acciones junto al nombre comercial.
+ FORM: Informe de actividad comercial, dirección 4; seed 31ec0c8a. Interacción: inspección diaria por teclado y series conmutables.
+ FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance -->
+ <?php endif; ?>
  <!-- Page -->
  <!-- Main -->
  <div class="flex grow">
@@ -36,7 +44,7 @@
     <!-- Container -->
     <div class="container-fixed" id="content_container">
 
-     <?php require VIEWS_PATH . 'layouts/toolbar.php'; ?>
+     <?php if ($vista !== 'inicio') require VIEWS_PATH . 'layouts/toolbar.php'; ?>
 
      <!-- Vista del módulo -->
      <?php
