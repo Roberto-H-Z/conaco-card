@@ -7,7 +7,7 @@ final class ControladorLogin
     public function index(): array
     {
         if (estaAutenticado()) {
-            header('Location: ' . base_url('afiliados'));
+            header('Location: ' . base_url(tieneRol('AFILIADO') ? 'inicio' : 'afiliados'));
             exit;
         }
         return [];
@@ -53,9 +53,12 @@ final class ControladorLogin
         $nuevoHash = password_needs_rehash((string) $usuario['password_hash'], PASSWORD_DEFAULT)
             ? password_hash($password, PASSWORD_DEFAULT)
             : null;
-        ModeloUsuarios::registrarIngreso((int) $usuario['idUsuario'], $nuevoHash);
+        if (!ModeloUsuarios::registrarIngreso((int) $usuario['idUsuario'], (string) $usuario['password_hash'], $nuevoHash)) {
+            $this->fallo();
+        }
+        if ($nuevoHash !== null) $usuario['password_hash'] = $nuevoHash;
         iniciarSesionUsuario($usuario);
-        header('Location: ' . base_url('afiliados'));
+        header('Location: ' . base_url($usuario['rol_clave'] === 'AFILIADO' ? 'inicio' : 'afiliados'));
         exit;
     }
 
@@ -68,6 +71,24 @@ final class ControladorLogin
         cerrarSesion();
         header('Location: ' . base_url('portada'));
         exit;
+    }
+
+    public function actividad(): void
+    {
+        if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
+            http_response_code(405);
+            header('Allow: POST');
+            exit;
+        }
+        if (!validarTokenCSRF((string) ($_SERVER['HTTP_X_CSRF_TOKEN'] ?? ''))) {
+            http_response_code(419);
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['status' => 'error', 'message' => 'La sesión del formulario expiró. Recarga la página.'], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+        registrarActividadSesion();
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode(['status' => 'success']);
     }
 
     private function fallo(string $mensaje = 'No fue posible iniciar sesión con esas credenciales.'): never

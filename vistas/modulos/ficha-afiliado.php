@@ -112,7 +112,7 @@ foreach ($sucursales as $sucursal) {
 }
 ?>
 
-<div class="cp-profile-page" data-profile-page>
+<div class="cp-profile-page" data-profile-page data-estadisticas-afiliado="<?= (int)$afiliado['idAfiliado'] ?>" data-estadisticas-token="<?= e(obtenerTokenCSRF()) ?>">
     <section class="cp-profile-hero" aria-labelledby="cpFichaTitulo">
         <div class="cp-profile-container">
             <a class="cp-profile-back" href="<?= e($datosVista['retorno_directorio'] ?? base_url('portada#empresas')) ?>" data-profile-back>

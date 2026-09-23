@@ -73,7 +73,7 @@
        <p>Ingrese sus datos para continuar a CANACO Card.</p>
       </div>
 
-      <?php $errorLogin = (string) ($_SESSION['login_error'] ?? ''); unset($_SESSION['login_error']); ?>
+      <?php $errorLogin = (string) ($_SESSION['login_error'] ?? ''); unset($_SESSION['login_error']); if (($_GET['sesion'] ?? '') === 'terminada') $errorLogin = 'Tu sesión terminó. Inicia sesión nuevamente.'; ?>
       <form class="canaco-auth-form" action="<?= base_url('login/autenticar') ?>" method="POST" novalidate>
        <?= campoCSRF() ?>
        <?php if ($errorLogin !== ''): ?><p class="canaco-auth-error" role="alert"><?= e($errorLogin) ?></p><?php endif; ?>

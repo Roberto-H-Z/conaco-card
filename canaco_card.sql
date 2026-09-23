@@ -722,6 +722,7 @@ CREATE TABLE IF NOT EXISTS interacciones_afiliados (
             'CLIC_SITIO_WEB',
             'CLIC_FACEBOOK',
             'CLIC_INSTAGRAM',
+            'CLIC_RED_SOCIAL',
             'VISITA_PROMOCION',
             'CLIC_MAPA'
         )

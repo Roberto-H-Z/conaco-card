@@ -266,3 +266,22 @@ form[role="search"] > button[type="submit"] { order: 2; }
 @media (min-width: 1024px) and (max-width: 1279px) {
  .canaco-table th, .canaco-table td { padding-left: .75rem; padding-right: .75rem; }
 }
+/* Inicio del afiliado: los datos heredan las tarjetas y colores del panel. */
+.canaco-inicio-intro,.canaco-inicio-periodo,.canaco-inicio-company{display:flex;align-items:center;justify-content:space-between;gap:1.25rem;flex-wrap:wrap}
+.canaco-inicio-selector{display:flex;align-items:center;gap:.65rem;flex-wrap:wrap}
+.canaco-inicio-selector .kt-select{min-width:14rem;max-width:22rem}
+.canaco-inicio-leyenda{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1rem}
+.canaco-inicio-leyenda span{display:inline-flex;align-items:center;gap:.4rem}
+.canaco-inicio-dot{display:inline-block;width:.55rem;height:.55rem;border-radius:50%}
+.canaco-inicio-dot.is-search,.canaco-inicio-chart-day .is-search{background:#26318c}
+.canaco-inicio-dot.is-visit,.canaco-inicio-chart-day .is-visit{background:#1778bd}
+.canaco-inicio-dot.is-contact,.canaco-inicio-chart-day .is-contact{background:#92c83e}
+.canaco-inicio-chart{height:11rem;display:grid;grid-template-columns:repeat(30,minmax(0,1fr));gap:.2rem;align-items:end;border-bottom:1px solid var(--border)}
+.canaco-inicio-chart-day{height:100%;display:flex;align-items:end;gap:1px;min-width:0}
+.canaco-inicio-chart-day span{display:block;width:33.33%;min-width:1px;border-radius:2px 2px 0 0}
+.canaco-inicio-chart-axis{display:flex;justify-content:space-between;margin-top:.5rem}
+.canaco-inicio-list div,.canaco-inicio-ranked li{display:flex;justify-content:space-between;gap:1rem;padding:.65rem 0;border-bottom:1px solid var(--border)}
+.canaco-inicio-list div:last-child,.canaco-inicio-ranked li:last-child{border-bottom:0}
+.canaco-inicio-list dd,.canaco-inicio-ranked strong{font-variant-numeric:tabular-nums;color:var(--foreground);white-space:nowrap}
+.canaco-inicio-ranked{list-style:none;margin:0;padding:0}
+@media(max-width:640px){.canaco-inicio-selector,.canaco-inicio-selector .kt-select{width:100%;max-width:none}.canaco-inicio-chart{gap:1px;height:8rem}.canaco-inicio-chart-day{gap:0}}

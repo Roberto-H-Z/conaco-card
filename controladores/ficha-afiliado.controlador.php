@@ -22,7 +22,16 @@ class ControladorFichaAfiliado
             return $this->noEncontrada();
         }
 
-        ControladorBuscador::registrarFicha((int)$afiliado['idAfiliado']);
+        $idAfiliado = (int)$afiliado['idAfiliado'];
+        if (!estaAutenticado() && !ControladorBuscador::registrarFicha($idAfiliado)) {
+            $ultima = (int)($_SESSION['visitas_ficha_directas'][$idAfiliado] ?? 0);
+            if ($ultima < time() - 1800) {
+                try {
+                    (new ModeloEstadisticas())->registrarVisita($idAfiliado);
+                    $_SESSION['visitas_ficha_directas'][$idAfiliado] = time();
+                } catch (Throwable $e) { registrarLog('Visita a ficha: '.$e->getMessage(),'ERROR'); }
+            }
+        }
         $descripcion = trim((string) ($afiliado['descripcion'] ?? ''));
         $metaDescripcion = $descripcion !== ''
             ? mb_substr($descripcion, 0, 155)

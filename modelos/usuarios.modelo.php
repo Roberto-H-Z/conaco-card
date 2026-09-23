@@ -18,6 +18,26 @@ final class ModeloUsuarios
         $usuario = $stmt->fetch();
         if (!$usuario) return null;
 
+        return self::completarAutorizacion($usuario);
+    }
+
+    /** Consulta la autorización vigente para invalidar sesiones con datos anteriores. */
+    public static function buscarParaSesion(int $idUsuario): ?array
+    {
+        $stmt = Conexion::conectar()->prepare(
+            'SELECT u.idUsuario, u.idRol, u.password_hash, u.activo, r.clave AS rol_clave, r.activo AS rol_activo
+             FROM usuarios u
+             INNER JOIN roles r ON r.idRol = u.idRol
+             WHERE u.idUsuario = :id
+             LIMIT 1'
+        );
+        $stmt->execute(['id' => $idUsuario]);
+        $usuario = $stmt->fetch();
+        return $usuario ? self::completarAutorizacion($usuario) : null;
+    }
+
+    private static function completarAutorizacion(array $usuario): array
+    {
         $usuario['permisos'] = self::permisos((int) $usuario['idRol']);
         $usuario['idCamara'] = self::camaraAsignada((int) $usuario['idUsuario']);
         $usuario['afiliados'] = self::afiliadosAsignados((int) $usuario['idUsuario']);
@@ -38,7 +58,7 @@ final class ModeloUsuarios
         $stmt->execute(['id' => $idUsuario]);
     }
 
-    public static function registrarIngreso(int $idUsuario, ?string $nuevoHash = null): void
+    public static function registrarIngreso(int $idUsuario, string $hashAnterior, ?string $nuevoHash = null): bool
     {
         $sql = 'UPDATE usuarios
                 SET ultimo_acceso_at = UTC_TIMESTAMP(6), intentos_fallidos = 0, bloqueado_hasta = NULL';
@@ -47,8 +67,11 @@ final class ModeloUsuarios
             $sql .= ', password_hash = :hash, password_actualizado_at = UTC_TIMESTAMP(6)';
             $params['hash'] = $nuevoHash;
         }
-        $sql .= ' WHERE idUsuario = :id';
-        Conexion::conectar()->prepare($sql)->execute($params);
+        $sql .= ' WHERE idUsuario = :id AND BINARY password_hash = BINARY :hash_anterior AND activo = 1';
+        $params['hash_anterior'] = $hashAnterior;
+        $stmt = Conexion::conectar()->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->rowCount() === 1;
     }
 
     public static function afiliadoPerteneceACamara(int $idAfiliado, int $idCamara): bool

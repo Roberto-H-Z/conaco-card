@@ -60,20 +60,22 @@ class ControladorBuscador
         return $datos;
     }
 
-    public static function registrarFicha(int $idAfiliado): void
+    public static function registrarFicha(int $idAfiliado): bool
     {
         $token = $_GET['busqueda'] ?? '';
-        if (!is_string($token) || !preg_match('/^[a-f0-9]{32}$/', $token)) return;
+        if (!is_string($token) || !preg_match('/^[a-f0-9]{32}$/', $token)) return false;
         foreach (($_SESSION['buscador_registros'] ?? []) as $registro) {
             if (!hash_equals($registro['token'], $token) || $registro['hasta'] < time()) continue;
             $clave = $registro['id'].':'.$idAfiliado;
-            if (isset($_SESSION['buscador_visitas'][$clave])) return;
+            if (isset($_SESSION['buscador_visitas'][$clave])) return true;
             try {
-                (new ModeloBuscador())->registrarConsulta($registro['id'], $idAfiliado);
-                $_SESSION['buscador_visitas'][$clave] = time();
-                $_SESSION['buscador_visitas'] = array_slice($_SESSION['buscador_visitas'], -100, null, true);
+                if ((new ModeloBuscador())->registrarConsulta($registro['id'], $idAfiliado)) {
+                    $_SESSION['buscador_visitas'][$clave] = time();
+                    $_SESSION['buscador_visitas'] = array_slice($_SESSION['buscador_visitas'], -100, null, true);
+                }
             } catch (PDOException $e) { registrarLog('Consulta desde buscador: '.$e->getMessage(), 'ERROR'); }
-            return;
+            return isset($_SESSION['buscador_visitas'][$clave]);
         }
+        return false;
     }
 }

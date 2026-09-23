@@ -67,6 +67,7 @@ final class ModeloAfiliados
     public static function localidadActivaExiste(int $id): bool { return self::existe('SELECT 1 FROM localidades WHERE idLocalidad=:id AND activo=1', $id); }
     public static function categoriasValidas(array $ids): bool { if (!$ids) return false; $in = implode(',', array_fill(0,count($ids),'?')); $s=Conexion::conectar()->prepare("SELECT COUNT(*) FROM categorias WHERE activo=1 AND idCategoria IN ($in)"); $s->execute($ids); return (int)$s->fetchColumn()===count($ids); }
     public static function rfcExiste(string $rfc, ?int $excepto=null): bool { $sql='SELECT 1 FROM afiliados WHERE rfc=:rfc'.($excepto!==null?' AND idAfiliado<>:id':'').' LIMIT 1';$s=Conexion::conectar()->prepare($sql);$parametros=['rfc'=>$rfc];if($excepto!==null)$parametros['id']=$excepto;$s->execute($parametros);return(bool)$s->fetchColumn(); }
+    public static function camaraDeAfiliado(int $idAfiliado): ?int { $s=Conexion::conectar()->prepare('SELECT idCamara FROM afiliados WHERE idAfiliado=:id LIMIT 1');$s->execute(['id'=>$idAfiliado]);$id=$s->fetchColumn();return $id===false?null:(int)$id; }
     public static function slugExiste(string $slug, ?int $excepto=null): bool { $sql='SELECT 1 FROM afiliados WHERE slug=:slug'.($excepto?' AND idAfiliado<>:id':'');$s=Conexion::conectar()->prepare($sql);$s->execute($excepto?['slug'=>$slug,'id'=>$excepto]:['slug'=>$slug]);return(bool)$s->fetchColumn(); }
 
     public static function obtenerAcceso(int $idAfiliado): ?array
@@ -85,15 +86,17 @@ final class ModeloAfiliados
         return $stmt->fetch() ?: null;
     }
 
-    public static function guardarCompleto(PDO $pdo, array $d): int
+    public static function guardarCompleto(PDO $pdo, array $d, bool $permitirCambioCamara = false): int
     {
         if($d['razon_social']==='') $d['razon_social']=null;
         if ($d['idAfiliado'] === null) {
             $s=$pdo->prepare('INSERT INTO afiliados(idCamara,rfc,razon_social,nombre_comercial,slug,descripcion,correo_general,idUsuarioCreador,idUsuarioActualizador) VALUES(:idCamara,:rfc,:razon_social,:nombre_comercial,:slug,:descripcion,:correo_general,:idUsuarioCreador,:idUsuarioActualizador)');
             $parametros=['idCamara'=>$d['idCamara'],'rfc'=>$d['rfc'],'razon_social'=>$d['razon_social'],'nombre_comercial'=>$d['nombre_comercial'],'slug'=>$d['slug'],'descripcion'=>$d['descripcion'],'correo_general'=>$d['correo_general'],'idUsuarioCreador'=>$d['idUsuario'],'idUsuarioActualizador'=>$d['idUsuario']];
         } else {
-            $s=$pdo->prepare('UPDATE afiliados SET idCamara=:idCamara,rfc=:rfc,razon_social=:razon_social,nombre_comercial=:nombre_comercial,slug=:slug,descripcion=:descripcion,correo_general=:correo_general,idUsuarioActualizador=:idUsuarioActualizador WHERE idAfiliado=:idAfiliado');
-            $parametros=['idCamara'=>$d['idCamara'],'rfc'=>$d['rfc'],'razon_social'=>$d['razon_social'],'nombre_comercial'=>$d['nombre_comercial'],'slug'=>$d['slug'],'descripcion'=>$d['descripcion'],'correo_general'=>$d['correo_general'],'idUsuarioActualizador'=>$d['idUsuario'],'idAfiliado'=>$d['idAfiliado']];
+            $camaraSql=$permitirCambioCamara?'idCamara=:idCamara,':'';
+            $s=$pdo->prepare('UPDATE afiliados SET '.$camaraSql.'rfc=:rfc,razon_social=:razon_social,nombre_comercial=:nombre_comercial,slug=:slug,descripcion=:descripcion,correo_general=:correo_general,idUsuarioActualizador=:idUsuarioActualizador WHERE idAfiliado=:idAfiliado');
+            $parametros=['rfc'=>$d['rfc'],'razon_social'=>$d['razon_social'],'nombre_comercial'=>$d['nombre_comercial'],'slug'=>$d['slug'],'descripcion'=>$d['descripcion'],'correo_general'=>$d['correo_general'],'idUsuarioActualizador'=>$d['idUsuario'],'idAfiliado'=>$d['idAfiliado']];
+            if($permitirCambioCamara)$parametros['idCamara']=$d['idCamara'];
         }
         foreach($parametros as $campo=>$valor)$s->bindValue(':'.$campo,$valor,in_array($campo,['idCamara','idUsuarioCreador','idUsuarioActualizador','idAfiliado'],true)?PDO::PARAM_INT:($valor===null?PDO::PARAM_NULL:PDO::PARAM_STR));
         $s->execute();

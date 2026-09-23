@@ -64,6 +64,7 @@ final class ControladorPromociones
         } catch (PDOException $error) {
             if ($db->inTransaction()) $db->rollBack();
             $this->limpiar($rutas);
+            registrarLog('Error al guardar promoción: '.$error->getMessage(), 'ERROR');
             $this->json(['status' => 'error', 'message' => 'No fue posible guardar la promoción.'], 500);
         } catch (RuntimeException $error) {
             if ($db->inTransaction()) $db->rollBack();

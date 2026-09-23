@@ -56,6 +56,42 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+// Registra actividad real mientras se edita una página sin navegar por el panel.
+document.addEventListener('DOMContentLoaded', () => {
+    const csrf = document.querySelector('meta[name="csrf-token"]')?.content;
+    if (!csrf) return;
+
+    const url = new URL('sesion/actividad', window.location.origin + document.body.dataset.baseUrl);
+    let ultimoEnvio = Date.now();
+    let enviando = false;
+    let vencida = false;
+
+    const registrar = event => {
+        if (!event.isTrusted || document.visibilityState !== 'visible' || enviando || vencida) return;
+        const ahora = Date.now();
+        if (ahora - ultimoEnvio < 60_000) return;
+        ultimoEnvio = ahora;
+        enviando = true;
+        fetch(url, {
+            method: 'POST',
+            headers: { 'X-CSRF-TOKEN': csrf, Accept: 'application/json' },
+            credentials: 'same-origin'
+        }).then(respuesta => {
+            if (respuesta.status === 401 || respuesta.status === 419) {
+                vencida = true;
+                window.alert('Tu sesión terminó. Copia los cambios que no hayas guardado e inicia sesión nuevamente.');
+            }
+        }).catch(() => {
+            // Un fallo de red no debe crear una ráfaga de intentos por cada tecla.
+            ultimoEnvio = Date.now() - 45_000;
+        }).finally(() => { enviando = false; });
+    };
+
+    for (const tipo of ['pointerdown', 'keydown', 'wheel']) {
+        document.addEventListener(tipo, registrar, { capture: true, passive: true });
+    }
+});
+
 async function canacoAjax(ruta, datos = {}, metodo = 'POST') {
     const baseUrl = document.body.dataset.baseUrl || '/';
     const url = new URL(ruta.replace(/^\/+/, ''), window.location.origin + baseUrl);

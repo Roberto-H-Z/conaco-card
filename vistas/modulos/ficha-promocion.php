@@ -106,7 +106,7 @@ if ($whatsApp !== null) {
 }
 ?>
 
-<div class="cp-promotion-page" data-promotion-page>
+<div class="cp-promotion-page" data-promotion-page data-estadisticas-afiliado="<?= (int)$promocion['idAfiliado'] ?>" data-estadisticas-promocion="<?= (int)$promocion['idPromocion'] ?>" data-estadisticas-token="<?= e(obtenerTokenCSRF()) ?>">
     <section class="cp-promotion-hero" aria-labelledby="cpPromocionTitulo">
         <div class="cp-profile-container">
             <a class="cp-promotion-back" href="<?= base_url('portada#promociones') ?>" data-promotion-back>

@@ -111,8 +111,10 @@ class ModeloBuscador
         }
     }
 
-    public function registrarConsulta(int $idBusqueda, int $idAfiliado): void
+    public function registrarConsulta(int $idBusqueda, int $idAfiliado): bool
     {
-        $this->db->prepare("INSERT INTO interacciones_afiliados (idBusqueda,idAfiliado,tipo) SELECT idBusqueda,idAfiliado,'VISITA_FICHA' FROM busquedas_resultados WHERE idBusqueda=? AND idAfiliado=?")->execute([$idBusqueda, $idAfiliado]);
+        $s = $this->db->prepare("INSERT INTO interacciones_afiliados (idBusqueda,idAfiliado,tipo) SELECT idBusqueda,idAfiliado,'VISITA_FICHA' FROM busquedas_resultados WHERE idBusqueda=? AND idAfiliado=?");
+        $s->execute([$idBusqueda, $idAfiliado]);
+        return $s->rowCount() > 0;
     }
 }

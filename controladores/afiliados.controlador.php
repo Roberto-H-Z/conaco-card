@@ -35,6 +35,10 @@ final class ControladorAfiliados
             if($usuario['rol']==='ADMIN_CAMARA'){
                 if($usuario['idCamara']===null)$this->prohibido();
                 $d['idCamara']=$usuario['idCamara'];
+            }elseif($usuario['rol']!=='ADMIN_GENERAL'&&$d['idAfiliado']!==null){
+                $camaraActual=ModeloAfiliados::camaraDeAfiliado($d['idAfiliado']);
+                if($camaraActual===null)$this->json(['status'=>'error','message'=>'El afiliado no existe.'],404);
+                $d['idCamara']=$camaraActual;
             }
             $d['idUsuario']=$usuario['id'];
             $errores=$this->validar($d);
@@ -47,7 +51,7 @@ final class ControladorAfiliados
 
             $etapa='conexión y datos del afiliado';
             $pdo=Conexion::conectar();$pdo->beginTransaction();
-            $id=ModeloAfiliados::guardarCompleto($pdo,$d);
+            $id=ModeloAfiliados::guardarCompleto($pdo,$d,$usuario['rol']==='ADMIN_GENERAL');
             if($d['crearUsuarioAcceso']){
                 $etapa='creación del usuario de acceso';
                 ModeloUsuarios::crearAccesoAfiliado($pdo,$id,$d['usuarioNombre'],$d['correo_general'],password_hash($d['usuarioPassword'],PASSWORD_DEFAULT));
