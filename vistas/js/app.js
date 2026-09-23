@@ -19,8 +19,8 @@ document.addEventListener('DOMContentLoaded', () => {
         botonMenu.title = oculto ? 'Mostrar menú lateral' : 'Ocultar menú lateral';
         const icono = document.getElementById('sidebarToggleIcon');
         if (icono) {
-            icono.classList.toggle('ki-menu', !oculto);
-            icono.classList.toggle('ki-arrow-right', oculto);
+            icono.classList.toggle('ki-double-left', !oculto);
+            icono.classList.toggle('ki-double-right', oculto);
         }
         if (guardar) localStorage.setItem('canaco-sidebar-hidden', oculto ? '1' : '0');
     };

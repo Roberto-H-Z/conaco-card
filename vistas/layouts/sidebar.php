@@ -10,7 +10,7 @@
         <button class="kt-btn kt-btn-icon kt-btn-ghost lg:hidden" data-kt-drawer-dismiss="true"
             aria-label="Cerrar menú"><i class="ki-filled ki-cross"></i></button>
     </div>
-    <div class="flex flex-col pt-5 pb-5 overflow-y-auto">
+    <div class="canaco-sidebar-main flex flex-col pt-5 pb-5">
         <nav class="kt-menu flex-col gap-2 px-5" data-kt-menu="true" aria-label="Navegación principal">
             <?php if($esAfiliadoMenu): ?>
             <div class="kt-menu-item <?= $rutaActual === 'inicio' ? 'active' : '' ?>">
@@ -37,7 +37,23 @@
                     <span class="kt-menu-title">Promociones</span>
                 </a>
             </div>
+            <?php if($esAfiliadoMenu): ?>
+            <div class="kt-menu-item <?= $rutaActual === 'sucursales' ? 'active' : '' ?>">
+                <a class="kt-menu-link canaco-nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-accent/60 text-sm font-medium text-foreground" href="<?= base_url('sucursales') ?>">
+                    <span class="kt-menu-icon text-muted-foreground w-5"><i class="ki-filled ki-geolocation text-lg"></i></span>
+                    <span class="kt-menu-title">Sucursales</span>
+                </a>
+            </div>
+            <?php endif; ?>
             <?php if($esAdminGeneralMenu): ?>
+            <?php foreach(['sucursales'=>['Sucursales','ki-geolocation'],'categorias'=>['Categorías','ki-category'],'ciudades'=>['Ciudades','ki-map'] ] as $ruta=>$item): ?>
+            <div class="kt-menu-item <?= $rutaActual === $ruta ? 'active' : '' ?>">
+                <a class="kt-menu-link canaco-nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-accent/60 text-sm font-medium text-foreground" href="<?= base_url($ruta) ?>">
+                    <span class="kt-menu-icon text-muted-foreground w-5"><i class="ki-filled <?= $item[1] ?> text-lg"></i></span>
+                    <span class="kt-menu-title"><?= e($item[0]) ?></span>
+                </a>
+            </div>
+            <?php endforeach; ?>
             <div class="kt-menu-item <?= $rutaActual === 'usuarios' ? 'active' : '' ?>">
                 <a class="kt-menu-link canaco-nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-accent/60 text-sm font-medium text-foreground" href="<?= base_url('usuarios') ?>">
                     <span class="kt-menu-icon text-muted-foreground w-5"><i class="ki-filled ki-user-square text-lg"></i></span>
@@ -45,18 +61,18 @@
                 </a>
             </div>
             <?php endif; ?>
-            <div class="kt-menu-item mt-6">
-                <form method="post" action="<?= base_url('logout') ?>">
-                    <?= campoCSRF() ?>
-                    <button class="kt-menu-link canaco-nav-link flex w-full items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-accent/60 text-sm font-medium text-foreground" type="submit">
-                    <span class="kt-menu-icon text-muted-foreground w-5">
-                        <i class="ki-filled ki-exit-left text-lg"></i>
-                    </span>
-                    <span class="kt-menu-title">Cerrar sesión</span>
-                    </button>
-                </form>
-            </div>
         </nav>
     </div>
-    <div class="px-5 py-4 border-t border-border text-xs text-muted-foreground">Sesión activa · <?= e($usuarioMenu['correo'] ?? '') ?></div>
+    <div class="canaco-sidebar-bottom">
+        <div class="px-5 pb-3">
+            <form method="post" action="<?= base_url('logout') ?>">
+                <?= campoCSRF() ?>
+                <button class="canaco-logout-link flex w-full items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium" type="submit">
+                    <span class="w-5"><i class="ki-filled ki-exit-left text-lg" aria-hidden="true"></i></span>
+                    <span>Cerrar sesión</span>
+                </button>
+            </form>
+        </div>
+        <div class="canaco-sidebar-session px-5 py-4 border-t border-border text-xs text-muted-foreground">Sesión activa · <?= e($usuarioMenu['correo'] ?? '') ?></div>
+    </div>
 </aside>

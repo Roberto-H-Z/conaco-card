@@ -10,7 +10,7 @@
     const detail = url => /\/(empresa\/[^/]+|promocion\/[1-9][0-9]*)\/?$/.test(new URL(url, location.href).pathname);
     const quiet = () => reduced.matches || keyboard;
     const native = 'onpageswap' in window && 'onpagereveal' in window;
-    const panelSection = url => /\/(inicio|afiliados|promociones)\/?$/.exec(new URL(url, location.href).pathname)?.[1];
+    const panelSection = url => /\/(inicio|afiliados|promociones|sucursales|categorias|ciudades)\/?$/.exec(new URL(url, location.href).pathname)?.[1];
     const isPanel = root.dataset.canacoPanel === 'true';
     let incomingPanel;
     try { incomingPanel = JSON.parse(sessionStorage.getItem(key)); } catch (_) {}
@@ -21,12 +21,17 @@
     }
     const panelNames = () => {
         let stat = 0;
+        let tools = 0;
         document.querySelectorAll('[data-panel-motion]').forEach(el => {
-            const name = el.dataset.panelMotion === 'stat' ? 'stat-' + stat++ : el.dataset.panelMotion;
+            const kind = el.dataset.panelMotion;
+            // Las tablas de Ciudades son extensas: no se capturan ni se animan.
+            if (root.classList.contains('canaco-panel-ciudades') && kind === 'results') return;
+            const name = kind === 'stat' ? 'stat-' + stat++ : kind === 'tools' ? 'tools' + (tools++ ? '-' + (tools - 1) : '') : kind;
             el.style.viewTransitionName = 'canaco-panel-' + name;
             el.dataset.panelShared = '';
         });
     };
+    if (isPanel && panelSection(location.href) === 'ciudades') root.classList.add('canaco-panel-ciudades');
     const cleanPanel = () => {
         document.querySelectorAll('[data-panel-shared]').forEach(el => {
             el.style.removeProperty('view-transition-name');

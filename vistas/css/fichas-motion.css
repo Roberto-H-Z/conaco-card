@@ -53,6 +53,8 @@
 ::view-transition-group(canaco-panel-stat-2),
 ::view-transition-group(canaco-panel-stat-3),
 ::view-transition-group(canaco-panel-tools),
+::view-transition-group(canaco-panel-tools-1),
+::view-transition-group(canaco-panel-tools-2),
 ::view-transition-group(canaco-panel-results) { animation: none; }
 ::view-transition-new(canaco-panel-title),
 ::view-transition-new(canaco-panel-stat-0),
@@ -60,6 +62,8 @@
 ::view-transition-new(canaco-panel-stat-2),
 ::view-transition-new(canaco-panel-stat-3),
 ::view-transition-new(canaco-panel-tools),
+::view-transition-new(canaco-panel-tools-1),
+::view-transition-new(canaco-panel-tools-2),
 ::view-transition-new(canaco-panel-results) { animation: canaco-panel-in var(--canaco-panel-enter) var(--canaco-panel-ease) both; }
 ::view-transition-new(canaco-panel-stat-0) { animation-delay: 70ms; }
 ::view-transition-new(canaco-panel-stat-1) { animation-delay: 140ms; }
@@ -71,7 +75,28 @@
 ::view-transition-old(canaco-panel-stat-2),
 ::view-transition-old(canaco-panel-stat-3),
 ::view-transition-old(canaco-panel-tools),
+::view-transition-old(canaco-panel-tools-1),
+::view-transition-old(canaco-panel-tools-2),
 ::view-transition-old(canaco-panel-results) { animation: canaco-panel-out var(--canaco-panel-exit) var(--canaco-panel-ease) both; }
+
+/* Ciudades: los encabezados aclaran la llegada; las tablas quedan estables y legibles. */
+.canaco-panel-ciudades { --canaco-panel-enter: 240ms; }
+.canaco-panel-ciudades.canaco-panel-enter:not(.canaco-panel-native) [data-panel-motion="results"] { animation: none; }
+.canaco-panel-ciudades.canaco-panel-enter:not(.canaco-panel-native) [data-panel-motion]:not([data-panel-motion="results"]) { animation-name: canaco-panel-city-in; }
+.canaco-panel-ciudades section[aria-labelledby="titulo-ciudades"] > .kt-card:nth-child(3) [data-panel-motion="tools"] { --panel-delay: 80ms; }
+.canaco-panel-ciudades section[aria-labelledby="titulo-ciudades"] > .kt-card:nth-child(4) [data-panel-motion="tools"] { --panel-delay: 140ms; }
+.canaco-panel-ciudades section[aria-labelledby="titulo-ciudades"] > .kt-card:nth-child(5) [data-panel-motion="tools"] { --panel-delay: 200ms; }
+@keyframes canaco-panel-city-in { from { opacity: .35; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.canaco-panel-ciudades::view-transition-new(canaco-panel-title),
+.canaco-panel-ciudades::view-transition-new(canaco-panel-stat-0),
+.canaco-panel-ciudades::view-transition-new(canaco-panel-stat-1),
+.canaco-panel-ciudades::view-transition-new(canaco-panel-stat-2),
+.canaco-panel-ciudades::view-transition-new(canaco-panel-stat-3),
+.canaco-panel-ciudades::view-transition-new(canaco-panel-tools),
+.canaco-panel-ciudades::view-transition-new(canaco-panel-tools-1),
+.canaco-panel-ciudades::view-transition-new(canaco-panel-tools-2) { animation-name: canaco-panel-city-in; }
+.canaco-panel-ciudades::view-transition-new(canaco-panel-tools-1) { animation-delay: 80ms; }
+.canaco-panel-ciudades::view-transition-new(canaco-panel-tools-2) { animation-delay: 140ms; }
 
 /* La entrada CSS también funciona con JavaScript desactivado o sin View Transitions. */
 .cp-profile-reveal { animation-duration: var(--canaco-ficha-enter); animation-timing-function: var(--cp-ease-out, var(--canaco-ficha-ease)); animation-delay: calc(min(var(--cp-reveal-index, 0), 4) * 50ms); }
