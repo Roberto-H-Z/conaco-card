@@ -19,6 +19,10 @@ class ControladorBuscador
                 $f[$key] = $value;
             }
         }
+        if (isset($entrada['orden'])) {
+            if (!is_string($entrada['orden']) || !preg_match('/^[a-f0-9]{32}$/', $entrada['orden'])) throw new InvalidArgumentException('El orden de búsqueda no es válido.');
+            $f['orden'] = $entrada['orden'];
+        }
         return $f;
     }
 
@@ -35,8 +39,10 @@ class ControladorBuscador
                 if ($f[$key] && !in_array($f[$key], array_map('intval', array_column($datos['catalogos'][$catalogo], 'id')), true)) throw new InvalidArgumentException('La ciudad o categoría seleccionada no está disponible. Ajusta los filtros e intenta otra vez.');
             }
             $datos['resultado'] = $modelo->buscar($f);
-            // Una recarga o regreso a la misma página no infla las estadísticas durante diez minutos.
-            $key = hash('sha256', json_encode([$f['q'],$f['ciudad'],$f['categoria'],$datos['resultado']['pagina']]));
+            $f['orden'] = $datos['resultado']['orden'];
+            $datos['filtros'] = $f;
+            // Cada nueva mezcla registra los afiliados realmente mostrados.
+            $key = hash('sha256', json_encode([$f['q'],$f['ciudad'],$f['categoria'],$datos['resultado']['pagina'],$f['orden']]));
             $reciente = $_SESSION['buscador_registros'][$key] ?? null;
             if ($reciente && $reciente['hasta'] > time()) {
                 $datos['busqueda_token'] = $reciente['token'];

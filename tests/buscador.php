@@ -26,12 +26,22 @@ try {
     $db->prepare('INSERT INTO promociones (idAfiliado,titulo,descripcion,inicio_vigencia,fin_vigencia) VALUES (?,?,?,CURRENT_TIMESTAMP()-INTERVAL 1 DAY,CURRENT_TIMESTAMP()+INTERVAL 1 DAY)')->execute([$ids[5],$tag,'Oferta']);
     $promo=(int)$db->lastInsertId();
     $r=$model->buscar(array_merge($defaults,['q'=>$tag]));
-    check(array_map('intval',array_column($r['items'],'nivel')) === [1,2,3,4,5,6], 'RF13 seis niveles en orden');
+    $niveles=array_map('intval',array_column($r['items'],'nivel')); sort($niveles);
+    check($niveles === [1,2,3,4,5,6], 'RF13 seis niveles de coincidencia conservados');
+    $repetida=$model->buscar(array_merge($defaults,['q'=>$tag]));
+    check(array_column($r['items'],'idAfiliado') !== array_column($repetida['items'],'idAfiliado'), 'Misma búsqueda cambia de orden');
+    $conservada=$model->buscar(array_merge($defaults,['q'=>$tag,'orden'=>$r['orden']]));
+    check(array_column($r['items'],'idAfiliado') === array_column($conservada['items'],'idAfiliado'), 'Token conserva orden para navegar');
     check($r['total']===6,'Afiliado inactivo excluido');
-    check($r['items'][4]['promocion']['idPromocion']===$promo,'RF14 promoción destacada en el resultado');
+    check(array_column($r['items'],null,'idAfiliado')[$ids[5]]['promocion']['idPromocion']===$promo,'RF14 promoción destacada en el resultado');
     $db->prepare('INSERT INTO promociones (idAfiliado,titulo,descripcion,inicio_vigencia,fin_vigencia) VALUES (?,?,?,CURRENT_TIMESTAMP()-INTERVAL 1 DAY,CURRENT_TIMESTAMP()+INTERVAL 1 HOUR)')->execute([$ids[5],'Otra oferta','No coincide']);
     $destacada=$model->buscar(array_merge($defaults,['q'=>$tag]));
-    check($destacada['items'][4]['promocion']['idPromocion']===$promo,'Destacada prioriza promoción coincidente frente a otra que vence antes');
+    check(array_column($destacada['items'],null,'idAfiliado')[$ids[5]]['promocion']['idPromocion']===$promo,'Destacada prioriza promoción coincidente frente a otra que vence antes');
+    $portada=new ModeloPortada();
+    $p1=$portada->obtenerPromocionesDestacadas();
+    $p2=$portada->obtenerPromocionesDestacadas();
+    check(array_column($p1,'idPromocion') !== array_column($p2,'idPromocion'), 'Carrusel cambia de orden o selección en cada carga');
+    check(count($p2)<=6 && count(array_unique(array_column($p2,'idPromocion')))===count($p2), 'Carrusel respeta límite sin duplicados');
     check($model->buscar(array_merge($defaults,['q'=>$tag,'categoria'=>$cat]))['total']===1,'Filtro por categoría combinado');
     $db->prepare('UPDATE promociones SET fin_vigencia=CURRENT_TIMESTAMP()-INTERVAL 1 HOUR WHERE idPromocion=?')->execute([$promo]);
     check($model->buscar(array_merge($defaults,['q'=>$tag]))['total']===5,'Promoción vencida excluida automáticamente');
@@ -42,7 +52,7 @@ try {
     check($model->buscar(array_merge($defaults,['q'=>$tag.'alias']))['items'][0]['nivel']===1,'Coincidencia exacta por alias');
     $db->prepare('UPDATE camaras SET activo=0 WHERE idCamara=?')->execute([$camara]);
     check($model->buscar(array_merge($defaults,['q'=>$tag]))['total']===0,'Cámara inactiva excluida');
-    foreach ([['q'=>[]],['ciudad'=>'-1'],['pagina'=>'0'],['q'=>str_repeat('x',121)]] as $bad) {
+    foreach ([['q'=>[]],['ciudad'=>'-1'],['pagina'=>'0'],['q'=>str_repeat('x',121)],['orden'=>[]],['orden'=>'invalido']] as $bad) {
         try { ControladorBuscador::filtros($bad); throw new RuntimeException('Se aceptó filtro inválido'); } catch (InvalidArgumentException $e) { echo "OK filtro inválido rechazado\n"; }
     }
 } finally { $db->rollBack(); }
@@ -56,7 +66,7 @@ if ($catalogos['ciudades']) {
 }
 $r=$model->buscar($defaults);
 if($r['total']>12) {
-    $r2=$model->buscar(array_merge($defaults,['pagina'=>2]));
+    $r2=$model->buscar(array_merge($defaults,['pagina'=>2,'orden'=>$r['orden']]));
     check(!array_intersect(array_column($r['items'],'idAfiliado'),array_column($r2['items'],'idAfiliado')),'Paginación sin empresas repetidas');
 }
 $busquedas=(int)$db->query("SELECT COUNT(*) FROM busquedas WHERE termino_normalizado='cafe'")->fetchColumn();

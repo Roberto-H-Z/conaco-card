@@ -37,7 +37,7 @@ $urlBusqueda = static function (array $cambios = []) use ($f): string {
             <div class="cp-search-results-heading">
                 <div><h2 id="busquedaResultados"><?= $f['q'] !== '' ? 'Resultados para “'.e($f['q']).'”' : 'Empresas afiliadas' ?></h2>
                 <p><?= number_format($resultado['total']) ?> <?= $resultado['total'] === 1 ? 'empresa encontrada' : 'empresas encontradas' ?></p></div>
-                <span><?= $f['q'] !== '' ? 'Por relevancia' : 'Orden alfabético' ?></span>
+                <span>Orden aleatorio</span>
             </div>
             <?php if ($datosVista['error']): ?>
                 <div class="cp-search-empty" role="alert"><h3>No pudimos completar la búsqueda</h3><p><?= e($datosVista['error']) ?></p><a href="<?= e(base_url('buscar')) ?>">Restablecer la búsqueda</a></div>

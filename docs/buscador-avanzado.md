@@ -1,5 +1,7 @@
 # Buscador avanzado público
 
+Actualización del 5 de octubre de 2026: cada nueva búsqueda mezcla todas las coincidencias, sin priorizar niveles ni nombres. Con al menos dos empresas evita repetir la primera página de la búsqueda anterior en la misma sesión. Los niveles siguen calculándose para identificar coincidencias y estadísticas. El parámetro `orden` (token hexadecimal de 32 caracteres ligado a la sesión y los filtros) conserva la mezcla en la paginación y el regreso desde la ficha; el formulario lo omite para generar una nueva mezcla. Se conservan hasta 30 órdenes y 30 búsquedas recientes. Cada nueva mezcla tiene su propio registro estadístico para asociar visitas con los resultados mostrados. El carrusel selecciona hasta seis promociones vigentes aleatorias en cada carga y evita repetir la presentación anterior si hay alternativas. Esta actualización sustituye las referencias históricas siguientes al orden alfabético, por relevancia y a la deduplicación de nuevas búsquedas durante diez minutos.
+
 Estado local: 9 de septiembre de 2026. Implementación del alcance RF10–RF19 en `/buscar`, integrada con la búsqueda de portada, las fichas de empresas y las promociones. El orden inicial de relevancia está implementado; su validación con el cliente sigue pendiente (RN28).
 
 ## Cobertura de requerimientos

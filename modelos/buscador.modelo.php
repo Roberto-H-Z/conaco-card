@@ -41,17 +41,43 @@ class ModeloBuscador
             $params[] = $f['categoria'];
         }
         $base = "SELECT a.idAfiliado, a.nombre_comercial, a.alias, a.slug, a.descripcion, $nivel AS nivel FROM afiliados a INNER JOIN camaras ca ON ca.idCamara=a.idCamara AND ca.activo=1 WHERE $where";
-        $stmt = $this->db->prepare("SELECT COUNT(*) FROM ($base) resultados WHERE nivel < 99");
+        // Solo IDs en memoria; las fichas completas se consultan para la página visible.
+        $stmt = $this->db->prepare("SELECT idAfiliado FROM ($base) resultados WHERE nivel < 99 ORDER BY idAfiliado");
         $stmt->execute($params);
-        $total = (int) $stmt->fetchColumn();
+        $ids = array_map('intval', $stmt->fetchAll(PDO::FETCH_COLUMN));
+        $total = count($ids);
+        $clave = hash('sha256', json_encode([$f['q'], $f['ciudad'], $f['categoria']]));
+        $orden = $f['orden'] ?? '';
+        $guardado = $_SESSION['buscador_ordenes'][$orden] ?? null;
+        if (!$guardado || $guardado['clave'] !== $clave) {
+            $anterior = $_SESSION['buscador_ultimos_ordenes'][$clave] ?? [];
+            $ids = OrdenAleatorio::mezclar($ids, $anterior, 12);
+            $orden = bin2hex(random_bytes(16));
+            $_SESSION['buscador_ordenes'][$orden] = ['clave'=>$clave, 'ids'=>$ids];
+            $_SESSION['buscador_ordenes'] = array_slice($_SESSION['buscador_ordenes'], -30, null, true);
+            unset($_SESSION['buscador_ultimos_ordenes'][$clave]);
+            $_SESSION['buscador_ultimos_ordenes'][$clave] = array_slice($ids, 0, 12);
+            $_SESSION['buscador_ultimos_ordenes'] = array_slice($_SESSION['buscador_ultimos_ordenes'], -30, null, true);
+        } else {
+            // Mantener la navegación y retirar empresas que ya no están publicadas.
+            $vigentes = array_fill_keys($ids, true);
+            $conservados = array_values(array_filter($guardado['ids'], static fn($id) => isset($vigentes[$id])));
+            $ids = array_merge($conservados, array_values(array_diff($ids, $conservados)));
+        }
         $paginas = max(1, (int) ceil($total / 12));
         $pagina = min($paginas, $f['pagina']);
         $offset = ($pagina - 1) * 12;
-        $stmt = $this->db->prepare("SELECT * FROM ($base) resultados WHERE nivel < 99 ORDER BY nivel, nombre_comercial, idAfiliado LIMIT 12 OFFSET $offset");
-        $stmt->execute($params);
-        $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $visibles = array_slice($ids, $offset, 12);
+        $items = [];
+        if ($visibles) {
+            $marks = implode(',', array_fill(0, count($visibles), '?'));
+            $stmt = $this->db->prepare("SELECT * FROM ($base) resultados WHERE nivel < 99 AND idAfiliado IN ($marks)");
+            $stmt->execute(array_merge($params, $visibles));
+            $porId = array_column($stmt->fetchAll(PDO::FETCH_ASSOC), null, 'idAfiliado');
+            foreach ($visibles as $id) if (isset($porId[$id])) $items[] = $porId[$id];
+        }
         if ($items) $this->completar($items, $f['ciudad'], $f['q']);
-        return compact('total', 'paginas', 'pagina', 'items');
+        return compact('total', 'paginas', 'pagina', 'items', 'orden');
     }
 
     private function completar(array &$items, int $ciudad, string $q): void

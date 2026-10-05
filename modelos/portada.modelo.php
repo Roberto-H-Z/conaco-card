@@ -45,7 +45,7 @@ class ModeloPortada
     /* ── Promociones ────────────────────────────────────────────────────── */
 
     /**
-     * Retorna las promociones vigentes más recientes para la portada.
+     * Retorna una selección aleatoria de promociones vigentes para la portada.
      * Usa la vista vw_promociones_vigentes (ya existente) + JOIN a archivos.
      *
      * @param int $limite Número máximo de promociones a devolver
@@ -77,15 +77,19 @@ class ModeloPortada
             ) f ON f.idPromocion = p.idPromocion
             WHERE p.activo = 1
               AND CURRENT_TIMESTAMP() BETWEEN p.inicio_vigencia AND p.fin_vigencia
-            ORDER BY p.inicio_vigencia DESC
-            LIMIT :limite
+            ORDER BY p.idPromocion
         ';
 
         $stmt = $this->db->prepare($sql);
-        $stmt->bindValue(':limite', $limite, \PDO::PARAM_INT);
         $stmt->execute();
 
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $promociones = array_column($stmt->fetchAll(\PDO::FETCH_ASSOC), null, 'idPromocion');
+        $limite = max(0, $limite);
+        if ($limite === 0) return [];
+        $ids = OrdenAleatorio::mezclar(array_keys($promociones), $_SESSION['portada_orden_promociones'] ?? [], $limite);
+        $ids = array_slice($ids, 0, $limite);
+        $_SESSION['portada_orden_promociones'] = $ids;
+        return array_map(static fn($id) => $promociones[$id], $ids);
     }
 
     /* ── Afiliados ──────────────────────────────────────────────────────── */
