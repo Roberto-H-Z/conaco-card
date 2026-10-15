@@ -3029,3 +3029,39 @@
 @media(hover:hover) and (pointer:fine) { .cp-search-company:hover h3 { color:var(--cp-verde); text-decoration:underline; text-underline-offset:4px; } .cp-search-filters button:hover { background:var(--cp-verde-dark); } }
 @media(max-width:900px) { .cp-search-layout { grid-template-columns:1fr; gap:32px; } .cp-search-filters { display:grid; grid-template-columns:1fr 1fr; gap:8px 20px; } .cp-search-filters h2,.cp-search-filters label,.cp-search-filters input,.cp-search-filters select,.cp-search-filters p { grid-column:1/-1; } .cp-search-filters button { margin:16px 0 0; } .cp-search-clear { margin-top:16px; } }
 @media(max-width:480px) { .cp-search-company { grid-template-columns:56px minmax(0,1fr); gap:14px; } .cp-search-logo { width:56px; height:56px; } .cp-search-arrow { display:none; } .cp-search-promotion { margin-left:0; } .cp-search-results-heading { flex-direction:column; gap:8px; } .cp-search-filters { display:block; padding:20px; } .cp-search-header { padding-bottom:28px; } }
+
+/* En teléfono, la tarea principal abre la portada inmediatamente bajo la navegación. */
+@media (max-width: 767px) {
+    :root { --cp-nav-h: 64px; }
+    .cp-nav-inner { padding-inline: max(16px, env(safe-area-inset-left)); gap: 12px; }
+    .cp-nav-actions { gap: 8px; }
+    .cp-nav-actions > .cp-btn-login { display: none; }
+    .cp-nav-hamburger, .cp-nav-mobile-close { min-width: 44px; min-height: 44px; }
+    .cp-nav-mobile { padding-inline: 24px; padding-bottom: max(24px, env(safe-area-inset-bottom)); overflow-y: auto; }
+    .cp-hero { min-height: 0; }
+    .cp-hero-content { width: 100%; padding: 16px 16px 32px; min-width: 0; }
+    .cp-hero-search { order: -2; flex-direction: row; gap: 6px; width: 100%; max-width: none; margin: 0; padding: 6px; border-radius: 12px; }
+    .cp-hero-search-icon { display: none; }
+    .cp-hero-search input { width: 0; min-width: 0; flex: 1 1 0; padding: 12px 8px; text-align: left; font-size: 16px; line-height: 24px; color: var(--cp-negro); }
+    .cp-hero-search input:focus-visible { outline: 2px solid var(--cp-verde); outline-offset: -2px; border-radius: 6px; }
+    .cp-hero-search input::placeholder { color: var(--cp-gris-medio); opacity: 1; }
+    .cp-hero-search-btn { width: auto; flex: 0 0 auto; min-height: 48px; padding: 12px 16px; border-radius: 8px; font-size: 16px; }
+    .cp-hero .cp-search-advanced-link { order: -1; justify-content: center; width: 100%; min-height: 48px; margin: 4px 0 24px; text-align: center; font-size: 13px; }
+    .cp-hero-title { font-size: clamp(28px, 7vw, 38px); }
+    .cp-hero-subtitle { margin-bottom: 24px; font-size: 16px; }
+    .cp-hero-stats { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; width: 100%; padding: 16px 10px; }
+    .cp-hero-stat { min-width: 0; }
+    .cp-hero-stat-num { font-size: 24px; }
+    .cp-hero-stat-label { font-size: 11px; line-height: 1.5; letter-spacing: 0; text-transform: none; }
+    .cp-hero-divider { display: none; }
+    .cp-search-header { padding-top: calc(var(--cp-nav-h) + 8px); padding-bottom: 16px; }
+    .cp-search-header h1 { font-size: 26px; margin-block: 8px; }
+    .cp-search-header p { font-size: 14px; }
+    .cp-search-layout { padding-top: 16px; gap: 24px; }
+    .cp-search-filters h2 { font-size: 21px; margin-bottom: 12px; }
+    .cp-search-filters label { margin-top: 12px; }
+    .cp-search-pagination { gap: 8px; }
+    .cp-profile-container, .cp-container { min-width: 0; }
+    .cp-profile-action, .cp-profile-map-link { min-height: 44px; }
+    .cp-profile-page :is(h1,h2,strong), .cp-promotion-page :is(h1,h2,strong) { overflow-wrap: anywhere; }
+}

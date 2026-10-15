@@ -19,7 +19,7 @@
 
 <?php require VIEWS_PATH . 'layouts/head.php'; ?>
 
-<body class="antialiased flex h-full text-base text-foreground bg-background demo1 kt-sidebar-fixed kt-header-fixed<?= $vista === 'inicio' ? ' canaco-home-page' : '' ?>" data-base-url="<?= e(base_url()) ?>">
+<body class="antialiased flex h-full text-base text-foreground bg-background demo1 kt-sidebar-fixed kt-header-fixed<?= in_array($vista,['inicio','estadisticas'],true) ? ' canaco-home-page' : '' ?>" data-base-url="<?= e(base_url()) ?>">
  <?php if ($vista === 'inicio'): ?>
  <!-- THESIS: La actividad del negocio se entiende como un informe visual mensual.
  OWN-WORLD: Superficies tinta y papel, azul para alcance, turquesa para visitas, ámbar para contacto; Inter y cifras tabulares.
@@ -44,7 +44,7 @@
     <!-- Container -->
     <div class="container-fixed" id="content_container">
 
-     <?php if ($vista !== 'inicio') require VIEWS_PATH . 'layouts/toolbar.php'; ?>
+     <?php if (!in_array($vista,['inicio','estadisticas'],true)) require VIEWS_PATH . 'layouts/toolbar.php'; ?>
 
      <!-- Vista del módulo -->
      <?php

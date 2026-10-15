@@ -70,5 +70,5 @@ if($r['total']>12) {
     check(!array_intersect(array_column($r['items'],'idAfiliado'),array_column($r2['items'],'idAfiliado')),'Paginación sin empresas repetidas');
 }
 $busquedas=(int)$db->query("SELECT COUNT(*) FROM busquedas WHERE termino_normalizado='cafe'")->fetchColumn();
-$visitas=(int)$db->query("SELECT COUNT(*) FROM interacciones_afiliados i JOIN busquedas b ON b.idBusqueda=i.idBusqueda WHERE b.termino_normalizado='cafe' AND i.tipo='VISITA_FICHA'")->fetchColumn();
+$visitas=(int)$db->query('SELECT COUNT(*) FROM '.ModeloEstadisticas::tablaInteracciones()." i JOIN busquedas b ON b.idBusqueda=i.idBusqueda WHERE b.termino_normalizado='cafe' AND i.tipo='VISITA_FICHA'")->fetchColumn();
 check($busquedas>0 && $visitas>0,'RF17 búsqueda y consulta de ficha registradas por prueba de navegador');

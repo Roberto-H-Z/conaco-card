@@ -20,6 +20,14 @@
                 </a>
             </div>
             <?php endif; ?>
+            <?php if(tieneRol('ADMIN_GENERAL','ADMIN_CAMARA') && tienePermiso('estadisticas.ver')): ?>
+            <div class="kt-menu-item <?= $rutaActual === 'estadisticas' ? 'active' : '' ?>">
+                <a class="kt-menu-link canaco-nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-accent/60 text-sm font-medium text-foreground" href="<?= base_url('estadisticas') ?>" <?= $rutaActual==='estadisticas'?'aria-current="page"':'' ?>>
+                    <span class="kt-menu-icon text-muted-foreground w-5"><i class="ki-filled ki-chart-simple text-lg" aria-hidden="true"></i></span>
+                    <span class="kt-menu-title">Estadísticas</span>
+                </a>
+            </div>
+            <?php endif; ?>
             <div class="kt-menu-item <?= $rutaActual === 'afiliados' ? 'active' : '' ?>">
                 <a class="kt-menu-link canaco-nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-accent/60 kt-menu-item-active:bg-accent/60 text-sm font-medium text-foreground kt-menu-item-active:text-primary"
                     href="<?= base_url('afiliados') ?>">

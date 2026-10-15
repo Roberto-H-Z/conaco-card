@@ -24,3 +24,6 @@ vendor/
 
 # Archivos temporales de Metronic 9.5 (fuentes)
 metronic-v9.5.0/
+
+# Capturas y descargas generadas por las pruebas de estadísticas
+tmp/estadisticas-qa/

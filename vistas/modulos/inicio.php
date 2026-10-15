@@ -7,6 +7,8 @@ if ($error !== null): ?>
 </section>
 <?php return; endif;
 $empresa = $datosVista['empresa'];
+$esAdministracion = $datosVista['administracion'] ?? false;
+$urlExportar = static fn(string $formato):string => base_url('estadisticas/exportar').'?'.http_build_query(['afiliado'=>(int)$empresa['idAfiliado'],'formato'=>$formato]);
 $r = $datosVista['resumen'];
 $perfil = $datosVista['perfil'];
 $serie = $datosVista['serie'];
@@ -40,13 +42,16 @@ $maxBusqueda = max([1, ...array_column($datosVista['busquedas'], 'apariciones')]
 $nombre = explode(' ', trim((string)(obtenerUsuarioSesion()['nombre'] ?? '')))[0] ?: 'afiliado';
 ?>
 <section class="inicio-dashboard" aria-labelledby="inicioTitulo" data-inicio-dashboard>
+    <?php if($esAdministracion): ?><a class="inicio-text-link estadisticas-volver" href="<?= e($datosVista['urlRegreso']) ?>"><i class="ki-filled ki-arrow-left" aria-hidden="true"></i> Volver al resumen de afiliados</a><?php endif; ?>
     <header class="inicio-heading" data-panel-motion="title">
-        <div><h1 id="inicioTitulo">Tu negocio, en perspectiva.</h1><p>Hola, <?= e($nombre) ?>. Descubre cómo encuentran y contactan a tu empresa.</p></div>
+        <div><h1 id="inicioTitulo"><?= $esAdministracion?'Estadísticas del afiliado':'Tu negocio, en perspectiva.' ?></h1><p><?= $esAdministracion?'Consulta cómo encuentran y contactan a esta empresa.':'Hola, '.e($nombre).'. Descubre cómo encuentran y contactan a tu empresa.' ?></p></div>
         <div class="inicio-period"><i class="ki-filled ki-calendar" aria-hidden="true"></i><div><strong>Últimos 30 días</strong><span><time datetime="<?= e($datosVista['periodo']['desde']) ?>"><?= e(date('d/m/Y', strtotime($datosVista['periodo']['desde']))) ?></time> — <time datetime="<?= e($datosVista['periodo']['hasta']) ?>"><?= e(date('d/m/Y', strtotime($datosVista['periodo']['hasta']))) ?></time></span></div></div>
     </header>
     <div class="inicio-business-bar" data-panel-motion="tools">
         <div class="inicio-business-name"><span class="inicio-business-mark" aria-hidden="true"><?= e(mb_strtoupper(mb_substr(trim($empresa['nombre_comercial']), 0, 1))) ?></span><div><strong><?= e($empresa['nombre_comercial']) ?></strong><span><?= e($empresa['camara']) ?></span></div></div>
         <div class="inicio-business-actions">
+            <a class="inicio-button inicio-button-quiet" href="<?= e($urlExportar('xlsx')) ?>">Descargar Excel</a>
+            <a class="inicio-button inicio-button-quiet" href="<?= e($urlExportar('pdf')) ?>">Descargar PDF</a>
             <?php if (count($datosVista['empresas']) > 1): ?>
             <form method="get" action="<?= e(base_url('inicio')) ?>" class="inicio-selector">
                 <label class="inicio-sr-only" for="inicioSelector">Empresa</label>
@@ -59,7 +64,7 @@ $nombre = explode(' ', trim((string)(obtenerUsuarioSesion()['nombre'] ?? '')))[0
     </div>
     <div class="inicio-analytics">
         <section class="inicio-panel inicio-trend" aria-labelledby="inicioTendencia" data-panel-motion="stat">
-            <div class="inicio-panel-heading"><div><h2 id="inicioTendencia">Actividad de tu negocio</h2><p>Del descubrimiento al contacto, día a día.</p></div><span class="inicio-unit">Eventos / día</span></div>
+            <div class="inicio-panel-heading"><div><h2 id="inicioTendencia"><?= $esAdministracion?'Actividad del negocio':'Actividad de tu negocio' ?></h2><p>Del descubrimiento al contacto, día a día.</p></div><span class="inicio-unit">Eventos / día</span></div>
             <dl class="inicio-totals"><?php foreach ($seriesInfo as [$clave, $etiqueta, $total]): ?><div class="inicio-total inicio-series-<?= e($clave) ?>"><dt><span class="inicio-line-key" aria-hidden="true"></span><?= e($etiqueta) ?></dt><dd><?= $numero($total) ?></dd></div><?php endforeach; ?></dl>
             <div class="inicio-chart-tools" hidden data-chart-tools><span>Mostrar</span><?php foreach ($seriesInfo as [$clave, $etiqueta]): ?><button type="button" class="inicio-series-toggle inicio-series-<?= e($clave) ?>" data-series-toggle="<?= e($clave) ?>" aria-pressed="true"><span class="inicio-line-key" aria-hidden="true"></span><?= e($clave === 'visitas' ? 'Visitas' : ($clave === 'contactos' ? 'Contactos' : $etiqueta)) ?></button><?php endforeach; ?></div>
             <figure class="inicio-chart-figure">
@@ -76,33 +81,33 @@ $nombre = explode(' ', trim((string)(obtenerUsuarioSesion()['nombre'] ?? '')))[0
                 </svg>
                 </div>
                 <div class="inicio-x-axis" aria-hidden="true"><?php foreach (array_unique([0, (int)floor(($cantidadDias - 1) / 3), (int)floor(2 * ($cantidadDias - 1) / 3), max(0, $cantidadDias - 1)]) as $i): if (!isset($dias[$i])) continue; ?><span><?= e($fechaCorta($dias[$i])) ?></span><?php endforeach; ?></div>
-                <?php if ($actividadTotal === 0): ?><figcaption class="inicio-empty-chart"><strong>Tu próxima visita empieza esta historia.</strong><span>Cuando las personas encuentren tu empresa o hagan clic en sus canales, verás aquí su actividad.</span></figcaption><?php endif; ?>
+                <?php if ($actividadTotal === 0): ?><figcaption class="inicio-empty-chart"><strong>Sin actividad registrada en el periodo.</strong><span>Las apariciones, visitas y clics de esta empresa se mostrarán aquí.</span></figcaption><?php endif; ?>
             </figure>
             <?php if ($cantidadDias > 0): ?><div class="inicio-chart-inspector" hidden data-chart-inspector><label for="inicioDia">Explorar un día <output id="inicioDiaFecha" for="inicioDia"><?= e($fechaCorta(end($dias))) ?></output></label><input type="range" id="inicioDia" min="0" max="<?= $cantidadDias - 1 ?>" value="<?= $cantidadDias - 1 ?>" step="1" aria-describedby="inicioDiaValores"><p id="inicioDiaValores" aria-live="polite" aria-atomic="true"></p></div><?php endif; ?>
             <details class="inicio-data-table"><summary>Ver datos diarios <i class="ki-filled ki-down" aria-hidden="true"></i></summary><div class="inicio-table-scroll"><table><caption>Eventos registrados por día</caption><thead><tr><th scope="col">Fecha</th><th scope="col">Apariciones</th><th scope="col">Visitas</th><th scope="col">Contactos</th></tr></thead><tbody><?php foreach ($serie as $fecha => $dia): ?><tr><th scope="row"><?= e(date('d/m/Y', strtotime($fecha))) ?></th><td><?= $numero($dia['apariciones']) ?></td><td><?= $numero($dia['visitas']) ?></td><td><?= $numero($dia['contactos']) ?></td></tr><?php endforeach; ?></tbody></table></div></details>
         </section>
         <section class="inicio-panel inicio-channels" aria-labelledby="inicioCanales" data-panel-motion="stat">
-            <div class="inicio-panel-heading"><div><h2 id="inicioCanales">Cómo te contactan</h2><p>Clics hacia tus canales publicados.</p></div></div>
+            <div class="inicio-panel-heading"><div><h2 id="inicioCanales"><?= $esAdministracion?'Cómo contactan al afiliado':'Cómo te contactan' ?></h2><p>Clics hacia los canales publicados.</p></div></div>
             <p class="inicio-contact-total"><strong><?= $numero($contactos) ?></strong><span>clics de contacto<br>durante el mes</span></p>
             <dl class="inicio-channel-list"><?php foreach ($canales as [$etiqueta, $campo, $icono, $clase]): ?><div class="inicio-channel inicio-channel-<?= e($clase) ?>"><dt><i class="ki-filled <?= e($icono) ?>" aria-hidden="true"></i><?= e($etiqueta) ?></dt><dd><?= $numero($r[$campo]) ?></dd><div class="inicio-bar-track" aria-hidden="true"><span style="width:<?= round((int)$r[$campo] / $maxCanal * 100, 2) ?>%"></span></div></div><?php endforeach; ?></dl>
-            <?php if ($contactos === 0): ?><p class="inicio-empty-note">Todavía no se registran clics. Mantén tus canales de contacto actualizados.</p><?php else: ?><p class="inicio-chart-note">La longitud de cada barra compara los clics entre canales.</p><?php endif; ?>
+            <?php if ($contactos === 0): ?><p class="inicio-empty-note">Todavía no se registran clics en los canales de contacto.</p><?php else: ?><p class="inicio-chart-note">La longitud de cada barra compara los clics entre canales.</p><?php endif; ?>
             <dl class="inicio-other-actions"><div><dt><i class="ki-filled ki-geolocation" aria-hidden="true"></i>Clics en el mapa</dt><dd><?= $numero($r['mapa']) ?></dd></div><div><dt><i class="ki-filled ki-discount" aria-hidden="true"></i>Visitas a promociones</dt><dd><?= $numero($r['promociones']) ?></dd></div></dl>
         </section>
     </div>
     <div class="inicio-detail-grid">
         <section class="inicio-panel" aria-labelledby="inicioBusquedas" data-panel-motion="stat">
-            <div class="inicio-panel-heading"><div><h2 id="inicioBusquedas">Así te encuentran</h2><p>Búsquedas que mostraron tu empresa.</p></div><i class="ki-filled ki-magnifier inicio-section-icon" aria-hidden="true"></i></div>
+            <div class="inicio-panel-heading"><div><h2 id="inicioBusquedas"><?= $esAdministracion?'Cómo encuentran al afiliado':'Así te encuentran' ?></h2><p>Búsquedas que mostraron esta empresa.</p></div><i class="ki-filled ki-magnifier inicio-section-icon" aria-hidden="true"></i></div>
             <?php if ($datosVista['busquedas']): ?><div class="inicio-list-heading"><span>Término de búsqueda</span><span>Apariciones</span></div><ol class="inicio-search-list"><?php foreach ($datosVista['busquedas'] as $fila): ?><li><div><span><?= e($fila['termino']) ?></span><strong><?= $numero($fila['apariciones']) ?></strong></div><div class="inicio-bar-track" aria-hidden="true"><span style="width:<?= round((int)$fila['apariciones'] / $maxBusqueda * 100, 2) ?>%"></span></div></li><?php endforeach; ?></ol>
-            <?php else: ?><div class="inicio-empty"><strong>Aún no hay búsquedas registradas.</strong><p>Las palabras que ayuden a descubrir tu negocio aparecerán aquí.</p><a class="inicio-text-link" href="<?= e(base_url('afiliados')) ?>">Revisar mi empresa <i class="ki-filled ki-arrow-right" aria-hidden="true"></i></a></div><?php endif; ?>
+            <?php else: ?><div class="inicio-empty"><strong>Aún no hay búsquedas registradas.</strong><p>Los términos que muestren esta empresa aparecerán aquí.</p></div><?php endif; ?>
         </section>
         <section class="inicio-panel" aria-labelledby="inicioPromos" data-panel-motion="stat">
-            <div class="inicio-panel-heading"><div><h2 id="inicioPromos">Promociones vigentes</h2><p>Tus ofertas disponibles hoy.</p></div><a class="inicio-text-link" href="<?= e(base_url('promociones')) ?>">Administrar <i class="ki-filled ki-arrow-right" aria-hidden="true"></i></a></div>
+            <div class="inicio-panel-heading"><div><h2 id="inicioPromos">Promociones vigentes</h2><p>Ofertas disponibles hoy.</p></div><a class="inicio-text-link" href="<?= e(base_url('promociones').'?afiliado='.(int)$empresa['idAfiliado']) ?>">Administrar <i class="ki-filled ki-arrow-right" aria-hidden="true"></i></a></div>
             <?php if ($datosVista['promociones']): ?><ul class="inicio-promo-list"><?php foreach ($datosVista['promociones'] as $promo): ?><li><div><strong><?= e($promo['titulo']) ?></strong><span>Hasta el <?= e(date('d/m/Y', strtotime($promo['fin_vigencia']))) ?></span></div><span class="inicio-promo-visits"><strong><?= $numero($promo['visitas']) ?></strong> visitas en el mes</span></li><?php endforeach; ?></ul>
-            <?php else: ?><div class="inicio-empty"><strong>Tu próxima oferta puede destacar aquí.</strong><p>No tienes promociones vigentes. Publica una oferta para dar más motivos para visitar tu negocio.</p><a class="inicio-text-link" href="<?= e(base_url('promociones')) ?>">Ir a promociones <i class="ki-filled ki-arrow-right" aria-hidden="true"></i></a></div><?php endif; ?>
+            <?php else: ?><div class="inicio-empty"><strong>No hay promociones vigentes.</strong><p>Las promociones de esta empresa aparecerán aquí durante su vigencia.</p><a class="inicio-text-link" href="<?= e(base_url('promociones').'?afiliado='.(int)$empresa['idAfiliado']) ?>">Ir a promociones <i class="ki-filled ki-arrow-right" aria-hidden="true"></i></a></div><?php endif; ?>
         </section>
     </div>
     <section class="inicio-company" aria-labelledby="inicioEmpresa" data-panel-motion="results">
-        <div class="inicio-company-copy"><h2 id="inicioEmpresa">Tu empresa en CANACO Card</h2><strong><?= e($empresa['nombre_comercial']) ?></strong><p><?= e(mb_strimwidth((string)$empresa['descripcion'], 0, 220, '…')) ?></p><a class="inicio-text-link" href="<?= e(base_url('afiliados')) ?>">Editar mi empresa <i class="ki-filled ki-arrow-right" aria-hidden="true"></i></a></div>
+        <div class="inicio-company-copy"><h2 id="inicioEmpresa"><?= $esAdministracion?'La empresa en CANACO Card':'Tu empresa en CANACO Card' ?></h2><strong><?= e($empresa['nombre_comercial']) ?></strong><p><?= e(mb_strimwidth((string)$empresa['descripcion'], 0, 220, '…')) ?></p><a class="inicio-text-link" href="<?= e(base_url('afiliados')) ?>"><?= $esAdministracion?'Ir a afiliados':'Editar mi empresa' ?> <i class="ki-filled ki-arrow-right" aria-hidden="true"></i></a></div>
         <dl class="inicio-company-facts"><div><dt>Sucursales activas</dt><dd><?= $numero($perfil['sucursales'] ?? 0) ?></dd></div><div><dt>Canales publicados</dt><dd><?= $numero($perfil['canales'] ?? 0) ?></dd></div><div><dt>Promociones vigentes</dt><dd><?= $numero($perfil['promociones'] ?? 0) ?></dd></div></dl>
     </section>
     <p class="inicio-footnote"><i class="ki-filled ki-information-2" aria-hidden="true"></i>Las cifras cuentan actividad registrada en el portal. Un clic no confirma una llamada, conversación o venta.</p>

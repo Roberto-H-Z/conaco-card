@@ -218,3 +218,45 @@ html.dark .canaco-home-page {
     .inicio-button, .inicio-data-line, .inicio-series-toggle { transition: none; transform: none; }
     .inicio-button:active { transform: none; }
 }
+
+/* Estadísticas administrativas: mismos indicadores y detalle que el afiliado. */
+.estadisticas-volver { margin-bottom: 1rem; }
+.estadisticas-filtros { display: flex; align-items: end; flex-wrap: wrap; gap: 1rem; padding: 1.25rem 0; border-block: 1px solid var(--inicio-border); }
+.estadisticas-filtros label { display: grid; gap: .5rem; font-weight: 600; flex: 1 1 15rem; min-width: 0; }
+.estadisticas-filtros input, .estadisticas-filtros select { min-width: 0; width: 100%; min-height: 2.75rem; padding: .65rem .8rem; border: 1px solid var(--inicio-border); border-radius: .5rem; background: var(--inicio-surface); color: var(--inicio-ink); caret-color: var(--inicio-blue); }
+.estadisticas-filtros input::placeholder { color: var(--inicio-muted); }
+.estadisticas-filtros :is(input,select):focus-visible { outline: 2px solid var(--inicio-blue); outline-offset: -2px; border-color: var(--inicio-blue); box-shadow: none; }
+.estadisticas-resultados-heading { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; margin: 1.5rem 0; }
+.estadisticas-resultados-heading p { color: var(--inicio-muted); overflow-wrap: anywhere; }
+.estadisticas-descargas { display: flex; flex-wrap: wrap; gap: .65rem; }
+.estadisticas-totales { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); border-bottom: 1px solid var(--inicio-border); padding-bottom: 1.5rem; margin-bottom: 1.5rem !important; gap: 1rem; }
+.estadisticas-totales dt { color: var(--inicio-muted); font-size: .8125rem; }
+.estadisticas-totales dd { font-size: 2rem; font-weight: 600; margin-top: .35rem; }
+.estadisticas-tabla-scroll { overflow: auto; width: 100%; border: 1px solid var(--inicio-border); border-radius: .75rem; scrollbar-color: var(--inicio-muted) var(--inicio-soft); }
+.estadisticas-tabla { border-collapse: collapse; min-width: 64rem; width: 100%; font-size: .8125rem; }
+.estadisticas-tabla thead th { background: var(--inicio-soft); font-weight: 600; }
+.estadisticas-tabla th, .estadisticas-tabla td { border-bottom: 1px solid var(--inicio-border); padding: .9rem .75rem; text-align: right; }
+.estadisticas-tabla th:first-child { text-align: left; min-width: 15rem; max-width: 23rem; }
+.estadisticas-tabla tbody th { font-weight: 400; }
+.estadisticas-tabla tbody th > span, .estadisticas-tabla tbody th > small { display: block; color: var(--inicio-muted); font-size: .75rem; overflow-wrap: anywhere; }
+.estadisticas-tabla tbody .inicio-text-link { overflow-wrap: anywhere; }
+.estadisticas-tabla tr:last-child > * { border-bottom: 0; }
+.estadisticas-paginacion { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 1rem; margin-top: 1.25rem; }
+@media (max-width: 767px) {
+    .estadisticas-filtros { gap: .85rem; }
+    .estadisticas-filtros label { flex-basis: 100%; }
+    .estadisticas-filtros input, .estadisticas-filtros select { font-size: 1rem; }
+    .estadisticas-filtros > button, .estadisticas-filtros > a { flex: 1; justify-content: center; }
+    .estadisticas-descargas { width: 100%; }
+    .estadisticas-descargas > a { flex: 1; }
+    .estadisticas-totales dd { font-size: 1.6rem; }
+    .estadisticas-totales dt { min-height: 2.5em; }
+    .estadisticas-tabla-scroll { overflow: visible; border: 0; }
+    .estadisticas-tabla { display: block; min-width: 0; }
+    .estadisticas-tabla thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+    .estadisticas-tabla tbody { display: grid; gap: 1.25rem; }
+    .estadisticas-tabla tr { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); border-bottom: 1px solid var(--inicio-border); padding-bottom: 1rem; }
+    .estadisticas-tabla th:first-child { grid-column: 1/-1; min-width: 0; max-width: none; padding: .5rem 0 1rem; border: 0; }
+    .estadisticas-tabla td { border: 0; display: flex; flex-direction: column; text-align: left; gap: .35rem; padding: .65rem .5rem .65rem 0; font-size: 1.125rem; }
+    .estadisticas-tabla td::before { content: attr(data-label); color: var(--inicio-muted); font-size: .75rem; }
+}

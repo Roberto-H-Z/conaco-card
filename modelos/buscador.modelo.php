@@ -139,7 +139,7 @@ class ModeloBuscador
 
     public function registrarConsulta(int $idBusqueda, int $idAfiliado): bool
     {
-        $s = $this->db->prepare("INSERT INTO interacciones_afiliados (idBusqueda,idAfiliado,tipo) SELECT idBusqueda,idAfiliado,'VISITA_FICHA' FROM busquedas_resultados WHERE idBusqueda=? AND idAfiliado=?");
+        $s = $this->db->prepare('INSERT INTO '.ModeloEstadisticas::tablaInteracciones()." (idBusqueda,idAfiliado,tipo) SELECT idBusqueda,idAfiliado,'VISITA_FICHA' FROM busquedas_resultados WHERE idBusqueda=? AND idAfiliado=?");
         $s->execute([$idBusqueda, $idAfiliado]);
         return $s->rowCount() > 0;
     }

@@ -28,7 +28,7 @@ class ControladorFichaPromocion
         $ultima = (int)($_SESSION['visitas_promocion'][(int)$id] ?? 0);
         if (!estaAutenticado() && $ultima < time() - 1800) {
             try {
-                $s = Conexion::conectar()->prepare("INSERT INTO interacciones_afiliados(idAfiliado,idPromocion,tipo) VALUES (?,?,'VISITA_PROMOCION')");
+                $s = Conexion::conectar()->prepare('INSERT INTO '.ModeloEstadisticas::tablaInteracciones()."(idAfiliado,idPromocion,tipo) VALUES (?,?,'VISITA_PROMOCION')");
                 $s->execute([(int)$promocion['idAfiliado'],(int)$id]);
                 $_SESSION['visitas_promocion'][(int)$id] = time();
             } catch (Throwable $e) { registrarLog('Visita a promoción: '.$e->getMessage(),'ERROR'); }

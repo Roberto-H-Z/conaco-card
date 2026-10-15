@@ -63,6 +63,15 @@ return [
         'controlador'=>'ControladorEventoPublico', 'metodo'=>'registrar',
         'auth'=>false, 'roles'=>[], 'api'=>true,
     ],
+    'estadisticas' => [
+        'controlador'=>'ControladorEstadisticas', 'metodo'=>'index', 'vista'=>'estadisticas',
+        'auth'=>true, 'permiso'=>'estadisticas.ver', 'roles'=>['ADMIN_GENERAL','ADMIN_CAMARA'],
+        'titulo'=>'Estadísticas', 'layout'=>'admin', 'js'=>['inicio.js'],
+    ],
+    'estadisticas/exportar' => [
+        'controlador'=>'ControladorEstadisticas', 'metodo'=>'exportar',
+        'auth'=>true, 'permiso'=>'estadisticas.ver', 'roles'=>['ADMIN_GENERAL','ADMIN_CAMARA','AFILIADO'], 'api'=>true,
+    ],
 
     'buscar' => [
         'controlador'=>'ControladorBuscador', 'metodo'=>'index', 'vista'=>'buscar',
