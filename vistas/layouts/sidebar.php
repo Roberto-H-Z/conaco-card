@@ -54,7 +54,7 @@
             </div>
             <?php endif; ?>
             <?php if($esAdminGeneralMenu): ?>
-            <?php foreach(['sucursales'=>['Sucursales','ki-geolocation'],'categorias'=>['Categorías','ki-category'],'ciudades'=>['Ciudades','ki-map'] ] as $ruta=>$item): ?>
+            <?php foreach(['camaras'=>['Cámaras','ki-bank'],'sucursales'=>['Sucursales','ki-geolocation'],'categorias'=>['Categorías','ki-category'],'ciudades'=>['Ciudades','ki-map'] ] as $ruta=>$item): ?>
             <div class="kt-menu-item <?= $rutaActual === $ruta ? 'active' : '' ?>">
                 <a class="kt-menu-link canaco-nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-accent/60 text-sm font-medium text-foreground" href="<?= base_url($ruta) ?>">
                     <span class="kt-menu-icon text-muted-foreground w-5"><i class="ki-filled <?= $item[1] ?> text-lg"></i></span>

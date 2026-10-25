@@ -129,6 +129,10 @@ return [
         'roles'       => [],
         'api'         => true,
     ],
+    'camaras' => ['controlador'=>'ControladorCamaras','metodo'=>'index','vista'=>'camaras','auth'=>true,'roles'=>['ADMIN_GENERAL'],'titulo'=>'Cámaras','breadcrumbs'=>[],'js'=>['camaras.js'],'layout'=>'admin'],
+    'camaras/obtener' => ['controlador'=>'ControladorCamaras','metodo'=>'obtener','auth'=>true,'roles'=>['ADMIN_GENERAL'],'api'=>true],
+    'camaras/guardar' => ['controlador'=>'ControladorCamaras','metodo'=>'guardar','auth'=>true,'roles'=>['ADMIN_GENERAL'],'api'=>true],
+    'camaras/cambiar-estado' => ['controlador'=>'ControladorCamaras','metodo'=>'cambiarEstado','auth'=>true,'roles'=>['ADMIN_GENERAL'],'api'=>true],
     'usuarios' => [
         'controlador'=>'ControladorUsuarios','metodo'=>'index','vista'=>'usuarios','auth'=>true,'permiso'=>'usuarios.ver','roles'=>['ADMIN_GENERAL'],'titulo'=>'Usuarios','breadcrumbs'=>[],'js'=>['usuarios.js'],'layout'=>'admin',
     ],
